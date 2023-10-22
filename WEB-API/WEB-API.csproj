@@ -14,9 +14,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Application" />
-      <Folder Include="Domain" />
       <Folder Include="Infrastructure" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Library\Library.csproj" />
     </ItemGroup>
 
 </Project>
