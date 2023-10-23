@@ -1,4 +1,4 @@
-﻿namespace Library.Auth.Interfaces;
+﻿namespace Domain.Auth.Interfaces;
 
 public interface IUserRepository
 {

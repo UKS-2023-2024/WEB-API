@@ -1,10 +1,9 @@
-﻿using Library.Auth.Enums;
+﻿using Domain.Auth.Enums;
 
-namespace Library.Auth;
+namespace Domain.Auth;
 
 public class User
 {
-    
     public string Id { get; private set; }
     public string Email { get; private set; }
     public string FullName { get; private set; }

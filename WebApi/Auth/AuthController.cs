@@ -1,7 +1,5 @@
 ﻿using Application.Auth.Commands.Create;
 using Application.Auth.Queries.FindAll;
-using Library.Auth;
-using Library.Auth.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using WEB_API.Auth.Dtos;

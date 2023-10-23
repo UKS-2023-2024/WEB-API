@@ -1,7 +1,6 @@
 ﻿
 using Application.Shared;
-using Library.Auth;
-using MediatR;
+using Domain.Auth;
 
 namespace Application.Auth.Queries.FindAll;
 

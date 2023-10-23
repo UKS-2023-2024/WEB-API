@@ -1,5 +1,5 @@
-﻿using Infrastructure.Auth.Repositories;
-using Library.Auth.Interfaces;
+﻿using Domain.Auth.Interfaces;
+using Infrastructure.Auth.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure;

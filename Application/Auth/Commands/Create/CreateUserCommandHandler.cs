@@ -1,8 +1,7 @@
 ﻿using Application.Shared;
-using Library.Auth;
-using Library.Auth.Enums;
-using Library.Auth.Interfaces;
-using MediatR;
+using Domain.Auth;
+using Domain.Auth.Enums;
+using Domain.Auth.Interfaces;
 
 namespace Application.Auth.Commands.Create;
 /*
