@@ -11,15 +11,15 @@ namespace Application.Auth.Commands.Create;
  * Takodje, posto je komanda u pitanju, ne vraca se nista nazad
  * i trebalo bi da se rade CUD operacije(CREATE, UPDATE, DELETE) sa njom.
  */
-public class CreateUserCommandHandler: ICommandHandler<CreateUserCommand>
+public class CreateUserCommandHandler: ICommandHandler<CreateUserCommand, string>
 {
-    private IUserRepository _userRepository;
-    public CreateUserCommandHandler(IUserRepository userRepository) =>  _userRepository = userRepository; 
+    private readonly IUserRepository _userRepository;
+    public CreateUserCommandHandler(IUserRepository userRepository) => _userRepository = userRepository; 
     
-    public Task Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public Task<string> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        var user = new User("1231231231", request.email, request.fullName, UserRole.USER);
+        var user = new User("1231231231", request.Email, request.FullName, UserRole.USER);
         _userRepository.Create(user);
-        return Task.CompletedTask;
+        return Task.FromResult("123123123123");
     }
 }

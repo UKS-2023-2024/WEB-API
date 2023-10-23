@@ -17,4 +17,4 @@ namespace Application.Auth.Commands.Create;
  * Mozemo se dogovoriti oko ovih konvencija. Takodje ista stvar vazi i za querije.
  * 
  */
-public sealed record CreateUserCommand(string email, string fullName): ICommand;
+public sealed record CreateUserCommand(string Email, string FullName): ICommand<string>;

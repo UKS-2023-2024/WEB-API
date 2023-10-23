@@ -13,7 +13,7 @@ namespace Application.Auth.Queries.FindAll;
  */
 public class FindAllUsersQueryHandler: IRequestHandler<FindAllUsersQuery, IEnumerable<User>>
 {
-    private IUserRepository _userRepository;
+    private readonly IUserRepository _userRepository;
     public FindAllUsersQueryHandler(IUserRepository userRepository) => _userRepository = userRepository;
 
     public Task<IEnumerable<User>> Handle(FindAllUsersQuery request, CancellationToken cancellationToken)
