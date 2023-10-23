@@ -1,6 +1,6 @@
 ﻿using Library.Auth;
+using Library.Auth.Enums;
 using Library.Auth.Interfaces;
-using Library.Enums;
 
 namespace Infrastructure.Auth.Repositories;
 

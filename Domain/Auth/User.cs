@@ -1,4 +1,4 @@
-﻿using Library.Enums;
+﻿using Library.Auth.Enums;
 
 namespace Library.Auth;
 

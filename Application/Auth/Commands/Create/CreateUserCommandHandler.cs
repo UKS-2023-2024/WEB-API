@@ -1,7 +1,7 @@
 ﻿using Application.Shared;
 using Library.Auth;
+using Library.Auth.Enums;
 using Library.Auth.Interfaces;
-using Library.Enums;
 using MediatR;
 
 namespace Application.Auth.Commands.Create;
