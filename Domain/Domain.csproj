@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>Library</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="EntityFramework" Version="6.4.4" />
+      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.0" />
+    </ItemGroup>
+
+</Project>
