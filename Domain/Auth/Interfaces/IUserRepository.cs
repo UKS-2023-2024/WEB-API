@@ -1,7 +1,8 @@
-﻿namespace Domain.Auth.Interfaces;
+﻿using Domain.Shared.Interfaces;
 
-public interface IUserRepository
+namespace Domain.Auth.Interfaces;
+
+public interface IUserRepository : IBaseRepository<User>
 {
-    List<User> FindAll();
-    void Create(User user);
+
 }

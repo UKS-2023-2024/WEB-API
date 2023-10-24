@@ -2,26 +2,15 @@
 using Domain.Auth.Enums;
 using Domain.Auth.Interfaces;
 using Infrastructure.Persistence;
+using Infrastructure.Shared.Repositories;
 
 namespace Infrastructure.Auth.Repositories;
 
-public class UserRepository: IUserRepository
+public class UserRepository: BaseRepository<User>, IUserRepository
 {
-    private readonly MainDbContext _context;
     
-    public UserRepository(MainDbContext context)
+    public UserRepository(MainDbContext context) : base(context)
     {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
     }
     
-    public List<User> FindAll()
-    {
-        return _context.Set<User>().ToList();
-    }
-
-    public void Create(User user)
-    {
-        _context.Set<User>().Add(user);
-        _context.SaveChanges();
-    }
 }
