@@ -8,12 +8,11 @@ namespace Domain.Auth
 {
     public class Email
     {
-        public string Id { get; private set; }
+        public Guid Id { get; private set; }
         public string Value { get; private set; }
 
         private Email() { }
-        public Email(string id, string value) {
-            Id = id;
+        public Email(string value) {
             Value = value;
         }
     }

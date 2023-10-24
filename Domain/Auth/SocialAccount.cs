@@ -8,13 +8,12 @@ namespace Domain.Auth
 {
     public class SocialAccount
     {
-        public string Id { get; set; }
+        public Guid Id { get; private set; }
         public string Value { get; private set; }
 
         private SocialAccount() { }
-        public SocialAccount(string id, string value)
+        public SocialAccount(string value)
         {
-            Id = id;
             Value = value;
         }
     }

@@ -17,7 +17,7 @@ public class CreateUserCommandHandler: ICommandHandler<CreateUserCommand, string
     
     public Task<string> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        var user = User.Create("1", "1231231231", "ana", "123", "123", UserRole.USER, "laal", "lala", "lala", "lala", new List<SocialAccount>() { new SocialAccount("1", "123")}, new List<Email>() {new Email("2", "123")});
+        var user = User.Create("1231231231", "ana", "123", "123", UserRole.USER, "laal", "lala", "lala", "lala", new List<SocialAccount>() { new SocialAccount("123")}, new List<Email>() {new Email("123")});
         _userRepository.Create(user);
         return Task.FromResult("123123123123");
     }

@@ -4,7 +4,7 @@ namespace Domain.Auth;
 
 public class User
 {
-    public string Id { get; private set; }
+    public Guid Id { get; private set; }
     public string PrimaryEmail { get; private set; }
     public string FullName { get; private set; }
     public string Username { get; private set; }
@@ -18,9 +18,8 @@ public class User
     public List<Email> SecondaryEmails { get; private set; }
 
     private User() { }
-    private User(string id, string primaryEmail, string fullName, string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails)
+    private User(string primaryEmail, string fullName, string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails)
     {
-        Id = id;
         PrimaryEmail = primaryEmail;
         FullName = fullName;
         Username = username;
@@ -34,11 +33,11 @@ public class User
         SecondaryEmails = secondaryEmails;
     }
 
-    public static User Create(string id, string primaryEmail, string fullName,string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails)
+    public static User Create(string primaryEmail, string fullName,string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails)
     {
         if (primaryEmail == null) throw new Exception("Primary email cannot be null");
         if (username == null) throw new Exception("Username cannot be null");
-        return new User(id, primaryEmail, fullName, username, password, role, bio, location, company, website, socialAccounts, secondaryEmails);
+        return new User(primaryEmail, fullName, username, password, role, bio, location, company, website, socialAccounts, secondaryEmails);
     }
 
 
