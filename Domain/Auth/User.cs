@@ -16,10 +16,9 @@ public class User
     public string Website { get; private set; }
     public List<SocialAccount> SocialAccounts { get; private set; }
     public List<Email> SecondaryEmails { get; private set; }
-    public Pronouns Pronouns { get; private set; }
 
     private User() { }
-    private User(string id, string primaryEmail, string fullName, string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails, Pronouns pronouns)
+    private User(string id, string primaryEmail, string fullName, string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails)
     {
         Id = id;
         PrimaryEmail = primaryEmail;
@@ -33,14 +32,13 @@ public class User
         Website = website;
         SocialAccounts = socialAccounts;
         SecondaryEmails = secondaryEmails;
-        Pronouns = pronouns;
     }
 
-    public static User Create(string id, string primaryEmail, string fullName,string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails, Pronouns pronouns)
+    public static User Create(string id, string primaryEmail, string fullName,string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails)
     {
         if (primaryEmail == null) throw new Exception("Primary email cannot be null");
         if (username == null) throw new Exception("Username cannot be null");
-        return new User(id, primaryEmail, fullName, username, password, role, bio, location, company, website, socialAccounts, secondaryEmails, pronouns);
+        return new User(id, primaryEmail, fullName, username, password, role, bio, location, company, website, socialAccounts, secondaryEmails);
     }
 
 
