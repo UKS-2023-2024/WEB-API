@@ -1,4 +1,4 @@
-﻿namespace Library.Auth.Enums;
+﻿namespace Domain.Auth.Enums;
 
 public enum UserRole
 {

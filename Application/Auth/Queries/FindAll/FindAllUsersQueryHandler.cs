@@ -1,5 +1,5 @@
-﻿using Library.Auth;
-using Library.Auth.Interfaces;
+﻿using Domain.Auth;
+using Domain.Auth.Interfaces;
 using MediatR;
 
 namespace Application.Auth.Queries.FindAll;

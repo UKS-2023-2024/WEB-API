@@ -1,7 +1,6 @@
-﻿using Library.Auth.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Library;
+namespace Domain;
 
 public static class DependencyInjection
 {
