@@ -36,7 +36,7 @@ namespace Infrastructure.Shared.Repositories
 
         public virtual void Update(T entity)
         {
-            _context.Entry(entity);
+            _context.Update(entity);
             _context.SaveChanges();
         }
 
