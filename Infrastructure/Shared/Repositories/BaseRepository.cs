@@ -18,7 +18,7 @@ namespace Infrastructure.Shared.Repositories
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public virtual T Find(string id)
+        public virtual T Find(Guid id)
         {
             return _context.Set<T>().Find(id);
         }
