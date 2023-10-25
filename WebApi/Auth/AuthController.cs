@@ -1,5 +1,5 @@
-﻿using Application.Auth.Commands.Create;
-using Application.Auth.Commands.Delete;
+﻿using Application.Auth.Commands.Delete;
+using Application.Auth.Commands.Register;
 using Application.Auth.Queries.FindAll;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -27,21 +27,20 @@ public class AuthController: ControllerBase
         return Ok(users.Result);
     }
 
-
-    [HttpPost]
-    [Route("/users")]
-    public IActionResult Create([FromBody] CreateUserDto data)
-    {
-        var result = _mediator.Send(new CreateUserCommand(data.Email, data.FullName));
-        if (result.IsCompleted) return Ok();
-        return BadRequest(result.Exception);
-    }
-
     [HttpDelete]
     [Route("/users/{id}")]
     public IActionResult Delete(Guid id)
     {
         var result = _mediator.Send(new DeleteUserCommand(id));
+        if (result.IsCompleted) return Ok();
+        return BadRequest(result.Exception);
+    }
+
+    [HttpPost]
+    [Route("/register")]
+    public IActionResult Register([FromBody] RegisterUserDto data)
+    {
+        var result = _mediator.Send(new RegisterUserCommand(data.PrimaryEmail, data.Password, data.Username, data.Fullname));
         if (result.IsCompleted) return Ok();
         return BadRequest(result.Exception);
     }

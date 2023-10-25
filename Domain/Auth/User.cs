@@ -11,12 +11,12 @@ public class User
     public string Username { get; private set; }
     public string Password { get; private set; }
     public UserRole Role { get; private set; }
-    public string Bio { get; private set; }
-    public string Location { get; private set; }
-    public string Company { get; private set; }
-    public string Website { get; private set; }
-    public List<SocialAccount> SocialAccounts { get; private set; }
-    public List<Email> SecondaryEmails { get; private set; } = new();
+    public string? Bio { get; private set; }
+    public string? Location { get; private set; }
+    public string? Company { get; private set; }
+    public string? Website { get; private set; }
+    public List<SocialAccount>? SocialAccounts { get; private set; }
+    public List<Email>? SecondaryEmails { get; private set; } = new();
     public bool Deleted { get; private set; }
 
     private User() { }
