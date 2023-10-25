@@ -1,4 +1,5 @@
 ﻿using Domain.Auth.Enums;
+using System.Data;
 
 namespace Domain.Auth;
 
@@ -16,9 +17,10 @@ public class User
     public string Website { get; private set; }
     public List<SocialAccount> SocialAccounts { get; private set; }
     public List<Email> SecondaryEmails { get; private set; }
+    public bool Deleted { get; private set; }
 
     private User() { }
-    private User(string primaryEmail, string fullName, string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails)
+    private User(string primaryEmail, string fullName, string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails, bool deleted)
     {
         PrimaryEmail = primaryEmail;
         FullName = fullName;
@@ -31,15 +33,20 @@ public class User
         Website = website;
         SocialAccounts = socialAccounts;
         SecondaryEmails = secondaryEmails;
+        Deleted = false;
     }
 
-    public static User Create(string primaryEmail, string fullName,string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails)
+    public static User Create(string primaryEmail, string fullName,string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails, bool deleted)
     {
         if (primaryEmail == null) throw new Exception("Primary email cannot be null");
         if (username == null) throw new Exception("Username cannot be null");
-        return new User(primaryEmail, fullName, username, password, role, bio, location, company, website, socialAccounts, secondaryEmails);
+        return new User(primaryEmail, fullName, username, password, role, bio, location, company, website, socialAccounts, secondaryEmails, deleted);
     }
 
+    public void Delete()
+    {
+        Deleted = true;
+    }
 
 
 }
