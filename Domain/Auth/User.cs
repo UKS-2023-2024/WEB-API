@@ -16,7 +16,7 @@ public class User
     public string Company { get; private set; }
     public string Website { get; private set; }
     public List<SocialAccount> SocialAccounts { get; private set; }
-    public List<Email> SecondaryEmails { get; private set; }
+    public List<Email> SecondaryEmails { get; private set; } = new();
     public bool Deleted { get; private set; }
 
     private User() { }
