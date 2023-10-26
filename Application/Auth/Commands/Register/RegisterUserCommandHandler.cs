@@ -13,6 +13,8 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, s
     
     public Task<string> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
+        if (_userRepository.FindUserByEmail(request.primaryEmail) != null)
+            throw new Exception("User with this email already exists!");
         User registeredUser = User.Create(request.primaryEmail, request.fullName, request.username,
             request.password, UserRole.USER, null, null, null, 
             null, null, null, false);
