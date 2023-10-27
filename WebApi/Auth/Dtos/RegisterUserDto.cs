@@ -6,7 +6,7 @@ public class RegisterUserDto
 {
     [Required] public string PrimaryEmail { get; set; }
 
-    [Required] public string Password { get; set; }
+    [Required] [MinLength(6)] public string Password { get; set; }
 
     [Required] public string Fullname { get; set; }
 
