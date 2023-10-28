@@ -7,7 +7,7 @@ using Domain.Exceptions;
 
 namespace Application.Auth.Commands.Register;
 
-public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand>
+public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, Guid>
 {
     private readonly IUserRepository _userRepository;
     private readonly IHashingService _hashingService;
@@ -18,7 +18,7 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand>
         _hashingService = hashingService;
     }
     
-    public async Task Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
         var existingUser = await _userRepository.FindUserByEmail(request.PrimaryEmail);
         if (existingUser is not null)
@@ -26,6 +26,7 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand>
         var hashedPassword = _hashingService.Hash(request.Password);
         var registeredUser = User.Create(request.PrimaryEmail, request.FullName, request.Username,
             hashedPassword, UserRole.USER);
-        await _userRepository.Create(registeredUser);
+        var created = await _userRepository.Create(registeredUser);
+        return created.Id;
     }
 }
