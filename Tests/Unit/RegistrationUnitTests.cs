@@ -2,6 +2,7 @@
 using Domain.Auth;
 using Domain.Auth.Enums;
 using Domain.Auth.Interfaces;
+using Domain.Exceptions;
 using Moq;
 using Shouldly;
 
@@ -10,10 +11,12 @@ namespace Tests.Unit;
 public class RegistrationUnitTests
 {
     private readonly Mock<IUserRepository> _userRepositoryMock;
+    private readonly Mock<IHashingService> _hashingService;
 
     public RegistrationUnitTests()
     {
         _userRepositoryMock = new();
+        _hashingService = new();
     }
 
     [Fact]
@@ -27,8 +30,8 @@ public class RegistrationUnitTests
             UserRole.USER, null, null, null, null, null, null, false);
 
         _userRepositoryMock.Setup(x => x.FindUserByEmail(It.IsAny<string>()))
-            .Returns(foundUser);
-        var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object);
+            .ReturnsAsync(foundUser);
+        var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object, _hashingService.Object);
         //Act
         Func<Task> handle = async () =>
         {
@@ -37,7 +40,7 @@ public class RegistrationUnitTests
         };
 
         //Assert
-        Should.ThrowAsync<Exception>(() => handle());
+        await Should.ThrowAsync<UserWithThisEmailExistsException>(() => handle());
     }
     
     [Fact]
@@ -45,18 +48,25 @@ public class RegistrationUnitTests
     {
         //Arrange
         var command = new RegisterUserCommand("test@gmail.com",
-            "123", "username", "firstName lastName");
+            "123456", "username", "firstName lastName");
 
         User foundUser = null;
+        User registeredUser = User.Create("test@gmail.com", "full name", "username", "password",
+            UserRole.USER, null, null, null, null, null, null, false);
         
         _userRepositoryMock.Setup(x => x.FindUserByEmail(It.IsAny<string>()))
-            .Returns(foundUser);
-        var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object);
+            .ReturnsAsync(foundUser);
+        _userRepositoryMock.Setup(x => x.Create(It.IsAny<User>())).ReturnsAsync(registeredUser);
+        var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object, _hashingService.Object);
         //Act
-        string userId = await handler.Handle(command, default);
+        Func<Task> handle = async () =>
+        {
+            await handler.Handle(command, default);
 
+        };
+       
         //Assert
-        userId.ShouldNotBeEmpty();
+        await Should.NotThrowAsync(() => handle());
     }
     
     [Fact]
@@ -69,17 +79,16 @@ public class RegistrationUnitTests
         User foundUser = null;
         
         _userRepositoryMock.Setup(x => x.FindUserByEmail(It.IsAny<string>()))
-            .Returns(foundUser);
-        var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object);
+            .ReturnsAsync(foundUser);
+        var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object, _hashingService.Object);
         //Act
         Func<Task> handle = async () =>
         {
             await handler.Handle(command, default);
-
         };
 
         //Assert
-        Should.ThrowAsync<Exception>(() => handle());;
+        Should.ThrowAsync<UserWithThisEmailExistsException>(() => handle());;
     }
     
     [Fact]
@@ -92,8 +101,8 @@ public class RegistrationUnitTests
         User foundUser = null;
         
         _userRepositoryMock.Setup(x => x.FindUserByEmail(It.IsAny<string>()))
-            .Returns(foundUser);
-        var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object);
+            .ReturnsAsync(foundUser);
+        var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object, _hashingService.Object);
         //Act
         Func<Task> handle = async () =>
         {
@@ -101,7 +110,7 @@ public class RegistrationUnitTests
         };
 
         //Assert
-        Should.ThrowAsync<Exception>(() => handle());;
+        Should.ThrowAsync<UserWithThisEmailExistsException>(() => handle());;
     }
     
     [Fact]
@@ -114,10 +123,10 @@ public class RegistrationUnitTests
         User foundUser = null;
         
         _userRepositoryMock.Setup(x => x.FindUserByEmail(It.IsAny<string>()))
-            .Returns(foundUser);
-        var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object);
+            .ReturnsAsync(foundUser);
+        var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object, _hashingService.Object);
         //Act
-        string userId = await handler.Handle(command, default);
+        await handler.Handle(command, default);
 
         //Assert
         _userRepositoryMock.Verify(x => x.Create(It.IsAny<User>()), Times.Once);

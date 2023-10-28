@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Domain.Auth;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Infrastructure.Persistence;
 
@@ -32,4 +31,6 @@ public class MainDbContext: DbContext
         
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
+
+    
 }

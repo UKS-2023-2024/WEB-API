@@ -1,6 +1,9 @@
-﻿using Application.Auth.Commands.Delete;
+﻿
+using Application.Auth.Commands.Delete;
 using Application.Auth.Commands.Register;
 using Application.Auth.Queries.FindAll;
+using Domain.Auth.Enums;
+using Domain.Auth.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using WEB_API.Auth.Dtos;
@@ -12,36 +15,34 @@ namespace WEB_API.Auth;
 public class AuthController: ControllerBase
 {
 
-    private IMediator _mediator;
+    private ISender _sender;
     
-    public AuthController(IMediator mediator)
+    public AuthController(ISender mediator)
     {
-        _mediator = mediator;
+        _sender = mediator;
     }
 
     [HttpGet]
     [Route("/users")]
     public IActionResult FindAllUsers()
     {
-        var users = _mediator.Send(new FindAllUsersQuery());
+        var users = _sender.Send(new FindAllUsersQuery());
         return Ok(users.Result);
     }
 
     [HttpDelete]
     [Route("/users/{id}")]
-    public IActionResult Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
-        var result = _mediator.Send(new DeleteUserCommand(id));
-        if (result.IsCompleted) return Ok();
-        return BadRequest(result.Exception);
+        await _sender.Send(new DeleteUserCommand(id));
+        return Ok();
     }
 
     [HttpPost]
     [Route("/register")]
-    public IActionResult Register([FromBody] RegisterUserDto data)
+    public async Task<IActionResult> Register([FromBody] RegisterUserDto data)
     {
-        var result = _mediator.Send(new RegisterUserCommand(data.PrimaryEmail, data.Password, data.Username, data.Fullname));
-        if (result.IsCompleted) return Ok();
-        return BadRequest(result.Exception);
+        await _sender.Send(new RegisterUserCommand(data.PrimaryEmail, data.Password, data.Username, data.Fullname));
+        return Ok();
     }
 }

@@ -3,6 +3,7 @@ using Domain.Auth.Enums;
 using Domain.Auth.Interfaces;
 using Infrastructure.Persistence;
 using Infrastructure.Shared.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Auth.Repositories;
 
@@ -14,8 +15,11 @@ public class UserRepository: BaseRepository<User>, IUserRepository
         _context = context;
     }
 
-    public User FindUserByEmail(string email)
+    public Task<User> FindUserByEmail(string email)
     {
-        return _context.Users.FirstOrDefault(user => user.PrimaryEmail == email);
+        return _context.Users
+            .Include(x => x.SecondaryEmails)
+            .Where(user => user.PrimaryEmail.Equals(email))
+            .FirstOrDefaultAsync();
     }
 }

@@ -4,5 +4,5 @@ namespace Domain.Auth.Interfaces;
 
 public interface IUserRepository : IBaseRepository<User>
 {
-    public User FindUserByEmail(string email);
+    public Task<User> FindUserByEmail(string email);
 }

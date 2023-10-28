@@ -4,7 +4,7 @@ namespace WEB_API.Auth.Dtos;
 
 public class RegisterUserDto
 {
-    [Required] public string PrimaryEmail { get; set; }
+    [Required] [EmailAddress] public string PrimaryEmail { get; set; }
 
     [Required] [MinLength(6)] public string Password { get; set; }
 

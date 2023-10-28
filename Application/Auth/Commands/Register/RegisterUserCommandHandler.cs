@@ -3,22 +3,29 @@ using Application.Shared;
 using Domain.Auth;
 using Domain.Auth.Enums;
 using Domain.Auth.Interfaces;
+using Domain.Exceptions;
 
 namespace Application.Auth.Commands.Register;
 
-public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, string>
+public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand>
 {
     private readonly IUserRepository _userRepository;
-    public RegisterUserCommandHandler(IUserRepository userRepository) => _userRepository = userRepository;
-    
-    public Task<string> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+    private readonly IHashingService _hashingService;
+
+    public RegisterUserCommandHandler(IUserRepository userRepository, IHashingService hashingService)
     {
-        if (_userRepository.FindUserByEmail(request.primaryEmail) != null)
-            throw new Exception("User with this email already exists!");
-        User registeredUser = User.Create(request.primaryEmail, request.fullName, request.username,
-            request.password, UserRole.USER, null, null, null, 
-            null, null, null, false);
-        _userRepository.Create(registeredUser);
-        return Task.FromResult(registeredUser.Id.ToString());
+        _userRepository = userRepository;
+        _hashingService = hashingService;
+    }
+    
+    public async Task Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+    {
+        var existingUser = await _userRepository.FindUserByEmail(request.PrimaryEmail);
+        if (existingUser is not null)
+            throw new UserWithThisEmailExistsException();
+        var hashedPassword = _hashingService.Hash(request.Password);
+        var registeredUser = User.Create(request.PrimaryEmail, request.FullName, request.Username,
+            hashedPassword, UserRole.USER);
+        await _userRepository.Create(registeredUser);
     }
 }

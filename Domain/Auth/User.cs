@@ -36,11 +36,30 @@ public class User
         Deleted = false;
     }
 
+    private User(string primaryEmail, string fullName, string username, string password, UserRole role)
+    {
+        PrimaryEmail = primaryEmail;
+        FullName = fullName;
+        Username = username;
+        Password = password;
+        Role = role;
+        SecondaryEmails = new();
+        SocialAccounts = new();
+        Deleted = false;
+    }
+
     public static User Create(string primaryEmail, string fullName,string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails, bool deleted)
     {
         if (primaryEmail == null) throw new Exception("Primary email cannot be null");
         if (username == null) throw new Exception("Username cannot be null");
         return new User(primaryEmail, fullName, username, password, role, bio, location, company, website, socialAccounts, secondaryEmails, deleted);
+    }
+
+    public static User Create(string primaryEmail, string fullName, string username, string password, UserRole role)
+    {
+        if (primaryEmail == null) throw new Exception("Primary email cannot be null");
+        if (username == null) throw new Exception("Username cannot be null");
+        return new User(primaryEmail, fullName, username, password, role);
     }
 
     public void Delete()
