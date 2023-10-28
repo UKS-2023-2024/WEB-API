@@ -12,7 +12,7 @@ namespace Domain.Shared.Interfaces
 
         IEnumerable<T> FindAll();
 
-        void Create(T entity);
+        Task<T> Create(T entity);
 
         void Update(T entity);
         void Delete(T entity);
