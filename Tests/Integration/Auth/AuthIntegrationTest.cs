@@ -1,4 +1,5 @@
 ﻿using Application.Auth.Commands.Register;
+using Application.Auth.Queries.Login;
 using Domain.Exceptions;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -60,6 +61,51 @@ public class AuthIntegrationTest: BaseIntegrationTest
 
         //Assert
         await Should.ThrowAsync<Exception>(() => handle());;
+    }
+    
+    [Fact]
+    async Task Login_ShouldThrowException_WhenEmailNotValid()
+    {
+        //Arrange
+        var command = new LoginQuery("test123@gmail.com", "asdasdasdasd");
+        
+        //Act
+        Func<Task> handle = async () =>
+        {
+            await _sender.Send(command);
+        };
+
+        //Assert
+        await Should.ThrowAsync<Exception>(() => handle());;
+    }
+    
+    [Fact]
+    async Task Login_ShouldThrowException_WhenPasswordNotValid()
+    {
+        //Arrange
+        var command = new LoginQuery("test@gmail.com", "123123123");
+        
+        //Act
+        Func<Task> handle = async () =>
+        {
+            await _sender.Send(command);
+        };
+
+        //Assert
+        await Should.ThrowAsync<Exception>(() => handle());;
+    }
+    
+    [Fact]
+    async Task Login_ShouldReturnUser_WhenQueryIsValid()
+    {
+        //Arrange
+        var command = new LoginQuery("test@gmail.com", "asdasdasdasd");
+        
+        //Act
+        var user = await _sender.Send(command);
+
+        //Assert
+        user.ShouldNotBeNull();
     }
     
 }

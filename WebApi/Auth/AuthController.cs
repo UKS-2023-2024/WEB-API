@@ -1,12 +1,16 @@
 ﻿
+using System.Security.Claims;
 using Application.Auth.Commands.Delete;
 using Application.Auth.Commands.Register;
 using Application.Auth.Queries.FindAll;
-using Domain.Auth.Enums;
-using Domain.Auth.Interfaces;
+using Application.Auth.Queries.FindById;
+using Application.Auth.Queries.Login;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WEB_API.Auth.Dtos;
+using WEB_API.Shared.TokenHandler;
+using WEB_API.Shared.UserIdentityService;
 
 namespace WEB_API.Auth;
 
@@ -15,14 +19,19 @@ namespace WEB_API.Auth;
 public class AuthController: ControllerBase
 {
 
-    private ISender _sender;
+    private readonly ISender _sender;
+    private readonly ITokenHandler _tokenHandler;
+    private readonly IUserIdentityService _userIdentityService;
     
-    public AuthController(ISender mediator)
+    public AuthController(ISender mediator,ITokenHandler tokenHandler,IUserIdentityService userIdentityService)
     {
         _sender = mediator;
+        _tokenHandler = tokenHandler;
+        _userIdentityService = userIdentityService;
     }
 
     [HttpGet]
+    [Authorize(Policy = "Admin")]
     [Route("/users")]
     public IActionResult FindAllUsers()
     {
@@ -31,11 +40,36 @@ public class AuthController: ControllerBase
     }
 
     [HttpDelete]
+    [Authorize]
     [Route("/users/{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
         await _sender.Send(new DeleteUserCommand(id));
         return Ok();
+    }
+    
+    [HttpGet]
+    [Authorize]
+    [Route("current")]
+    public async Task<IActionResult> GetCurrentUser()
+    {
+        var idString = _userIdentityService.FindUserIdentity(HttpContext.User);
+        
+        if (idString == null)
+            return Unauthorized();
+        
+        var id = Guid.Parse(idString);
+        var result = await _sender.Send(new FindUserByIdQuery(id));
+        return Ok(new CurrentUserDto(result));
+    }
+    
+    [HttpPost]
+    [Route("login")]
+    public async Task<IActionResult> Login([FromBody] LoginDto data)
+    {
+        var user = await _sender.Send(new LoginQuery(data.Email, data.Password));
+        var jwtToken = _tokenHandler.Generate(user);
+        return Ok(jwtToken);
     }
 
     [HttpPost]

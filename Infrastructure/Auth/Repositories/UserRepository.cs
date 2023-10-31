@@ -1,5 +1,4 @@
 ﻿using Domain.Auth;
-using Domain.Auth.Enums;
 using Domain.Auth.Interfaces;
 using Infrastructure.Persistence;
 using Infrastructure.Shared.Repositories;
@@ -15,11 +14,19 @@ public class UserRepository: BaseRepository<User>, IUserRepository
         _context = context;
     }
 
-    public Task<User> FindUserByEmail(string email)
+    public Task<User?> FindUserByEmail(string email)
     {
         return _context.Users
             .Include(x => x.SecondaryEmails)
             .Where(user => user.PrimaryEmail.Equals(email))
+            .FirstOrDefaultAsync();
+    }
+
+    public Task<User?> FindUserById(Guid id)
+    {
+        return _context.Users
+            .Include(x => x.SecondaryEmails)
+            .Where(user => user.Id.Equals(id))
             .FirstOrDefaultAsync();
     }
 }

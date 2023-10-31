@@ -52,7 +52,7 @@ public class RegistrationUnitTests
 
         User foundUser = null;
         User registeredUser = User.Create("test@gmail.com", "full name", "username", "password",
-            UserRole.USER, null, null, null, null, null, null, false);
+            UserRole.USER);
         
         _userRepositoryMock.Setup(x => x.FindUserByEmail(It.IsAny<string>()))
             .ReturnsAsync(foundUser);
@@ -121,9 +121,13 @@ public class RegistrationUnitTests
             "123456", "username", "firstName lastName");
 
         User foundUser = null;
+        User registeredUser = User.Create("test@gmail.com", "full name", "username", "password",
+            UserRole.USER);
         
         _userRepositoryMock.Setup(x => x.FindUserByEmail(It.IsAny<string>()))
             .ReturnsAsync(foundUser);
+        _userRepositoryMock.Setup(x => x.Create(It.IsAny<User>()))
+            .ReturnsAsync(registeredUser);
         var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object, _hashingService.Object);
         //Act
         await handler.Handle(command, default);
