@@ -14,7 +14,7 @@ using WEB_API.Shared.TokenHandler;
 namespace WEB_API.Auth;
 
 [ApiController]
-[Route("[controller]")]
+[Route("auth")]
 public class AuthController: ControllerBase
 {
 
