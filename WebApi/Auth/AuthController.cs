@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WEB_API.Auth.Dtos;
 using WEB_API.Shared.TokenHandler;
+using WEB_API.Shared.UserIdentityService;
 
 namespace WEB_API.Auth;
 
@@ -20,11 +21,13 @@ public class AuthController: ControllerBase
 
     private readonly ISender _sender;
     private readonly ITokenHandler _tokenHandler;
+    private readonly IUserIdentityService _userIdentityService;
     
-    public AuthController(ISender mediator,ITokenHandler tokenHandler)
+    public AuthController(ISender mediator,ITokenHandler tokenHandler,IUserIdentityService userIdentityService)
     {
         _sender = mediator;
         _tokenHandler = tokenHandler;
+        _userIdentityService = userIdentityService;
     }
 
     [HttpGet]
@@ -47,14 +50,10 @@ public class AuthController: ControllerBase
     
     [HttpGet]
     [Authorize]
-    [Route("/current")]
+    [Route("current")]
     public async Task<IActionResult> GetCurrentUser()
     {
-        if (HttpContext.User.Identity is not ClaimsIdentity identity) return Unauthorized();
-        
-        var userClaims = identity.Claims;
-        IEnumerable<Claim> enumerable = userClaims as Claim[] ?? userClaims.ToArray();
-        var idString = enumerable.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value;
+        var idString = _userIdentityService.FindUserIdentity(HttpContext.User);
         
         if (idString == null)
             return Unauthorized();
@@ -65,7 +64,7 @@ public class AuthController: ControllerBase
     }
     
     [HttpPost]
-    [Route("/login")]
+    [Route("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto data)
     {
         var user = await _sender.Send(new LoginQuery(data.Email, data.Password));

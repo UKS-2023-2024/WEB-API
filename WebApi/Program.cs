@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using WEB_API.Shared.TokenHandler;
+using WEB_API.Shared.UserIdentityService;
 using TokenHandler = WEB_API.Shared.TokenHandler.TokenHandler;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,6 +41,7 @@ builder.Services.AddDbContext<MainDbContext>(options =>
     options.UseNpgsql(config["ConnectionString"]));
 
 builder.Services.AddScoped<ITokenHandler, TokenHandler>();
+builder.Services.AddScoped<IUserIdentityService, UserIdentityService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
