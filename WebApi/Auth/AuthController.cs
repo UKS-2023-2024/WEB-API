@@ -39,7 +39,7 @@ public class AuthController: ControllerBase
     }
 
     [HttpPost]
-    [Route("/register")]
+    [Route("register")]
     public async Task<IActionResult> Register([FromBody] RegisterUserDto data)
     {
         await _sender.Send(new RegisterUserCommand(data.PrimaryEmail, data.Password, data.Username, data.Fullname));
