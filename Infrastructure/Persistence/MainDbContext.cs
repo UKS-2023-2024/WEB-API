@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Domain.Auth;
+using Domain.Organizations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence;
@@ -14,6 +15,9 @@ public class MainDbContext: DbContext
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Email> Emails { get; set; } = null!;
     public DbSet<SocialAccount> SocialAccounts { get; set; } = null!;
+    public DbSet<Organization> Organizations { get; set; } = null!;
+    public DbSet<OrganizationMember> OrganizationMembers { get; set; } = null!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 
@@ -29,8 +33,15 @@ public class MainDbContext: DbContext
             .HasIndex(u => u.PrimaryEmail)
             .IsUnique();
         
+        modelBuilder.Entity<Organization>()
+            .HasMany(o => o.Members)
+            .WithOne(m => m.Organization)
+            .HasForeignKey(o => o.OrganizationId);
+
+        modelBuilder.Entity<Organization>()
+            .HasMany(o => o.PendingMembers)
+            .WithMany(u => u.PendingOrganizations);
+        
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
-
-    
 }
