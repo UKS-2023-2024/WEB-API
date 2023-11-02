@@ -70,5 +70,13 @@ public class User
         Deleted = true;
     }
 
-
+    public void Update(string fullName, string bio, string company, string location, string website, List<SocialAccount> socialAccounts)
+    {
+        FullName = fullName;   
+        Bio = bio;
+        Company = company;
+        Location = location;
+        Website = website;
+        SocialAccounts = socialAccounts;
+    }
 }
