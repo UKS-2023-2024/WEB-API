@@ -41,9 +41,15 @@ public class AuthController: ControllerBase
 
     [HttpDelete]
     [Authorize]
-    [Route("/users/{id}")]
-    public async Task<IActionResult> Delete(Guid id)
+    [Route("/users")]
+    public async Task<IActionResult> Delete()
     {
+        var idString = _userIdentityService.FindUserIdentity(HttpContext.User);
+
+        if (idString == null)
+            return Unauthorized();
+
+        var id = Guid.Parse(idString);
         await _sender.Send(new DeleteUserCommand(id));
         return Ok();
     }
