@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231101221152_addedOrganizationAndOrganizationMember")]
+    partial class addedOrganizationAndOrganizationMember
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -157,59 +160,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("OrganizationMembers");
                 });
 
-            modelBuilder.Entity("Domain.Repositories.Repository", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsPrivate")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("OrganizationId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrganizationId");
-
-                    b.HasIndex("OwnerId");
-
-                    b.ToTable("Repositories");
-                });
-
-            modelBuilder.Entity("Domain.Repositories.RepositoryMember", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("MemberId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("RepositoryId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MemberId");
-
-                    b.HasIndex("RepositoryId");
-
-                    b.ToTable("RepositoryMembers");
-                });
-
             modelBuilder.Entity("OrganizationUser", b =>
                 {
                     b.Property<Guid>("PendingMembersId")
@@ -223,21 +173,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("PendingOrganizationsId");
 
                     b.ToTable("OrganizationUser");
-                });
-
-            modelBuilder.Entity("RepositoryUser", b =>
-                {
-                    b.Property<Guid>("PendingMembersId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("PendingRepositoriesId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("PendingMembersId", "PendingRepositoriesId");
-
-                    b.HasIndex("PendingRepositoriesId");
-
-                    b.ToTable("RepositoryUser");
                 });
 
             modelBuilder.Entity("Domain.Auth.Email", b =>
@@ -277,44 +212,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Organization");
                 });
 
-            modelBuilder.Entity("Domain.Repositories.Repository", b =>
-                {
-                    b.HasOne("Domain.Organizations.Organization", "Organization")
-                        .WithMany()
-                        .HasForeignKey("OrganizationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Auth.User", "Owner")
-                        .WithMany("OwnedRepositories")
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Organization");
-
-                    b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("Domain.Repositories.RepositoryMember", b =>
-                {
-                    b.HasOne("Domain.Auth.User", "Member")
-                        .WithMany()
-                        .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Repositories.Repository", "Repository")
-                        .WithMany("Members")
-                        .HasForeignKey("RepositoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Member");
-
-                    b.Navigation("Repository");
-                });
-
             modelBuilder.Entity("OrganizationUser", b =>
                 {
                     b.HasOne("Domain.Auth.User", null)
@@ -330,36 +227,14 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RepositoryUser", b =>
-                {
-                    b.HasOne("Domain.Auth.User", null)
-                        .WithMany()
-                        .HasForeignKey("PendingMembersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Repositories.Repository", null)
-                        .WithMany()
-                        .HasForeignKey("PendingRepositoriesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Domain.Auth.User", b =>
                 {
-                    b.Navigation("OwnedRepositories");
-
                     b.Navigation("SecondaryEmails");
 
                     b.Navigation("SocialAccounts");
                 });
 
             modelBuilder.Entity("Domain.Organizations.Organization", b =>
-                {
-                    b.Navigation("Members");
-                });
-
-            modelBuilder.Entity("Domain.Repositories.Repository", b =>
                 {
                     b.Navigation("Members");
                 });
