@@ -1,7 +1,6 @@
 ﻿using Domain.Auth.Enums;
 using Domain.Organizations;
 using Domain.Repositories;
-using System.ComponentModel.Design.Serialization;
 
 namespace Domain.Auth;
 
