@@ -1,6 +1,7 @@
 ﻿using Domain.Auth.Enums;
 using Domain.Organizations;
 using Domain.Repositories;
+using System.ComponentModel.Design.Serialization;
 
 namespace Domain.Auth;
 
@@ -63,6 +64,15 @@ public class User
         if (primaryEmail == null) throw new Exception("Primary email cannot be null");
         if (username == null) throw new Exception("Username cannot be null");
         return new User(primaryEmail, fullName, username, password, role);
+    }
+
+    public static User Create(Guid id, string primaryEmail, string fullName, string username, string password, UserRole role)
+    {
+        if (primaryEmail == null) throw new Exception("Primary email cannot be null");
+        if (username == null) throw new Exception("Username cannot be null");
+        User user = new User(primaryEmail, fullName, username, password, role);
+        user.Id = id;
+        return user;
     }
 
     public void Delete()

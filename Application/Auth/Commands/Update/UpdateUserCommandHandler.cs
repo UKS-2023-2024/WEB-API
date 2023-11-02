@@ -2,6 +2,7 @@
 using Domain.Auth;
 using Domain.Auth.Enums;
 using Domain.Auth.Interfaces;
+using Domain.Exceptions;
 
 namespace Application.Auth.Commands.Update;
 /*
@@ -15,11 +16,15 @@ public class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand, strin
     private readonly IUserRepository _userRepository;
     public UpdateUserCommandHandler(IUserRepository userRepository) => _userRepository = userRepository;
 
-    public Task<string> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+    public async Task<string> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        var user = _userRepository.Find(request.id);
+        var user = await _userRepository.FindUserById(request.id);
+        if (user is null)
+            throw new UserNotFoundException();
+
         user.Update(request.fullName, request.bio, request.company, request.location, request.website, request.socialAccounts);
         _userRepository.Update(user);
-        return Task.FromResult(user.Id.ToString());
+
+        return user.Id.ToString();
     }
 }
