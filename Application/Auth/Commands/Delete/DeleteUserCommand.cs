@@ -1,4 +1,5 @@
 ﻿using Application.Shared;
+using Domain.Auth;
 
 namespace Application.Auth.Commands.Delete;
 
@@ -16,4 +17,4 @@ namespace Application.Auth.Commands.Delete;
  * Mozemo se dogovoriti oko ovih konvencija. Takodje ista stvar vazi i za querije.
  * 
  */
-public sealed record DeleteUserCommand(Guid id) : ICommand<string>;
+public sealed record DeleteUserCommand(Guid id) : ICommand<User>;

@@ -1,5 +1,8 @@
-﻿using Application.Auth.Commands.Register;
+﻿using Application.Auth.Commands.Delete;
+using Application.Auth.Commands.Register;
+using Application.Auth.Commands.Update;
 using Application.Auth.Queries.Login;
+using Domain.Auth;
 using Domain.Exceptions;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -107,5 +110,64 @@ public class AuthIntegrationTest: BaseIntegrationTest
         //Assert
         user.ShouldNotBeNull();
     }
-    
+
+
+    [Fact]  
+    async Task Update_ShouldUpdateUser_WhenCommandIsValid()
+    {
+        //Arrange
+        var command = new UpdateUserCommand(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), "", "", "", "", "", new List<SocialAccount>());
+
+        //Act
+        var user = await _sender.Send(command);
+
+        //Assert 
+        user.ShouldNotBeNull();
+    }
+
+    [Fact]
+    async Task Update_ShouldThrowException_WhenIdIsInvalid()
+    {
+        //Arrange
+        var command = new UpdateUserCommand(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a1"), "", "", "", "", "", new List<SocialAccount>());
+
+        //Act
+        Func<Task> handle = async () =>
+        {
+            await _sender.Send(command);
+        };
+
+        //Assert
+        await Should.ThrowAsync<UserNotFoundException>(() => handle());
+    }
+
+    [Fact]
+    async Task Delete_ShouldDeleteUser_WhenCommandIsValid()
+    {
+        //Arrange
+        var command = new DeleteUserCommand(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
+
+        //Act
+        var user = await _sender.Send(command);
+
+        //Assert 
+        user.ShouldNotBeNull();
+    }
+
+    [Fact]
+    async Task Delete_ShouldThrowException_WhenIdIsInvalid()
+    {
+        //Arrange
+        var command = new DeleteUserCommand(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a1"));
+
+        //Act
+        Func<Task> handle = async () =>
+        {
+            await _sender.Send(command);
+        };
+
+        //Assert
+        await Should.ThrowAsync<UserNotFoundException>(() => handle());
+    }
+
 }

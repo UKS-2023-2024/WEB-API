@@ -11,12 +11,12 @@ namespace Application.Auth.Commands.Delete;
  * Takodje, posto je komanda u pitanju, ne vraca se nista nazad
  * i trebalo bi da se rade CUD operacije(CREATE, UPDATE, DELETE) sa njom.
  */
-public class DeleteUserCommandHandler : ICommandHandler<DeleteUserCommand, string>
+public class DeleteUserCommandHandler : ICommandHandler<DeleteUserCommand, User>
 {
     private readonly IUserRepository _userRepository;
     public DeleteUserCommandHandler(IUserRepository userRepository) => _userRepository = userRepository;
 
-    public async Task<string> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+    public async Task<User> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.FindUserById(request.id);
         if (user is null)
@@ -25,6 +25,6 @@ public class DeleteUserCommandHandler : ICommandHandler<DeleteUserCommand, strin
         user.Delete();
         _userRepository.Update(user);
 
-        return user.Id.ToString();
+        return user;
     }
 }

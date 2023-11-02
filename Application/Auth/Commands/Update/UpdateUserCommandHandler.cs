@@ -11,12 +11,12 @@ namespace Application.Auth.Commands.Update;
  * Takodje, posto je komanda u pitanju, ne vraca se nista nazad
  * i trebalo bi da se rade CUD operacije(CREATE, UPDATE, DELETE) sa njom.
  */
-public class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand, string>
+public class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand, User>
 {
     private readonly IUserRepository _userRepository;
     public UpdateUserCommandHandler(IUserRepository userRepository) => _userRepository = userRepository;
 
-    public async Task<string> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+    public async Task<User> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.FindUserById(request.id);
         if (user is null)
@@ -25,6 +25,6 @@ public class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand, strin
         user.Update(request.fullName, request.bio, request.company, request.location, request.website, request.socialAccounts);
         _userRepository.Update(user);
 
-        return user.Id.ToString();
+        return user;
     }
 }

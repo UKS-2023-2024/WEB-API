@@ -53,7 +53,8 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
         var user = User.Create("test@gmail.com", "test test", "test", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.ADMINISTRATOR);
-
+        context.Users.Add(user);
+        user = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), "anav@gmail.com", "test test", "test", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.ADMINISTRATOR);
         context.Users.Add(user);
         context.SaveChanges();
     }

@@ -17,4 +17,4 @@ namespace Application.Auth.Commands.Update;
  * Mozemo se dogovoriti oko ovih konvencija. Takodje ista stvar vazi i za querije.
  * 
  */
-public sealed record UpdateUserCommand(Guid id, string fullName, string bio, string company, string location, string website, List<SocialAccount> socialAccounts) : ICommand<string>;
+public sealed record UpdateUserCommand(Guid id, string fullName, string bio, string company, string location, string website, List<SocialAccount> socialAccounts) : ICommand<User>;
