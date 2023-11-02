@@ -36,8 +36,6 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 var config = builder.Configuration;
-Console.WriteLine("Printing connection strnig");
-Console.WriteLine(config["ConnectionString"]);
 
 builder.Services.AddDbContext<MainDbContext>(options => 
     options.UseNpgsql(config["ConnectionString"]));
