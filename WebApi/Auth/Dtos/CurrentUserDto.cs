@@ -10,6 +10,8 @@ public class CurrentUserDto
     public string? Bio { get; }
     public string? Location { get; }
     public string? Company { get; }
+    public string? Website { get; }
+    public List<string> SocialAccounts { get; set; } = new();
     
     public CurrentUserDto(User user)
     {
@@ -19,5 +21,11 @@ public class CurrentUserDto
         Bio =  user.Bio;
         Location =  user.Location;
         Company =  user.Company;
+        Website = user.Website;
+        if (user.SocialAccounts != null)
+        {
+            foreach (SocialAccount acc in user.SocialAccounts)
+                SocialAccounts.Add(acc.Value);
+        }
     }
 }
