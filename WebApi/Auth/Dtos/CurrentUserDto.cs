@@ -11,7 +11,7 @@ public class CurrentUserDto
     public string? Location { get; }
     public string? Company { get; }
     public string? Website { get; }
-    public List<string> SocialAccounts { get; set; } = new();
+    public List<SocialAccount> SocialAccounts { get; set; }
     
     public CurrentUserDto(User user)
     {
@@ -22,10 +22,6 @@ public class CurrentUserDto
         Location =  user.Location;
         Company =  user.Company;
         Website = user.Website;
-        if (user.SocialAccounts != null)
-        {
-            foreach (SocialAccount acc in user.SocialAccounts)
-                SocialAccounts.Add(acc.Value);
-        }
+        SocialAccounts = user.SocialAccounts?? new(); 
     }
 }
