@@ -19,10 +19,12 @@ namespace Tests.Unit
     public class UpdateUserUnitTests
     {
         private readonly Mock<IUserRepository> _userRepositoryMock;
+        private readonly Mock<ISocialAccountRepository> _socialAccountRepositoryMock;
 
         public UpdateUserUnitTests()
         {
            _userRepositoryMock = new Mock<IUserRepository>();
+           _socialAccountRepositoryMock = new Mock<ISocialAccountRepository>();
             var user = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7"), "test@gmail.com", "full name", "username", "password", UserRole.USER);
             _userRepositoryMock.Setup(x => x.FindUserById(user.Id)).ReturnsAsync(user);
         }
@@ -33,7 +35,7 @@ namespace Tests.Unit
             //Arrange
             var command = new UpdateUserCommand(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7"), "izmenjeno ime", "", "ftn", "Novi Sad", "", new List<SocialAccount>());
 
-            var handler = new UpdateUserCommandHandler(_userRepositoryMock.Object);
+            var handler = new UpdateUserCommandHandler(_userRepositoryMock.Object, _socialAccountRepositoryMock.Object);
 
             //Act
             Func<Task> handle = async () =>
@@ -51,7 +53,7 @@ namespace Tests.Unit
             //Arrange
             var command = new UpdateUserCommand(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), "izmenjeno ime", "", "ftn", "Novi Sad", "", new List<SocialAccount>());
 
-            var handler = new UpdateUserCommandHandler(_userRepositoryMock.Object);
+            var handler = new UpdateUserCommandHandler(_userRepositoryMock.Object, _socialAccountRepositoryMock.Object);
 
             //Act
             Func<Task> handle = async () =>
