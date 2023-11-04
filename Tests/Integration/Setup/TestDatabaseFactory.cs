@@ -1,9 +1,11 @@
 ﻿using Domain.Auth;
 using Domain.Auth.Enums;
+using Domain.Organizations;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
@@ -52,10 +54,19 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
     {
         context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
+        
         var user = User.Create("test@gmail.com", "test test", "test", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.ADMINISTRATOR);
         context.Users.Add(user);
         user = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), "anav@gmail.com", "test test", "test", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.ADMINISTRATOR);
+        
+        var organization = Organization.Create("organization1", "contact@example.com", new List<User>());
+        var organizationMember = OrganizationMember.Create(user, organization, OrganizationMemberRole.OWNER);
+        organization.Members.Add(organizationMember);
+        
+        
         context.Users.Add(user);
+        context.Organizations.Add(organization);
+        context.OrganizationMembers.Add(organizationMember);
         context.SaveChanges();
     }
 }

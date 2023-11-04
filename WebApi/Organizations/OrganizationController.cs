@@ -1,4 +1,6 @@
 ﻿using Application.Organizations.Commands.Create;
+using Application.Organizations.Commands.Delete;
+using Domain.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +38,18 @@ public class OrganizationController : ControllerBase
         var creatorId = Guid.Parse(idString);
         await _sender.Send(new CreateOrganizationCommand(organizationDto.Name, organizationDto.ContactEmail,
             organizationDto.PendingMembers, creatorId));
+        return Ok();
+    }
+
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<IActionResult> Delete(string id)
+    {
+        User? user = await _userIdentityService.FindUserFromToken(HttpContext.User);
+        
+        if (user is null)
+            return Unauthorized();
+        await _sender.Send(new DeleteOrganizationCommand(Guid.Parse(id), user));
         return Ok();
     }
 }
