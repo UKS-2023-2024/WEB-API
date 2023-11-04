@@ -7,4 +7,5 @@ public interface IUserIdentityService
 {
     string? FindUserIdentity(ClaimsPrincipal user);
     Task<User?> FindUserFromToken(ClaimsPrincipal user);
+
 }

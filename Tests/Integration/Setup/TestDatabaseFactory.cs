@@ -46,7 +46,8 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
             services.Remove(descriptor);
         }
 
-        services.AddDbContext<MainDbContext>(opt => opt.UseNpgsql(_configuration["ConnectionString"]));
+        var connectionString = _configuration["TestConnectionString"];
+        services.AddDbContext<MainDbContext>(opt => opt.UseNpgsql(connectionString));
         return services.BuildServiceProvider();
     }
 
@@ -61,7 +62,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         
         var organization = Organization.Create("organization1", "contact@example.com", new List<User>());
         var organizationMember = OrganizationMember.Create(user, organization, OrganizationMemberRole.OWNER);
-        organization.Members.Add(organizationMember);
+        organization.AddMember(organizationMember);
         
         
         context.Users.Add(user);

@@ -16,7 +16,7 @@ public class CreateIntegrationTest: BaseIntegrationTest
     {
         //Arrange
         var command = new CreateOrganizationCommand("organization", "sara@gmail.com", new List<Guid>(),
-            Guid.Parse("705a6c69-5b51-4156-b4cc-71e8dd111579"));
+            Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
         Console.WriteLine("command");
 
         //Act

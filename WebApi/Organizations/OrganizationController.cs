@@ -36,9 +36,9 @@ public class OrganizationController : ControllerBase
             return Unauthorized();
         
         var creatorId = Guid.Parse(idString);
-        await _sender.Send(new CreateOrganizationCommand(organizationDto.Name, organizationDto.ContactEmail,
+        var createdOrgId = await _sender.Send(new CreateOrganizationCommand(organizationDto.Name, organizationDto.ContactEmail,
             organizationDto.PendingMembers, creatorId));
-        return Ok();
+        return Ok(createdOrgId);
     }
 
     [HttpDelete("{id}")]

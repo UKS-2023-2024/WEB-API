@@ -4,7 +4,7 @@ using Infrastructure.Persistence;
 using Infrastructure.Shared.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Auth.Repositories;
+namespace Infrastructure.Organizations.Repositories;
 
 public class OrganizationRepository: BaseRepository<Organization>, IOrganizationRepository
 {

@@ -21,23 +21,28 @@ public class CreateOrganizationCommandHandler: ICommandHandler<CreateOrganizatio
 
     public async Task<Guid> Handle(CreateOrganizationCommand request, CancellationToken cancellationToken)
     {
-        User creator = await _userRepository.FindUserById(request.creatorId);
+        var creator = await _userRepository.FindUserById(request.CreatorId);
+        if (creator is null)
+            throw new UserNotFoundException();
+            
+        List<User> pendingMembers = new();
         
-        List<User> pendingMembers = new List<User>();
-        foreach (Guid id in request.PendingMembers)
+        foreach (var id in request.PendingMembers)
         {
-            pendingMembers.Add(await _userRepository.FindUserById(id));
+            var member = await _userRepository.FindUserById(id);
+            if (member is null) continue;
+            pendingMembers.Add(member);
         }
 
-        Organization? organization = await _organizationRepository.FindByName(request.Name);
-        if (organization is not null)
+        var existingOrganization = await _organizationRepository.FindByName(request.Name);
+        if (existingOrganization is not null)
             throw new OrganizationWithThisNameExistsException();
 
-        Organization newOrganization = Organization.Create(request.Name, request.ContactEmail, pendingMembers);
-        OrganizationMember newMember = OrganizationMember.Create(creator, newOrganization, OrganizationMemberRole.OWNER);
-        newOrganization.Members.Add(newMember);
+        var organization = Organization.Create(request.Name, request.ContactEmail, pendingMembers);
+        var newMember = OrganizationMember.Create(creator, organization, OrganizationMemberRole.OWNER);
+        organization.AddMember(newMember);
 
-        _organizationRepository.Create(newOrganization);
-        return newOrganization.Id;
+        await _organizationRepository.Create(organization);
+        return organization.Id;
     }
 }

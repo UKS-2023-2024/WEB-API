@@ -2,6 +2,7 @@
 using Domain.Organizations.Interfaces;
 using Infrastructure.Auth.Repositories;
 using Infrastructure.Auth.Services;
+using Infrastructure.Organizations.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure;
