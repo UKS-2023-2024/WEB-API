@@ -6,9 +6,11 @@ using Domain.Auth.Enums;
 using Infrastructure;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using WEB_API.ExceptionHandling;
 using WEB_API.Shared.TokenHandler;
 using WEB_API.Shared.UserIdentityService;
 using TokenHandler = WEB_API.Shared.TokenHandler.TokenHandler;
@@ -36,6 +38,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 var config = builder.Configuration;
+Console.WriteLine("Connection string: ", config["ConnectionString"]);
 
 builder.Services.AddDbContext<MainDbContext>(options => 
     options.UseNpgsql(config["ConnectionString"]));
@@ -101,7 +104,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.ConfigureGlobalErrorHandling();
 app.MapControllers();
 
 app.UseAuthentication();
