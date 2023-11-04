@@ -11,6 +11,7 @@ public static class DependencyInjection
     {
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IHashingService, HashingService>();
+        services.AddScoped<ISocialAccountRepository, SocialAccountRepository>();
         return services;
     }    
 }

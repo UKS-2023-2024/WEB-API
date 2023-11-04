@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using Application.Auth.Commands.Delete;
 using Application.Auth.Commands.Register;
+using Application.Auth.Commands.Update;
 using Application.Auth.Queries.FindAll;
 using Application.Auth.Queries.FindById;
 using Application.Auth.Queries.Login;
@@ -41,9 +42,15 @@ public class AuthController: ControllerBase
 
     [HttpDelete]
     [Authorize]
-    [Route("/users/{id}")]
-    public async Task<IActionResult> Delete(Guid id)
+    [Route("/user")]
+    public async Task<IActionResult> Delete()
     {
+        var idString = _userIdentityService.FindUserIdentity(HttpContext.User);
+
+        if (idString == null)
+            return Unauthorized();
+
+        var id = Guid.Parse(idString);
         await _sender.Send(new DeleteUserCommand(id));
         return Ok();
     }
@@ -77,6 +84,21 @@ public class AuthController: ControllerBase
     public async Task<IActionResult> Register([FromBody] RegisterUserDto data)
     {
         await _sender.Send(new RegisterUserCommand(data.PrimaryEmail, data.Password, data.Username, data.Fullname));
+        return Ok();
+    }
+
+    [HttpPatch]
+    [Authorize]
+    [Route("/user")]
+    public async Task<IActionResult> Update([FromBody] UpdateUserDto data)
+    {
+        var idString = _userIdentityService.FindUserIdentity(HttpContext.User);
+
+        if (idString == null)
+            return Unauthorized();
+
+        var id = Guid.Parse(idString);
+        await _sender.Send(new UpdateUserCommand(id, data.FullName, data.Bio, data.Company, data.Location, data.Website, data.SocialAccounts));
         return Ok();
     }
 }

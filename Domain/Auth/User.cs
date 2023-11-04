@@ -65,10 +65,27 @@ public class User
         return new User(primaryEmail, fullName, username, password, role);
     }
 
+    public static User Create(Guid id, string primaryEmail, string fullName, string username, string password, UserRole role)
+    {
+        if (primaryEmail == null) throw new Exception("Primary email cannot be null");
+        if (username == null) throw new Exception("Username cannot be null");
+        User user = new User(primaryEmail, fullName, username, password, role);
+        user.Id = id;
+        return user;
+    }
+
     public void Delete()
     {
         Deleted = true;
     }
 
-
+    public void Update(string fullName, string bio, string company, string location, string website, List<SocialAccount> socialAccounts)
+    {
+        FullName = fullName;   
+        Bio = bio;
+        Company = company;
+        Location = location;
+        Website = website;
+        SocialAccounts = socialAccounts;
+    }
 }

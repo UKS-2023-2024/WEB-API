@@ -2,6 +2,7 @@
 using Domain.Auth;
 using Domain.Auth.Enums;
 using Domain.Auth.Interfaces;
+using Domain.Exceptions;
 
 namespace Application.Auth.Commands.Delete;
 /*
@@ -10,16 +11,20 @@ namespace Application.Auth.Commands.Delete;
  * Takodje, posto je komanda u pitanju, ne vraca se nista nazad
  * i trebalo bi da se rade CUD operacije(CREATE, UPDATE, DELETE) sa njom.
  */
-public class DeleteUserCommandHandler : ICommandHandler<DeleteUserCommand, string>
+public class DeleteUserCommandHandler : ICommandHandler<DeleteUserCommand, User>
 {
     private readonly IUserRepository _userRepository;
     public DeleteUserCommandHandler(IUserRepository userRepository) => _userRepository = userRepository;
 
-    public Task<string> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+    public async Task<User> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
-        var user = _userRepository.Find(request.id);
+        var user = await _userRepository.FindUserById(request.id);
+        if (user is null)
+            throw new UserNotFoundException();
+
         user.Delete();
         _userRepository.Update(user);
-        return Task.FromResult(user.Id.ToString());
+
+        return user;
     }
 }

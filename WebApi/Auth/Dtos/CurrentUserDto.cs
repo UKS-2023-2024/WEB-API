@@ -10,6 +10,8 @@ public class CurrentUserDto
     public string? Bio { get; }
     public string? Location { get; }
     public string? Company { get; }
+    public string? Website { get; }
+    public List<SocialAccount> SocialAccounts { get; set; }
     
     public CurrentUserDto(User user)
     {
@@ -19,5 +21,7 @@ public class CurrentUserDto
         Bio =  user.Bio;
         Location =  user.Location;
         Company =  user.Company;
+        Website = user.Website;
+        SocialAccounts = user.SocialAccounts?? new(); 
     }
 }

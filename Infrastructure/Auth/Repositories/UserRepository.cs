@@ -18,7 +18,9 @@ public class UserRepository: BaseRepository<User>, IUserRepository
     {
         return _context.Users
             .Include(x => x.SecondaryEmails)
+            .Include(x => x.SocialAccounts)
             .Where(user => user.PrimaryEmail.Equals(email))
+            .Where(user => !user.Deleted)
             .FirstOrDefaultAsync();
     }
 
@@ -26,7 +28,9 @@ public class UserRepository: BaseRepository<User>, IUserRepository
     {
         return _context.Users
             .Include(x => x.SecondaryEmails)
+            .Include(x => x.SocialAccounts)
             .Where(user => user.Id.Equals(id))
+            .Where(user => !user.Deleted)
             .FirstOrDefaultAsync();
     }
 }
