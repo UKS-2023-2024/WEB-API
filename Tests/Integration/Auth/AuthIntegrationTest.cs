@@ -14,6 +14,8 @@ using WEB_API.Auth.Dtos;
 
 namespace Tests.Integration.Auth;
 
+
+[Collection("Sequential")]
 public class AuthIntegrationTest: BaseIntegrationTest
 {
     public AuthIntegrationTest(TestDatabaseFactory factory) : base(factory)
@@ -47,7 +49,7 @@ public class AuthIntegrationTest: BaseIntegrationTest
         };
 
         //Assert
-        await Should.ThrowAsync<UserWithThisEmailExistsException>(() => handle());;
+        await Should.ThrowAsync<UserWithThisEmailExistsException>(() => handle());
     }
     
     [Fact]

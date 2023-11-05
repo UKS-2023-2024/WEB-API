@@ -18,4 +18,8 @@
 
 
 
+    <ItemGroup>
+      <Folder Include="Organizations\Queries\" />
+    </ItemGroup>
+
 </Project>
