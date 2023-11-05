@@ -2,6 +2,7 @@
 using Domain.Auth;
 using Domain.Exceptions;
 using Domain.Organizations;
+using Domain.Organizations.Exceptions;
 using Shouldly;
 using Tests.Integration.Setup;
 

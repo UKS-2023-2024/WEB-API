@@ -1,9 +1,11 @@
 ﻿using Application.Organizations.Commands.Create;
 using Application.Shared;
 using Domain.Auth;
+using Domain.Auth.Exceptions;
 using Domain.Auth.Interfaces;
 using Domain.Exceptions;
 using Domain.Organizations;
+using Domain.Organizations.Exceptions;
 using Domain.Organizations.Interfaces;
 
 namespace Application.Organizations.Commands.Create;
@@ -22,6 +24,8 @@ public class CreateOrganizationCommandHandler: ICommandHandler<CreateOrganizatio
     public async Task<Guid> Handle(CreateOrganizationCommand request, CancellationToken cancellationToken)
     {
         var creator = await _userRepository.FindUserById(request.CreatorId);
+        var role = await _organizationRepository.FindRole("OWNER");
+        
         if (creator is null)
             throw new UserNotFoundException();
             
@@ -39,7 +43,7 @@ public class CreateOrganizationCommandHandler: ICommandHandler<CreateOrganizatio
             throw new OrganizationWithThisNameExistsException();
 
         var organization = Organization.Create(request.Name, request.ContactEmail, pendingMembers);
-        var newMember = OrganizationMember.Create(creator, organization, OrganizationMemberRole.OWNER);
+        var newMember = OrganizationMember.Create(creator, organization, role);
         organization.AddMember(newMember);
 
         await _organizationRepository.Create(organization);

@@ -4,6 +4,7 @@ using Domain.Auth.Enums;
 using Domain.Auth.Interfaces;
 using Domain.Exceptions;
 using Domain.Organizations;
+using Domain.Organizations.Exceptions;
 using Domain.Organizations.Interfaces;
 using Moq;
 using Shouldly;
