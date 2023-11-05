@@ -23,4 +23,13 @@ public class OrganizationMemberRepository: BaseRepository<OrganizationMember>, I
             .FirstOrDefaultAsync();
     }
 
+    public Task<List<Organization>> FindUserOrganizations(Guid userId)
+    {
+        return _context.OrganizationMembers
+            .Include(x => x.Organization)
+            .Where(x => x.MemberId.Equals(userId))
+            .Select(x => x.Organization)
+            .ToListAsync();
+    }
+
 }

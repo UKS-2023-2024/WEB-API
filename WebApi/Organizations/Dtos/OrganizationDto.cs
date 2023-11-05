@@ -9,5 +9,5 @@ public class OrganizationDto
     [Required]
     public string ContactEmail { get; set; }
 
-    public List<Guid> PendingMembers { get; set; }
+    public List<string> PendingMembers { get; set; }
 }

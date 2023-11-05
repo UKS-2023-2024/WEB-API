@@ -1,10 +1,12 @@
 ﻿using Application.Organizations.Commands.Create;
 using Application.Organizations.Commands.Delete;
+using Application.Organizations.Queries.FindUserOrganizations;
 using Domain.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WEB_API.Organization.Dtos;
+using WEB_API.Organization.Presenters;
 using WEB_API.Shared.TokenHandler;
 using WEB_API.Shared.UserIdentityService;
 
@@ -36,8 +38,14 @@ public class OrganizationController : ControllerBase
             return Unauthorized();
         
         var creatorId = Guid.Parse(idString);
+        List<Guid> pendingMembersGuids = new List<Guid>();
+        foreach (string id in organizationDto.PendingMembers)
+        {
+            pendingMembersGuids.Add(Guid.Parse(id));
+        }
+
         var createdOrgId = await _sender.Send(new CreateOrganizationCommand(organizationDto.Name, organizationDto.ContactEmail,
-            organizationDto.PendingMembers, creatorId));
+            pendingMembersGuids, creatorId));
         return Ok(createdOrgId);
     }
 
@@ -51,5 +59,18 @@ public class OrganizationController : ControllerBase
             return Unauthorized();
         await _sender.Send(new DeleteOrganizationCommand(Guid.Parse(id), Guid.Parse(userId)));
         return Ok();
+    }
+
+    [HttpGet("member")]
+    [Authorize]
+    public async Task<IActionResult> FindUserOrganizations()
+    {
+        string? userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        
+        if (userId is null)
+            return Unauthorized();
+
+        List<Domain.Organizations.Organization> organizations = await _sender.Send(new FindUserOrganizationsQuery(Guid.Parse(userId)));
+        return Ok(OrganizationPresenter.MapOrganizationsToOrganizationPresenters(organizations));
     }
 }
