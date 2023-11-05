@@ -33,14 +33,14 @@ public class UpdateRepositoryCommandHandler : ICommandHandler<UpdateRepositoryCo
 
         if (repository.Organization is not null)
         {
-            var existingRepository = await _repositoryRepository.FindByNameAndOrganization(request.Name, repository.Organization.Id);
+            var existingRepository = await _repositoryRepository.FindByNameAndOrganizationId(request.Name, repository.Organization.Id);
             if (existingRepository != null && existingRepository.Id != repository.Id)
                 throw new RepositoryWithThisNameExistsException();
         }
         else
         {
             var repositoryOwner = await _repositoryMemberRepository.FindRepositoryOwner(request.repositoryId);
-            var existingRepository = await _repositoryRepository.FindByNameAndOwner(request.Name, repositoryOwner.Member.Id);
+            var existingRepository = await _repositoryRepository.FindByNameAndOwnerId(request.Name, repositoryOwner.Member.Id);
             if (existingRepository != null && existingRepository.Id != repository.Id)
                 throw new RepositoryWithThisNameExistsException();
         }

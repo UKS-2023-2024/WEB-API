@@ -30,12 +30,12 @@ public class CreateRepositoryCommandHandler: ICommandHandler<CreateRepositoryCom
             organization = _organizationRepository.Find(request.OrganizationId);
             if (organization is null)
                 throw new OrganizationNotFoundException();
-            var existingRepository = await _repositoryRepository.FindByNameAndOrganization(request.Name, request.OrganizationId);
+            var existingRepository = await _repositoryRepository.FindByNameAndOrganizationId(request.Name, request.OrganizationId);
             if (existingRepository is not null)
                 throw new RepositoryWithThisNameExistsException();
         } else
         {
-            var existingRepository = await _repositoryRepository.FindByNameAndOwner(request.Name, request.CreatorId);
+            var existingRepository = await _repositoryRepository.FindByNameAndOwnerId(request.Name, request.CreatorId);
             if (existingRepository is not null)
                 throw new RepositoryWithThisNameExistsException();
         }

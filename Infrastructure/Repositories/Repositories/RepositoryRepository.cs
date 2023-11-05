@@ -5,6 +5,7 @@ using Domain.Repositories.Interfaces;
 using Infrastructure.Persistence;
 using Infrastructure.Shared.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Xml.Linq;
 
 namespace Infrastructure.Repositories.Repositories;
 
@@ -24,7 +25,7 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
             .Include(x => x.PendingMembers)
             .FirstOrDefault();
     }
-    public async Task<Repository?> FindByNameAndOwner(string name, Guid ownerId)
+    public async Task<Repository?> FindByNameAndOwnerId(string name, Guid ownerId)
     {
         return await _context.Repositories
             .Include(r => r.Members)
@@ -32,7 +33,7 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
             .FirstOrDefaultAsync();
     }
 
-    public async Task<Repository?> FindByNameAndOrganization(string name, Guid organizationId)
+    public async Task<Repository?> FindByNameAndOrganizationId(string name, Guid organizationId)
     {
         return await _context.Repositories
             .Include(r => r.Organization)
@@ -40,4 +41,21 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
             .FirstOrDefaultAsync();
     }
 
+    public async Task<IEnumerable<Repository>> FindAllByOwnerId(Guid id)
+    {
+        return _context.Repositories
+            .Include(r => r.Members)
+            .Include(r => r.Organization)
+            .Where(r => r.Organization == null && r.Members.Any(m => m.Member.Id == id && m.Role == RepositoryMemberRole.OWNER))
+            .ToList();
+    }
+
+    public async Task<IEnumerable<Repository>> FindAllByOrganizationId(Guid id)
+    {
+        return _context.Repositories
+            .Include(r => r.Members)
+            .Include(r => r.Organization)
+            .Where(r => r.Organization.Id == id)
+            .ToList();
+    }
 }

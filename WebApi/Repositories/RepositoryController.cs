@@ -1,7 +1,10 @@
 ﻿using Application.Auth.Commands.Update;
+using Application.Auth.Queries.FindAll;
 using Application.Organizations.Commands.Delete;
 using Application.Repositories.Commands.Create;
 using Application.Repositories.Commands.Delete;
+using Application.Repositories.Queries.FindAllByOrganizationId;
+using Application.Repositories.Queries.FindAllByOwnerId;
 using Domain.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -67,6 +70,20 @@ public class RepositoryController : ControllerBase
         await _sender.Send(new UpdateRepositoryCommand(Guid.Parse(userId), dto.Id, dto.Name, dto.Description, dto.IsPrivate));
 
         return Ok();
+    }
+
+    [HttpGet("{ownerId}")]
+    public async Task<IActionResult> FindAllByOwnerId(Guid ownerId)
+    {
+        var repositories = await _sender.Send(new FindAllRepositoriesByOwnerIdQuery(ownerId));
+        return Ok(repositories);
+    }
+
+    [HttpGet("organization/{organizationId}")]
+    public async Task<IActionResult> FindAllByOrganizationIdAsync(Guid organizationId)
+    {
+        var repositories = await _sender.Send(new FindAllRepositoriesByOrganizationIdQuery(organizationId));
+        return Ok(repositories);
     }
 
 }
