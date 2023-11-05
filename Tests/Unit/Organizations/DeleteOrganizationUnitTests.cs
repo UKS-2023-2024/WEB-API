@@ -27,7 +27,7 @@ public class DeleteOrganizationUnitTests
             UserRole.USER);
         Organization organization = Organization.Create("my organization", "org@example.com", new List<User>());
         OrganizationMember member = OrganizationMember.Create(user, organization, OrganizationMemberRole.CONTRIBUTOR);
-        var command = new DeleteOrganizationCommand(user.Id, user);
+        var command = new DeleteOrganizationCommand(organization.Id, user.Id);
         _organizationMemberRepository.Setup(x => x.FindByUserIdAndOrganizationId(It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(member);
 
@@ -53,7 +53,7 @@ public class DeleteOrganizationUnitTests
         OrganizationMember member = null;
         _organizationMemberRepository.Setup(x => x.FindByUserIdAndOrganizationId(It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(member);
-        var command = new DeleteOrganizationCommand(user.Id, user);
+        var command = new DeleteOrganizationCommand(organization.Id, user.Id);
         var handler =
             new DeleteOrganizationCommandHandler(_organizationMemberRepository.Object, _organizationRepository.Object);
         
@@ -74,7 +74,7 @@ public class DeleteOrganizationUnitTests
             UserRole.USER);
         Organization organization = Organization.Create("my organization", "org@example.com", new List<User>());
         OrganizationMember member = OrganizationMember.Create(user, organization, OrganizationMemberRole.OWNER);
-        var command = new DeleteOrganizationCommand(user.Id, user);
+        var command = new DeleteOrganizationCommand(organization.Id, user.Id);
         _organizationMemberRepository.Setup(x => x.FindByUserIdAndOrganizationId(It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(member);
 

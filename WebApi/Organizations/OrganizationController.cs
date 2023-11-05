@@ -45,11 +45,11 @@ public class OrganizationController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Delete(string id)
     {
-        User? user = await _userIdentityService.FindUserFromToken(HttpContext.User);
+        string? userId = _userIdentityService.FindUserIdentity(HttpContext.User);
         
-        if (user is null)
+        if (userId is null)
             return Unauthorized();
-        await _sender.Send(new DeleteOrganizationCommand(Guid.Parse(id), user));
+        await _sender.Send(new DeleteOrganizationCommand(Guid.Parse(id), Guid.Parse(userId)));
         return Ok();
     }
 }

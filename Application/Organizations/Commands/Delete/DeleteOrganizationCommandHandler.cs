@@ -16,10 +16,10 @@ public class DeleteOrganizationCommandHandler: ICommandHandler<DeleteOrganizatio
 
     public async Task Handle(DeleteOrganizationCommand request, CancellationToken cancellationToken)
     {
-        OrganizationMember? member = await _organizationMemberRepository.FindByUserIdAndOrganizationId(request.user.Id, request.Id);
+        OrganizationMember? member = await _organizationMemberRepository.FindByUserIdAndOrganizationId(request.userId, request.organizationId);
         if (member is null || member.Role != OrganizationMemberRole.OWNER)
             throw new UnauthorizedAccessException();
-        Organization organization = _organizationRepository.Find(request.Id);
+        Organization organization = _organizationRepository.Find(request.organizationId);
         _organizationRepository.Delete(organization);
     }
 }
