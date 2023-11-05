@@ -16,6 +16,14 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
         _context = context;
     }
 
+    public override Repository? Find(Guid id)
+    {
+        return _context.Repositories
+            .Include(x => x.Organization)
+            .Include(x => x.Members)
+            .Include(x => x.PendingMembers)
+            .FirstOrDefault();
+    }
     public async Task<Repository?> FindByNameAndOwner(string name, Guid ownerId)
     {
         return await _context.Repositories

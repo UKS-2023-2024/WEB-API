@@ -41,5 +41,11 @@ namespace Domain.Repositories
             Members.Add(member);
         }
 
+        public void Update(string name, string description, bool isPrivate)
+        {
+            Name = name;
+            Description = description;
+            IsPrivate = isPrivate;
+        }
     }
 }

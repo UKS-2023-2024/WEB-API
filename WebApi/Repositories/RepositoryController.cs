@@ -1,4 +1,5 @@
-﻿using Application.Organizations.Commands.Delete;
+﻿using Application.Auth.Commands.Update;
+using Application.Organizations.Commands.Delete;
 using Application.Repositories.Commands.Create;
 using Application.Repositories.Commands.Delete;
 using Domain.Auth;
@@ -50,6 +51,20 @@ public class RepositoryController : ControllerBase
             return Unauthorized();
 
         await _sender.Send(new DeleteRepositoryCommand(Guid.Parse(userId), Guid.Parse(id)));
+
+        return Ok();
+    }
+
+
+    [HttpPatch]
+    [Authorize]
+    public async Task<IActionResult> Update([FromBody] UpdateRepositoryDto dto)
+    {
+        string? userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        if (userId is null)
+            return Unauthorized();
+
+        await _sender.Send(new UpdateRepositoryCommand(Guid.Parse(userId), dto.Id, dto.Name, dto.Description, dto.IsPrivate));
 
         return Ok();
     }

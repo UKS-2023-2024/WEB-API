@@ -19,7 +19,7 @@ public class DeleteRepositoryCommandHandler: ICommandHandler<DeleteRepositoryCom
     {
         var member = await _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.userId, request.repositoryId);
         if (member is null || member.Role != RepositoryMemberRole.OWNER)
-            throw new UnauthorizedAccessException();
+            throw new UnautorizedAccessException();
         Repository repository = _repositoryRepository.Find(request.repositoryId);
         _repositoryRepository.Delete(repository);
     }

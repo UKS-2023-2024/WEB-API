@@ -18,8 +18,16 @@ public class RepositoryMemberRepository: BaseRepository<RepositoryMember>, IRepo
     public Task<RepositoryMember?> FindByUserIdAndRepositoryId(Guid userId, Guid repositoryId)
     {
         return _context.RepositoryMembers
-            .Where(o => o.Member.Id.Equals(userId) && o.RepositoryId.Equals(repositoryId))
+            .Where(r => r.Member.Id.Equals(userId) && r.RepositoryId.Equals(repositoryId))
             .FirstOrDefaultAsync();
     }
 
+    public Task<RepositoryMember?> FindRepositoryOwner(Guid repositoryId)
+    {
+        return _context.RepositoryMembers
+            .Include(r => r.Repository)
+            .Include(r => r.Member)
+            .Where(r => r.Repository.Id == repositoryId && r.Role == RepositoryMemberRole.OWNER)
+            .FirstOrDefaultAsync();
+    }
 }
