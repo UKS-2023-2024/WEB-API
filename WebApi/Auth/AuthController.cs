@@ -101,4 +101,5 @@ public class AuthController: ControllerBase
         await _sender.Send(new UpdateUserCommand(id, data.FullName, data.Bio, data.Company, data.Location, data.Website, data.SocialAccounts));
         return Ok();
     }
+    
 }

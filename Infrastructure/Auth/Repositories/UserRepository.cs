@@ -6,9 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Auth.Repositories;
 
-public class UserRepository: BaseRepository<User>, IUserRepository
+public class UserRepository : BaseRepository<User>, IUserRepository
 {
     private readonly MainDbContext _context;
+
     public UserRepository(MainDbContext context) : base(context)
     {
         _context = context;
@@ -32,5 +33,13 @@ public class UserRepository: BaseRepository<User>, IUserRepository
             .Where(user => user.Id.Equals(id))
             .Where(user => !user.Deleted)
             .FirstOrDefaultAsync();
+    }
+
+    public Task<List<User>> SearchUsers(String value)
+    {
+        return _context.Users
+            .Where(x => x.FullName.Contains(value) || x.PrimaryEmail.Contains(value) || x.Username.Contains(value))
+            .Take(10)
+            .ToListAsync();
     }
 }
