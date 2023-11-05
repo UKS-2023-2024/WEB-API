@@ -52,7 +52,8 @@ public class MainDbContext: DbContext
         modelBuilder.Entity<Repository>()
             .HasMany(o => o.Members)
             .WithOne(m => m.Repository)
-            .HasForeignKey(o => o.RepositoryId);
+            .HasForeignKey(o => o.RepositoryId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Repository>()
             .HasMany(o => o.PendingMembers)
@@ -92,7 +93,7 @@ public class MainDbContext: DbContext
         //Permission-Role connection
         modelBuilder.Entity<OrganizationRolePermission>()
             .HasData(GetSeedPermissionRole());
-        
+
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 

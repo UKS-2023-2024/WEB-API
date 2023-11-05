@@ -27,7 +27,8 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
     public async Task<Repository?> FindByNameAndOrganization(string name, Guid organizationId)
     {
         return await _context.Repositories
-            .Where(o => o.Name.Equals(name) && o.Organization.Id == organizationId)
+            .Include(r => r.Organization)
+            .Where(r => r.Name.ToLower().Equals(name.ToLower()) && r.Organization.Id == organizationId)
             .FirstOrDefaultAsync();
     }
 

@@ -1,4 +1,7 @@
-﻿using Application.Repositories.Commands.Create;
+﻿using Application.Organizations.Commands.Delete;
+using Application.Repositories.Commands.Create;
+using Application.Repositories.Commands.Delete;
+using Domain.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,16 +31,27 @@ public class RepositoryController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Create([FromBody] RepositoryDto repositoryDto)
     {
-        var idString = _userIdentityService.FindUserIdentity(HttpContext.User);
-        if (idString == null)
+        string? creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        if (creatorId is null)
             return Unauthorized();
-        
-        var creatorId = Guid.Parse(idString);
 
         var createdRepositoryId = await _sender.Send(new CreateRepositoryCommand(repositoryDto.Name, repositoryDto.Description, 
-            repositoryDto.IsPrivate, creatorId, repositoryDto.OrganizationId));
+            repositoryDto.IsPrivate, Guid.Parse(creatorId), repositoryDto.OrganizationId));
 
         return Ok(createdRepositoryId);
+    }
+
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<IActionResult> Delete(string id)
+    {
+        string? userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        if (userId is null)
+            return Unauthorized();
+
+        await _sender.Send(new DeleteRepositoryCommand(Guid.Parse(userId), Guid.Parse(id)));
+
+        return Ok();
     }
 
 }

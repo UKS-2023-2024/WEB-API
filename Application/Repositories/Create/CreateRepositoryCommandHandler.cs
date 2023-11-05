@@ -25,8 +25,12 @@ public class CreateRepositoryCommandHandler: ICommandHandler<CreateRepositoryCom
 
     public async Task<Guid> Handle(CreateRepositoryCommand request, CancellationToken cancellationToken)
     {
+        Organization? organization = null;
         if (request.OrganizationId != Guid.Empty) {
-            var existingRepository = await _repositoryRepository.FindByNameAndOrganization(request.Name, request.CreatorId);
+            organization = _organizationRepository.Find(request.OrganizationId);
+            if (organization is null)
+                throw new OrganizationNotFoundException();
+            var existingRepository = await _repositoryRepository.FindByNameAndOrganization(request.Name, request.OrganizationId);
             if (existingRepository is not null)
                 throw new RepositoryWithThisNameExistsException();
         } else
@@ -37,9 +41,6 @@ public class CreateRepositoryCommandHandler: ICommandHandler<CreateRepositoryCom
         }
 
         var creator = await _userRepository.FindUserById(request.CreatorId);
-        var organization = _organizationRepository.Find(request.OrganizationId);
-        if (organization is null)
-            throw new OrganizationNotFoundException();
 
         var repository = Repository.Create(request.Name, request.Description, request.IsPrivate, organization);
 
