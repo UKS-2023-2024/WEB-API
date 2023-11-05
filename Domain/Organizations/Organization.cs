@@ -36,4 +36,11 @@ public class Organization
         Organization newOrganization = new Organization(name, contactEmail, pendingMembers);
         return newOrganization;
     }
+
+    public static Organization Create(Guid id, string name, string contactEmail, List<User> pendingMembers)
+    {
+        Organization newOrganization = new Organization(name, contactEmail, pendingMembers);
+        newOrganization.Id = id;
+        return newOrganization;
+    }
 }

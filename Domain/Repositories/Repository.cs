@@ -36,6 +36,13 @@ namespace Domain.Repositories
             return new Repository(name, description, isPrivate, organization, new(), new());
         }
 
+        public static Repository Create(Guid id, string name, string description, bool isPrivate, Organization? organization)
+        {
+            Repository repository = new Repository(name, description, isPrivate, organization, new(), new());
+            repository.Id = id;
+            return repository;
+        }
+
         public void AddMember(RepositoryMember member)
         {
             Members.Add(member);
