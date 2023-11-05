@@ -15,7 +15,7 @@ using Application.Auth.Commands.Update;
 using Application.Auth.Queries.Login;
 using Domain.Auth.Exceptions;
 
-namespace Tests.Unit
+namespace Tests.Unit.Auth
 {
     public class UpdateUserUnitTests
     {
@@ -24,8 +24,8 @@ namespace Tests.Unit
 
         public UpdateUserUnitTests()
         {
-           _userRepositoryMock = new Mock<IUserRepository>();
-           _socialAccountRepositoryMock = new Mock<ISocialAccountRepository>();
+            _userRepositoryMock = new Mock<IUserRepository>();
+            _socialAccountRepositoryMock = new Mock<ISocialAccountRepository>();
             var user = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7"), "test@gmail.com", "full name", "username", "password", UserRole.USER);
             _userRepositoryMock.Setup(x => x.FindUserById(user.Id)).ReturnsAsync(user);
         }

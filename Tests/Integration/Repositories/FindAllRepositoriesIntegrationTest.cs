@@ -1,12 +1,5 @@
-﻿using Application.Organizations.Commands.Create;
-using Application.Repositories.Commands.Create;
-using Application.Repositories.Queries.FindAllByOrganizationId;
+﻿using Application.Repositories.Queries.FindAllByOrganizationId;
 using Application.Repositories.Queries.FindAllByOwnerId;
-using Domain.Auth;
-using Domain.Exceptions;
-using Domain.Exceptions.Repositories;
-using Domain.Organizations;
-using Domain.Repositories;
 using Shouldly;
 using Tests.Integration.Setup;
 
@@ -23,7 +16,7 @@ public class FindAllRepositoriesByOrganizationIdIntegrationTest : BaseIntegratio
     }
 
     [Fact]
-    async Task FindAllRepositoriesByOwnerId_ShouldReturnNotEmptyList()
+    async Task FindAllRepositoriesByOwnerId_ShouldReturnNonEmptyList()
     {
         //Arrange
         var query = new FindAllRepositoriesByOwnerIdQuery(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
@@ -36,7 +29,7 @@ public class FindAllRepositoriesByOrganizationIdIntegrationTest : BaseIntegratio
     }
 
     [Fact]
-    async Task FindAllRepositoriesByOrganizationId_ShouldReturnNotEmptyList()
+    async Task FindAllRepositoriesByOrganizationId_ShouldReturnNonEmptyList()
     {
         //Arrange
         var query = new FindAllRepositoriesByOrganizationIdQuery(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));

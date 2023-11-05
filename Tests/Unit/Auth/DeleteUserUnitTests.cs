@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using Application.Auth.Commands.Delete;
 using Domain.Auth.Exceptions;
 
-namespace Tests.Unit
+namespace Tests.Unit.Auth
 {
     public class DeleteUserUnitTests
     {
