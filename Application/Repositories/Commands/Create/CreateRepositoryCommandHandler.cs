@@ -1,6 +1,5 @@
 ﻿using Application.Shared;
 using Domain.Auth.Interfaces;
-using Domain.Exceptions;
 using Domain.Organizations;
 using Domain.Organizations.Exceptions;
 using Domain.Organizations.Interfaces;

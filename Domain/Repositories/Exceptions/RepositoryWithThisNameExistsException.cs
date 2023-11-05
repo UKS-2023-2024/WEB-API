@@ -1,6 +1,7 @@
-﻿using Domain.Exceptions;
+using Domain.Exceptions;
 
 namespace Domain.Repositories.Exceptions;
+
 
 public class RepositoryWithThisNameExistsException : BaseException
 {
