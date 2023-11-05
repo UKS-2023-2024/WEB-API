@@ -73,6 +73,7 @@ public class RepositoryController : ControllerBase
     }
 
     [HttpGet("{ownerId}")]
+    [Authorize]
     public async Task<IActionResult> FindAllByOwnerId(Guid ownerId)
     {
         var repositories = await _sender.Send(new FindAllRepositoriesByOwnerIdQuery(ownerId));
@@ -80,6 +81,7 @@ public class RepositoryController : ControllerBase
     }
 
     [HttpGet("organization/{organizationId}")]
+    [Authorize]
     public async Task<IActionResult> FindAllByOrganizationIdAsync(Guid organizationId)
     {
         var repositories = await _sender.Send(new FindAllRepositoriesByOrganizationIdQuery(organizationId));
