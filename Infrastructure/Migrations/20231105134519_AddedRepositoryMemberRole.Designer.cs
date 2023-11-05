@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231105134519_AddedRepositoryMemberRole")]
+    partial class AddedRepositoryMemberRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -145,9 +148,8 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("OrganizationId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("RoleName")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -155,116 +157,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("OrganizationId");
 
-                    b.HasIndex("RoleName");
-
                     b.ToTable("OrganizationMembers");
-                });
-
-            modelBuilder.Entity("Domain.Organizations.OrganizationPermission", b =>
-                {
-                    b.Property<string>("Value")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.HasKey("Value");
-
-                    b.ToTable("OrganizationPermissions");
-
-                    b.HasData(
-                        new
-                        {
-                            Value = "owner",
-                            Description = ""
-                        },
-                        new
-                        {
-                            Value = "admin",
-                            Description = ""
-                        },
-                        new
-                        {
-                            Value = "manager",
-                            Description = ""
-                        },
-                        new
-                        {
-                            Value = "read_only",
-                            Description = ""
-                        });
-                });
-
-            modelBuilder.Entity("Domain.Organizations.OrganizationRole", b =>
-                {
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.HasKey("Name");
-
-                    b.ToTable("OrganizationRoles");
-
-                    b.HasData(
-                        new
-                        {
-                            Name = "OWNER",
-                            Description = "Has all rights!"
-                        },
-                        new
-                        {
-                            Name = "MEMBER",
-                            Description = "Member has all rights except owners"
-                        });
-                });
-
-            modelBuilder.Entity("Domain.Organizations.OrganizationRolePermission", b =>
-                {
-                    b.Property<string>("RoleName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PermissionName")
-                        .HasColumnType("text");
-
-                    b.HasKey("RoleName", "PermissionName");
-
-                    b.HasIndex("PermissionName");
-
-                    b.ToTable("OrganizationRolePermissions");
-
-                    b.HasData(
-                        new
-                        {
-                            RoleName = "OWNER",
-                            PermissionName = "owner"
-                        },
-                        new
-                        {
-                            RoleName = "OWNER",
-                            PermissionName = "admin"
-                        },
-                        new
-                        {
-                            RoleName = "OWNER",
-                            PermissionName = "manager"
-                        },
-                        new
-                        {
-                            RoleName = "OWNER",
-                            PermissionName = "read_only"
-                        },
-                        new
-                        {
-                            RoleName = "MEMBER",
-                            PermissionName = "manager"
-                        },
-                        new
-                        {
-                            RoleName = "MEMBER",
-                            PermissionName = "read_only"
-                        });
                 });
 
             modelBuilder.Entity("Domain.Repositories.Repository", b =>
@@ -380,36 +273,9 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Organizations.OrganizationRole", "Role")
-                        .WithMany("Members")
-                        .HasForeignKey("RoleName")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Member");
 
                     b.Navigation("Organization");
-
-                    b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("Domain.Organizations.OrganizationRolePermission", b =>
-                {
-                    b.HasOne("Domain.Organizations.OrganizationPermission", "Permission")
-                        .WithMany("Roles")
-                        .HasForeignKey("PermissionName")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Organizations.OrganizationRole", "Role")
-                        .WithMany("Permissions")
-                        .HasForeignKey("RoleName")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Permission");
-
-                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("Domain.Repositories.Repository", b =>
@@ -480,18 +346,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Organizations.Organization", b =>
                 {
                     b.Navigation("Members");
-                });
-
-            modelBuilder.Entity("Domain.Organizations.OrganizationPermission", b =>
-                {
-                    b.Navigation("Roles");
-                });
-
-            modelBuilder.Entity("Domain.Organizations.OrganizationRole", b =>
-                {
-                    b.Navigation("Members");
-
-                    b.Navigation("Permissions");
                 });
 
             modelBuilder.Entity("Domain.Repositories.Repository", b =>

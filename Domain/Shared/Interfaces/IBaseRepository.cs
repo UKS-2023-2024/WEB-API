@@ -8,7 +8,7 @@ namespace Domain.Shared.Interfaces
 {
     public interface IBaseRepository<T> where T : class
     {
-        T Find(Guid id);
+        T? Find(Guid id);
 
         IEnumerable<T> FindAll();
 

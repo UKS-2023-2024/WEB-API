@@ -13,20 +13,17 @@ namespace Domain.Repositories
     {
         public Guid Id { get; private set; }
         public string Name { get; private set; }
-        public User Owner { get; private set; }
-        public Guid OwnerId { get; set; }
         public string Description { get; private set; }
         public bool IsPrivate { get; private set; }
-        public Organization Organization { get; private set; }
+        public Organization? Organization { get; private set; }
         public List<RepositoryMember> Members { get; private set; }
         public List<User> PendingMembers { get; private set; }
 
         private Repository() { }
 
-        private Repository(string name, User owner, string description, bool isPrivate, Organization organization, List<RepositoryMember> members, List<User> pendingMembers)
+        private Repository(string name, string description, bool isPrivate, Organization? organization, List<RepositoryMember> members, List<User> pendingMembers)
         {
             Name = name;
-            Owner = owner;
             Description = description;
             IsPrivate = isPrivate;  
             Organization = organization;
@@ -34,11 +31,15 @@ namespace Domain.Repositories
             PendingMembers = pendingMembers;
         }
 
-        public Repository Create(string name, User owner, string description, bool isPrivate, Organization organization, List<RepositoryMember> members, List<User> pendingMembers)
+        public static Repository Create(string name, string description, bool isPrivate, Organization? organization)
         {
-            return new Repository(name, owner, description, isPrivate, organization, members, pendingMembers);
+            return new Repository(name, description, isPrivate, organization, new(), new());
         }
 
+        public void AddMember(RepositoryMember member)
+        {
+            Members.Add(member);
+        }
 
     }
 }

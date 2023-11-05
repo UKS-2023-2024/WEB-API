@@ -50,11 +50,6 @@ public class MainDbContext: DbContext
             .WithMany(u => u.PendingOrganizations);
 
         modelBuilder.Entity<Repository>()
-         .HasOne(r => r.Owner)         
-         .WithMany(u => u.OwnedRepositories) 
-         .HasForeignKey(r => r.OwnerId);
-
-        modelBuilder.Entity<Repository>()
             .HasMany(o => o.Members)
             .WithOne(m => m.Repository)
             .HasForeignKey(o => o.RepositoryId);

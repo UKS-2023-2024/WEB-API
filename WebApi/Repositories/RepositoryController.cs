@@ -1,0 +1,43 @@
+﻿using Application.Repositories.Commands.Create;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using WEB_API.Repositories.Dtos;
+using WEB_API.Shared.TokenHandler;
+using WEB_API.Shared.UserIdentityService;
+
+namespace WEB_API.Repositories;
+
+
+[ApiController]
+[Route("repositories")]
+public class RepositoryController : ControllerBase
+{
+    private readonly ISender _sender;
+    private readonly ITokenHandler _tokenHandler;
+    private readonly IUserIdentityService _userIdentityService;
+
+    public RepositoryController(ISender sender,ITokenHandler tokenHandler,IUserIdentityService userIdentityService)
+    {
+        _sender = sender;
+        _tokenHandler = tokenHandler;
+        _userIdentityService = userIdentityService;
+    }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> Create([FromBody] RepositoryDto repositoryDto)
+    {
+        var idString = _userIdentityService.FindUserIdentity(HttpContext.User);
+        if (idString == null)
+            return Unauthorized();
+        
+        var creatorId = Guid.Parse(idString);
+
+        var createdRepositoryId = await _sender.Send(new CreateRepositoryCommand(repositoryDto.Name, repositoryDto.Description, 
+            repositoryDto.IsPrivate, creatorId, repositoryDto.OrganizationId));
+
+        return Ok(createdRepositoryId);
+    }
+
+}

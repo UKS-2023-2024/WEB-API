@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Intrinsics.X86;
+using Domain.Auth;
 using Domain.Organizations;
 using Domain.Organizations.Interfaces;
 using Infrastructure.Persistence;
@@ -15,7 +16,7 @@ public class OrganizationMemberRepository: BaseRepository<OrganizationMember>, I
     {
         _context = context;
     }
-    
+
     public Task<OrganizationMember?> FindByUserIdAndOrganizationId(Guid userId, Guid organizationId)
     {
         return _context.OrganizationMembers
@@ -30,6 +31,12 @@ public class OrganizationMemberRepository: BaseRepository<OrganizationMember>, I
             .Where(x => x.MemberId.Equals(userId))
             .Select(x => x.Organization)
             .ToListAsync();
+    }
+    public Task<OrganizationMember?> FindByOrganizationIdAndRole(Guid organizationId, OrganizationMemberRole role)
+    {
+        return _context.OrganizationMembers
+          .Where(o => o.OrganizationId.Equals(organizationId) && o.Role.Equals(role))
+          .FirstOrDefaultAsync();
     }
 
 }
