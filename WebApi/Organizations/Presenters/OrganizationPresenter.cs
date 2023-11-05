@@ -2,6 +2,7 @@
 
 public class OrganizationPresenter
 {
+    public Guid Id { get; set; }
     public string Name { get; set; }
     public string ContactEmail { get; set; }
 
@@ -9,6 +10,7 @@ public class OrganizationPresenter
 
     public OrganizationPresenter(Domain.Organizations.Organization organization)
     {
+        Id = organization.Id;
         Name = organization.Name;
         ContactEmail = organization.ContactEmail;
     }
