@@ -1,11 +1,6 @@
 ﻿using Application.Auth.Commands.Update;
 using Application.Organizations.Commands.Create;
-using Application.Repositories.Commands.Create;
-using Domain.Auth;
-using Domain.Exceptions;
-using Domain.Exceptions.Repositories;
-using Domain.Organizations;
-using Domain.Repositories;
+using Domain.Repositories.Exceptions;
 using Shouldly;
 using Tests.Integration.Setup;
 

@@ -7,14 +7,9 @@ using Domain.Repositories;
 using Domain.Repositories.Interfaces;
 using Moq;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Application.Auth.Commands.Update;
 using FluentResults;
-using Domain.Exceptions.Repositories;
+using Domain.Repositories.Exceptions;
 
 namespace Tests.Unit.Repositories
 {

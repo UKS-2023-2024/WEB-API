@@ -2,6 +2,8 @@
 using Application.Auth.Queries.FindAll;
 using Application.Organizations.Commands.Delete;
 using Application.Repositories.Commands.Create;
+using Application.Repositories.Commands.Create.CreateForOrganization;
+using Application.Repositories.Commands.Create.CreateForUser;
 using Application.Repositories.Commands.Delete;
 using Application.Repositories.Queries.FindAllByOrganizationId;
 using Application.Repositories.Queries.FindAllByOwnerId;
@@ -31,16 +33,31 @@ public class RepositoryController : ControllerBase
         _userIdentityService = userIdentityService;
     }
 
-    [HttpPost]
+    [HttpPost("user")]
     [Authorize]
-    public async Task<IActionResult> Create([FromBody] RepositoryDto repositoryDto)
+    public async Task<IActionResult> CreateForUser([FromBody] UserRepositoryDto repositoryDto)
     {
         string? creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
         if (creatorId is null)
             return Unauthorized();
 
-        var createdRepositoryId = await _sender.Send(new CreateRepositoryCommand(repositoryDto.Name, repositoryDto.Description, 
-            repositoryDto.IsPrivate, Guid.Parse(creatorId), repositoryDto.OrganizationId));
+        var createdRepositoryId = await _sender.Send(new CreateRepositoryForUserCommand(repositoryDto.Name, repositoryDto.Description, 
+            repositoryDto.IsPrivate, Guid.Parse(creatorId)));
+
+        return Ok(createdRepositoryId);
+    }
+
+
+    [HttpPost("organization")]
+    [Authorize]
+    public async Task<IActionResult> CreateForOrganization([FromBody] OrganizationRepositoryDto dto)
+    {
+        string? creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        if (creatorId is null)
+            return Unauthorized();
+
+        var createdRepositoryId = await _sender.Send(new CreateRepositoryForOrganizationCommand(dto.Name, dto.Description,
+            dto.IsPrivate, Guid.Parse(creatorId), dto.OrganizationId));
 
         return Ok(createdRepositoryId);
     }

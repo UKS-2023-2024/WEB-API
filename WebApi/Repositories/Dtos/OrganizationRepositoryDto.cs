@@ -2,7 +2,7 @@
 
 namespace WEB_API.Repositories.Dtos
 {
-    public class RepositoryDto
+    public class OrganizationRepositoryDto
     {
         [Required]
         public string Name { get; set; }

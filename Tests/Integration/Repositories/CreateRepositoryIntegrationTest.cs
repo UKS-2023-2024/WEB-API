@@ -1,10 +1,7 @@
-﻿using Application.Organizations.Commands.Create;
-using Application.Repositories.Commands.Create;
-using Domain.Auth;
-using Domain.Exceptions;
-using Domain.Exceptions.Repositories;
-using Domain.Organizations;
+﻿using Application.Repositories.Commands.Create.CreateForOrganization;
+using Application.Repositories.Commands.Create.CreateForUser;
 using Domain.Repositories;
+using Domain.Repositories.Exceptions;
 using Shouldly;
 using Tests.Integration.Setup;
 
@@ -24,8 +21,8 @@ public class CreateRepositoryIntegrationTest : BaseIntegrationTest
     async Task CreateRepositoryForUser_ShouldBeSuccess_WhenCommandValid()
     {
         //Arrange
-        var command = new CreateRepositoryCommand("repository", "test repository", false,
-            Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), Guid.Empty);
+        var command = new CreateRepositoryForUserCommand("repository", "test repository", false,
+            Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
 
         //Act
         Guid repositoryId = await _sender.Send(command);
@@ -39,7 +36,7 @@ public class CreateRepositoryIntegrationTest : BaseIntegrationTest
     async Task CreateRepositoryForOrganization_ShouldBeSuccess_WhenCommandValid()
     {
         //Arrange
-        var command = new CreateRepositoryCommand("repository", "test repository", false,
+        var command = new CreateRepositoryForOrganizationCommand("repository", "test repository", false,
             Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
 
         //Act
@@ -54,8 +51,8 @@ public class CreateRepositoryIntegrationTest : BaseIntegrationTest
     async Task CreateRepositoryForUser_ShouldFail_WhenUserAlreadyHasRepositoryWithSameName()
     {
         //Arrange
-        var command = new CreateRepositoryCommand("repo", "test repo", false,
-            Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), Guid.Empty);
+        var command = new CreateRepositoryForUserCommand("repo", "test repo", false,
+            Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
 
         //Act
 
@@ -73,7 +70,7 @@ public class CreateRepositoryIntegrationTest : BaseIntegrationTest
     async Task CreateRepositoryForOrganization_ShouldFail_WhenOrganizationAlreadyHasRepositoryWithSameName()
     {
         //Arrange
-        var command = new CreateRepositoryCommand("repo", "test repo", false,
+        var command = new CreateRepositoryForOrganizationCommand("repo", "test repo", false,
             Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
 
         //Act

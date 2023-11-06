@@ -24,7 +24,7 @@ public class UpdateRepositoryCommandHandler : ICommandHandler<UpdateRepositoryCo
     public async Task<Repository> Handle(UpdateRepositoryCommand request, CancellationToken cancellationToken)
     {
         var member = await _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.userId, request.repositoryId);
-        if (member is null || member.Role != RepositoryMemberRole.OWNER)
+        if (member is null || (member.Role != RepositoryMemberRole.OWNER && member.Role != RepositoryMemberRole.ADMIN))
             throw new UnautorizedAccessException();
 
         var repository = _repositoryRepository.Find(request.repositoryId);
