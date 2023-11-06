@@ -55,20 +55,40 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
     {
         context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
+
+        var ownerPermission = context.OrganizationRoles.FirstOrDefault(o => o.Name.Equals("OWNER"));
+        var memberPermission = context.OrganizationRoles.FirstOrDefault(o => o.Name.Equals("MEMBER"));
         
         User user1 = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), "anav@gmail.com", "test test", "test", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.ADMINISTRATOR);
         User user2 = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7"), "saras@gmail.com", "sara test", "sara", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.ADMINISTRATOR);
+        User user3 = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"), "test@gmail.com", "sara test", "dusan", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.ADMINISTRATOR);
 
         var organization = Organization.Create("organization1", "contact@example.com", new List<User>());
-        var organizationMember1 = OrganizationMember.Create(user1, organization, OrganizationMemberRole.OWNER);
-        var organizationMember2 = OrganizationMember.Create(user2, organization, OrganizationMemberRole.CONTRIBUTOR);
+        var organizationMember1 = OrganizationMember.Create(user1, organization, ownerPermission);
+        var organizationMember2 = OrganizationMember.Create(user2, organization, memberPermission);
 
         organization.AddMember(organizationMember1);
         organization.AddMember(organizationMember2);
-
         
-        context.Users.Add(user1);
+        // context.OrganizationRoles.AddRange(OrganizationRole.Owner(), OrganizationRole.Member());
+        // context.OrganizationPermissions.AddRange(GetSeedPermissions());
+        // context.OrganizationRolePermissions.AddRange(GetSeedPermissionRole());
+        context.Users.AddRange(user1, user3);
         context.Organizations.Add(organization);
         context.SaveChanges();
     }
+    
+    private static List<OrganizationRolePermission> GetSeedPermissionRole()
+        => new()
+        {
+            new("OWNER", "owner"),
+            new("OWNER", "admin"),
+            new("OWNER", "manager"),
+            new("OWNER", "read_only"),
+            new("MEMBER", "manager"),
+            new("MEMBER", "read_only"),
+        };
+    private static List<OrganizationPermission> GetSeedPermissions()
+        => new() { new("owner"), new("admin"), new("manager"), new("read_only") };
+
 }

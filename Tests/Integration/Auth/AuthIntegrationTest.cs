@@ -3,6 +3,7 @@ using Application.Auth.Commands.Register;
 using Application.Auth.Commands.Update;
 using Application.Auth.Queries.Login;
 using Domain.Auth;
+using Domain.Auth.Exceptions;
 using Domain.Exceptions;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Http.HttpResults;

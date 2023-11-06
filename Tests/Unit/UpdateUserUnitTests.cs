@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Application.Auth.Commands.Update;
 using Application.Auth.Queries.Login;
+using Domain.Auth.Exceptions;
 
 namespace Tests.Unit
 {

@@ -22,10 +22,11 @@ public class UserIdentityService: IUserIdentityService
         return idString;
     }
 
-    public async Task<User> FindUserFromToken(ClaimsPrincipal user)
+    public Task<User> FindUserFromToken(ClaimsPrincipal user)
     {
         string id = FindUserIdentity(user);
-        if (id == null) return null;
-        return await _userRepository.FindUserById(new Guid(id));
+        if (id == null)
+            throw new UnauthorizedAccessException();
+        return _userRepository.FindUserById(new Guid(id));
     }
 }

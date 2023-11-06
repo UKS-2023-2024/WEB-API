@@ -1,4 +1,6 @@
-﻿namespace Domain.Exceptions;
+﻿using Domain.Exceptions;
+
+namespace Domain.Organizations.Exceptions;
 
 public class OrganizationWithThisNameExistsException : BaseException
 {

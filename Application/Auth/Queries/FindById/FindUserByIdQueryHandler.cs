@@ -1,4 +1,5 @@
 ﻿using Domain.Auth;
+using Domain.Auth.Exceptions;
 using Domain.Auth.Interfaces;
 using Domain.Exceptions;
 using MediatR;

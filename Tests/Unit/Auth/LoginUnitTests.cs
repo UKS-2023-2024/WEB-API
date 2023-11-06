@@ -1,6 +1,7 @@
 ﻿using Application.Auth.Queries.Login;
 using Domain.Auth;
 using Domain.Auth.Enums;
+using Domain.Auth.Exceptions;
 using Domain.Auth.Interfaces;
 using Domain.Exceptions;
 using Moq;

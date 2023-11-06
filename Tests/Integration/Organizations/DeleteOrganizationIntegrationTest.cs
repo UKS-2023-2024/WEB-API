@@ -2,6 +2,7 @@
 using Domain.Auth;
 using Domain.Auth.Enums;
 using Domain.Organizations;
+using Domain.Organizations.Exceptions;
 using Shouldly;
 using Tests.Integration.Setup;
 using Tests.Unit.Organizations;
@@ -51,6 +52,6 @@ public class DeleteOrganizationIntegrationTest: BaseIntegrationTest
         };
 
         //Assert
-        await Should.ThrowAsync<UnauthorizedAccessException>(() => handle());
+        await Should.ThrowAsync<PermissionDeniedException>(() => handle());
     }
 }
