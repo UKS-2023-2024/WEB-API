@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Application;
 using Domain;
 using Domain.Auth.Enums;
@@ -16,6 +17,7 @@ using WEB_API.Shared.UserIdentityService;
 using TokenHandler = WEB_API.Shared.TokenHandler.TokenHandler;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 // Add services to the container.
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";

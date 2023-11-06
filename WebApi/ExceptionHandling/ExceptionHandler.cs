@@ -2,7 +2,7 @@ using System.Net;
 using Domain.Auth.Exceptions;
 using Domain.Exceptions;
 using Domain.Organizations.Exceptions;
-
+using Domain.Repositories.Exceptions;
 namespace WEB_API.ExceptionHandling;
 
 public static class ExceptionHandler
@@ -11,11 +11,11 @@ public static class ExceptionHandler
     {
         HttpStatusCode code = exception switch
         {
-            InvalidCredentialsException => HttpStatusCode.Unauthorized,
-            UserNotFoundException => HttpStatusCode.NotFound,
-            UserWithThisEmailExistsException => HttpStatusCode.Conflict,
+            InvalidCredentialsException or UnautorizedAccessException => HttpStatusCode.Unauthorized,
+            UserNotFoundException or RepositoryNotFoundException or OrganizationNotFoundException => HttpStatusCode.NotFound,
+            UserWithThisEmailExistsException or RepositoryWithThisNameExistsException => HttpStatusCode.Conflict,
             PermissionDeniedException => HttpStatusCode.Forbidden,
-            _ => HttpStatusCode.InternalServerError
+
         };
 
         return (int)code;

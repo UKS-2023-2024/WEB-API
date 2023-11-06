@@ -284,17 +284,12 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("OrganizationId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("OwnerId")
+                    b.Property<Guid?>("OrganizationId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
                     b.HasIndex("OrganizationId");
-
-                    b.HasIndex("OwnerId");
 
                     b.ToTable("Repositories");
                 });
@@ -310,6 +305,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<Guid>("RepositoryId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -418,19 +416,9 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Organizations.Organization", "Organization")
                         .WithMany()
-                        .HasForeignKey("OrganizationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Auth.User", "Owner")
-                        .WithMany("OwnedRepositories")
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("OrganizationId");
 
                     b.Navigation("Organization");
-
-                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("Domain.Repositories.RepositoryMember", b =>
@@ -484,8 +472,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Auth.User", b =>
                 {
-                    b.Navigation("OwnedRepositories");
-
                     b.Navigation("SecondaryEmails");
 
                     b.Navigation("SocialAccounts");

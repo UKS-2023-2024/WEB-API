@@ -1,8 +1,10 @@
 ﻿using Domain.Auth.Interfaces;
 using Domain.Organizations.Interfaces;
+using Domain.Repositories.Interfaces;
 using Infrastructure.Auth.Repositories;
 using Infrastructure.Auth.Services;
 using Infrastructure.Organizations.Repositories;
+using Infrastructure.Repositories.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure;
@@ -16,6 +18,8 @@ public static class DependencyInjection
         services.AddScoped<ISocialAccountRepository, SocialAccountRepository>();
         services.AddScoped<IOrganizationRepository, OrganizationRepository>();
         services.AddScoped<IOrganizationMemberRepository, OrganizationMemberRepository>();
+        services.AddScoped<IRepositoryRepository, RepositoryRepository>();
+        services.AddScoped<IRepositoryMemberRepository, RepositoryMemberRepository>();
         return services;
     }    
 }
