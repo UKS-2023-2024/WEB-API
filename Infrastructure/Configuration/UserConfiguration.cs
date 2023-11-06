@@ -10,5 +10,14 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     {
         builder.HasMany(user => user.SecondaryEmails);
         builder.HasMany(user => user.SocialAccounts);
+        
+        builder
+            .HasMany(u => u.SecondaryEmails)
+            .WithOne(e => e.User)
+            .HasForeignKey(e => e.UserId);
+
+        builder
+            .HasIndex(u => u.PrimaryEmail)
+            .IsUnique();
     }
 }
