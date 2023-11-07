@@ -1,6 +1,7 @@
 ﻿using Application.Shared;
 using Domain.Organizations;
 using Domain.Repositories;
+using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
 
 namespace Application.Repositories.Commands.Delete;
@@ -20,7 +21,9 @@ public class DeleteRepositoryCommandHandler: ICommandHandler<DeleteRepositoryCom
         var member = await _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.userId, request.repositoryId);
         if (member is null || member.Role != RepositoryMemberRole.OWNER)
             throw new UnautorizedAccessException();
-        Repository repository = _repositoryRepository.Find(request.repositoryId);
+        var repository = _repositoryRepository.Find(request.repositoryId);
+        if (repository is null)
+            throw new RepositoryNotFoundException(); 
         _repositoryRepository.Delete(repository);
     }
 }

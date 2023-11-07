@@ -11,7 +11,8 @@ public class RepositoryConfiguration: IEntityTypeConfiguration<Repository>
         builder
             .HasMany(o => o.Members)
             .WithOne(m => m.Repository)
-            .HasForeignKey(o => o.RepositoryId);
+            .HasForeignKey(o => o.RepositoryId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder
             .HasMany(o => o.PendingMembers)
