@@ -8,6 +8,7 @@ using Application.Repositories.Commands.Delete;
 using Application.Repositories.Queries.FindAllByOrganizationId;
 using Application.Repositories.Queries.FindAllByOwnerId;
 using Domain.Auth;
+using Domain.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -84,16 +85,19 @@ public class RepositoryController : ControllerBase
         if (userId is null)
             return Unauthorized();
 
-        await _sender.Send(new UpdateRepositoryCommand(Guid.Parse(userId), dto.Id, dto.Name, dto.Description, dto.IsPrivate));
+        Repository repository = await _sender.Send(new UpdateRepositoryCommand(Guid.Parse(userId), dto.Id, dto.Name, dto.Description, dto.IsPrivate));
 
-        return Ok();
+        return Ok(repository);
     }
 
-    [HttpGet("{ownerId}")]
+    [HttpGet]
     [Authorize]
-    public async Task<IActionResult> FindAllByOwnerId(Guid ownerId)
+    public async Task<IActionResult> FindLoggedUserRepositories()
     {
-        var repositories = await _sender.Send(new FindAllRepositoriesByOwnerIdQuery(ownerId));
+        string? userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        if (userId is null)
+            return Unauthorized();
+        var repositories = await _sender.Send(new FindAllRepositoriesByOwnerIdQuery(Guid.Parse(userId)));
         return Ok(repositories);
     }
 
