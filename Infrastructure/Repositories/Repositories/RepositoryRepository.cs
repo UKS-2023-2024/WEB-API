@@ -23,6 +23,7 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
             .Include(x => x.Organization)
             .Include(x => x.Members)
             .Include(x => x.PendingMembers)
+            .Where(x => x.Id == id)
             .FirstOrDefault();
     }
     public async Task<Repository?> FindByNameAndOwnerId(string name, Guid ownerId)
@@ -45,6 +46,7 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
     {
         return _context.Repositories
             .Include(r => r.Members)
+            .ThenInclude(m => m.Member)
             .Include(r => r.Organization)
             .Where(r => r.Organization == null && r.Members.Any(m => m.Member.Id == id && m.Role == RepositoryMemberRole.OWNER))
             .ToList();
@@ -54,6 +56,7 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
     {
         return _context.Repositories
             .Include(r => r.Members)
+             .ThenInclude(m => m.Member)
             .Include(r => r.Organization)
             .Where(r => r.Organization.Id == id)
             .ToList();
