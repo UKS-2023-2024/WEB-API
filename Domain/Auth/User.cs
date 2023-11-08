@@ -21,8 +21,10 @@ public class User
     public bool Deleted { get; private set; }
     public List<Organization> PendingOrganizations { get; private set; }
     public List<Repository> PendingRepositories { get; private set; }
+    
+    public List<Repository> Starred { get; private set; }
     private User() { }
-    private User(string primaryEmail, string fullName, string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails, bool deleted)
+    private User(string primaryEmail, string fullName, string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails,List<Repository> starred)
     {
         PrimaryEmail = primaryEmail;
         FullName = fullName;
@@ -36,6 +38,7 @@ public class User
         SocialAccounts = socialAccounts;
         SecondaryEmails = secondaryEmails;
         Deleted = false;
+        Starred = starred;
     }
 
     private User(string primaryEmail, string fullName, string username, string password, UserRole role)
@@ -50,11 +53,11 @@ public class User
         Deleted = false;
     }
 
-    public static User Create(string primaryEmail, string fullName,string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails, bool deleted)
+    public static User Create(string primaryEmail, string fullName,string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails, List<Repository> starred)
     {
         if (primaryEmail == null) throw new Exception("Primary email cannot be null");
         if (username == null) throw new Exception("Username cannot be null");
-        return new User(primaryEmail, fullName, username, password, role, bio, location, company, website, socialAccounts, secondaryEmails, deleted);
+        return new User(primaryEmail, fullName, username, password, role, bio, location, company, website, socialAccounts, secondaryEmails, starred);
     }
 
     public static User Create(string primaryEmail, string fullName, string username, string password, UserRole role)
@@ -87,4 +90,5 @@ public class User
         Website = website;
         SocialAccounts = socialAccounts;
     }
+    
 }

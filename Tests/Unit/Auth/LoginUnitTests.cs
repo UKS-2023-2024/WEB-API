@@ -34,15 +34,11 @@ public class LoginUnitTests
         var command = new LoginQuery("test@gmail.com",
             "password");
         
-        var handler = new LoginQueryHandler(_userRepositoryMock.Object, _hashingService.Object);
         //Act
-        Func<Task> handle = async () =>
-        {
-            await handler.Handle(command, default);
-
-        };
+        var result = new LoginQueryHandler(_userRepositoryMock.Object, _hashingService.Object).Handle(command,default);
+        
         //Assert
-        await Should.NotThrowAsync(() => handle());
+        result.IsFaulted.ShouldBe(false);
     }
     
     [Fact]
@@ -52,15 +48,11 @@ public class LoginUnitTests
         var command = new LoginQuery("test123@gmail.com",
             "password");
         
-        var handler = new LoginQueryHandler(_userRepositoryMock.Object, _hashingService.Object);
         //Act
-        Func<Task> handle = async () =>
-        {
-            await handler.Handle(command, default);
-
-        };
+        var result = new LoginQueryHandler(_userRepositoryMock.Object, _hashingService.Object).Handle(command,default);
+        
         //Assert
-        Should.ThrowAsync<InvalidCredentialsException>(() => handle());;
+        result.IsFaulted.ShouldBe(true);
     }
     
     [Fact]
@@ -72,12 +64,8 @@ public class LoginUnitTests
         
         var handler = new LoginQueryHandler(_userRepositoryMock.Object, _hashingService.Object);
         //Act
-        Func<Task> handle = async () =>
-        {
-            await handler.Handle(command, default);
-
-        };
+        var result = new LoginQueryHandler(_userRepositoryMock.Object, _hashingService.Object).Handle(command,default);
         //Assert
-        Should.ThrowAsync<InvalidCredentialsException>(() => handle());;
+        result.IsFaulted.ShouldBe(true);
     }
 }

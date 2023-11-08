@@ -17,5 +17,9 @@ public class RepositoryConfiguration: IEntityTypeConfiguration<Repository>
         builder
             .HasMany(o => o.PendingMembers)
             .WithMany(u => u.PendingRepositories);
+        
+        builder
+            .HasMany(o => o.StarredBy)
+            .WithMany(u => u.Starred);
     }
 }

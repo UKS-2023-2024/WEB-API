@@ -23,8 +23,8 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
             .Include(x => x.Organization)
             .Include(x => x.Members)
             .Include(x => x.PendingMembers)
-            .Where(x => x.Id == id)
-            .FirstOrDefault();
+            .Include(x=>x.StarredBy)
+            .FirstOrDefault(x => x.Id == id);
     }
     public async Task<Repository?> FindByNameAndOwnerId(string name, Guid ownerId)
     {
