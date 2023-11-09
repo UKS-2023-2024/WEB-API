@@ -1,11 +1,5 @@
 ﻿using Domain.Auth;
 using Domain.Organizations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Repositories
 {
@@ -18,10 +12,11 @@ namespace Domain.Repositories
         public Organization? Organization { get; private set; }
         public List<RepositoryMember> Members { get; private set; }
         public List<User> PendingMembers { get; private set; }
+        public List<User> StarredBy { get; private set; }
 
         private Repository() { }
 
-        private Repository(string name, string description, bool isPrivate, Organization? organization, List<RepositoryMember> members, List<User> pendingMembers)
+        private Repository(string name, string description, bool isPrivate, Organization? organization, List<RepositoryMember> members, List<User> pendingMembers, List<User> starredBy)
         {
             Name = name;
             Description = description;
@@ -29,17 +24,20 @@ namespace Domain.Repositories
             Organization = organization;
             Members = members;
             PendingMembers = pendingMembers;
+            StarredBy = starredBy;
         }
 
         public static Repository Create(string name, string description, bool isPrivate, Organization? organization)
         {
-            return new Repository(name, description, isPrivate, organization, new(), new());
+            return new Repository(name, description, isPrivate, organization, new(), new(), new());
         }
 
         public static Repository Create(Guid id, string name, string description, bool isPrivate, Organization? organization)
         {
-            Repository repository = new Repository(name, description, isPrivate, organization, new(), new());
-            repository.Id = id;
+            var repository = new Repository(name, description, isPrivate, organization, new(), new(), new())
+             {
+                 Id = id
+             };
             return repository;
         }
 
@@ -47,11 +45,28 @@ namespace Domain.Repositories
         {
             Members.Add(member);
         }
+        
+        public void AddToStarredBy(User user)
+        {
+            StarredBy.Add(user);
+        }
+        public void RemoveFromStarredBy(User user)
+        {
+            StarredBy.Remove(user);
+        }
 
         public void Update(string name, string description, bool isPrivate)
         {
             Name = name;
             Description = description;
+            
+            if (!IsPrivate && isPrivate)
+            {
+                var starredUsersToRemove = new List<User>();
+                starredUsersToRemove.AddRange(StarredBy.Where(starredUser => Members.All(m => m.Member != starredUser)));
+                StarredBy = StarredBy.Except(starredUsersToRemove).ToList();
+            }
+
             IsPrivate = isPrivate;
         }
     }

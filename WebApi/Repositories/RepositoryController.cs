@@ -5,6 +5,8 @@ using Application.Repositories.Commands.Create;
 using Application.Repositories.Commands.Create.CreateForOrganization;
 using Application.Repositories.Commands.Create.CreateForUser;
 using Application.Repositories.Commands.Delete;
+using Application.Repositories.Commands.StarRepository;
+using Application.Repositories.Commands.UnstarRepository;
 using Application.Repositories.Queries.FindAllByOrganizationId;
 using Application.Repositories.Queries.FindAllByOwnerId;
 using Domain.Auth;
@@ -99,6 +101,28 @@ public class RepositoryController : ControllerBase
             return Unauthorized();
         var repositories = await _sender.Send(new FindAllRepositoriesByOwnerIdQuery(Guid.Parse(userId)));
         return Ok(repositories);
+    }
+    
+    [HttpPatch("star/{repositoryId}")]
+    [Authorize]
+    public async Task<IActionResult> StarRepository(Guid repositoryId)
+    {
+        var user = await _userIdentityService.FindUserFromToken(HttpContext.User);
+        if (user is null)
+            return Unauthorized();
+        await _sender.Send(new StarRepositoryCommand(user,repositoryId));
+        return Ok();
+    }
+    
+    [HttpPatch("unstar/{repositoryId}")]
+    [Authorize]
+    public async Task<IActionResult> UnstarRepository(Guid repositoryId)
+    {
+        var user = await _userIdentityService.FindUserFromToken(HttpContext.User);
+        if (user is null)
+            return Unauthorized();
+        await _sender.Send(new UnstarRepositoryCommand(user,repositoryId));
+        return Ok();
     }
 
     [HttpGet("organization/{organizationId}")]

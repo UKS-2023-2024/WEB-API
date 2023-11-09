@@ -28,7 +28,7 @@ public class RegistrationUnitTests
             "123", "username", "firstName lastName");
 
         User foundUser = User.Create("email@gmail.com", "full name", "username", "password",
-            UserRole.USER, null, null, null, null, null, null, false);
+            UserRole.USER, null, null, null, null, null, null, null);
 
         _userRepositoryMock.Setup(x => x.FindUserByEmail(It.IsAny<string>()))
             .ReturnsAsync(foundUser);
