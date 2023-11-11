@@ -25,6 +25,8 @@ public class OrganizationRepository: BaseRepository<Organization>, IOrganization
     public Task<OrganizationMember?> FindMemberWithOrgPermission(PermissionParams data)
     {
         return _context.OrganizationMembers
+            .Include(mem => mem.Role)
+            .ThenInclude(role => role.Permissions)
             .Where(o =>
                 o.MemberId.Equals(data.Authorized) &&
                 o.OrganizationId.Equals(data.OrganizationId) &&
@@ -36,5 +38,19 @@ public class OrganizationRepository: BaseRepository<Organization>, IOrganization
     {
         return _context.OrganizationRoles
             .FirstOrDefaultAsync(r => r.Name.Equals(name));
+    }
+
+
+    public Task<OrganizationMember?> FindMember(Guid organizationId, Guid memberId)
+    {
+        return _context.OrganizationMembers.FirstOrDefaultAsync(member =>
+            member.OrganizationId.Equals(organizationId)
+            && member.MemberId.Equals(memberId));
+    }
+
+    public Task<Organization?> FindById(Guid organizationId)
+    {
+        return _context.Organizations
+            .FirstOrDefaultAsync(org => org.Id.Equals(organizationId));
     }
 }

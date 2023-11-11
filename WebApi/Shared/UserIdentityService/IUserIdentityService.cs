@@ -5,7 +5,7 @@ namespace WEB_API.Shared.UserIdentityService;
 
 public interface IUserIdentityService
 {
-    string? FindUserIdentity(ClaimsPrincipal user);
+    string FindUserIdentity(ClaimsPrincipal user);
     Task<User?> FindUserFromToken(ClaimsPrincipal user);
 
 }

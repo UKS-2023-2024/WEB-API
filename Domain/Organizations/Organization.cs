@@ -1,4 +1,5 @@
 ﻿using Domain.Auth;
+using Domain.Organizations.Exceptions;
 
 namespace Domain.Organizations;
 
@@ -13,7 +14,6 @@ public class Organization
     public List<User> PendingMembers { get; private set; }
     public string? Url { get; private set; }
     public string? Location { get; private set; }
-
     private Organization()
     {
     }
@@ -42,5 +42,10 @@ public class Organization
         Organization newOrganization = new Organization(name, contactEmail, pendingMembers);
         newOrganization.Id = id;
         return newOrganization;
+    }
+
+    public static void ThrowIfDoesntExist(Organization? organization)
+    {
+        if (organization is null) throw new OrganizationNotFoundException();
     }
 }

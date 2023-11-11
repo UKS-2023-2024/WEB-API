@@ -17,4 +17,10 @@ public class HashingService : IHashingService
     {
         return BCrypt.Net.BCrypt.Verify(value, hash);
     }
+
+    public string GenerateRandomToken()
+    {
+        var guid = Guid.NewGuid();
+        return Convert.ToBase64String(guid.ToByteArray());
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using Domain.Auth;
+using Domain.Organizations.Exceptions;
 
 namespace Domain.Organizations;
 
@@ -10,6 +11,7 @@ public class OrganizationMember
     public Organization Organization { get; private set; }
     public Guid OrganizationId { get; private set; }
     public OrganizationRole Role { get; private set; }
+    public List<OrganizationInvite> Invites { get; private set; }
 
     public OrganizationMember()
     {
@@ -33,6 +35,11 @@ public class OrganizationMember
     public static OrganizationMember Create(User member, Organization organization, OrganizationRole role)
     {
         return new OrganizationMember(member, member.Id, organization, organization.Id, role);
+    }
+
+    public static void ThrowIfDoesntExist(OrganizationMember? member)
+    {
+        if (member is null) throw new OrganizationMemberNotFoundException();
     }
     
 }

@@ -19,6 +19,8 @@ public class UserIdentityService: IUserIdentityService
         var userClaims = identity.Claims;
         IEnumerable<Claim> enumerable = userClaims as Claim[] ?? userClaims.ToArray();
         var idString = enumerable.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value;
+
+        if (idString is null) throw new UnauthorizedAccessException();
         return idString;
     }
 

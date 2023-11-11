@@ -1,5 +1,7 @@
-﻿using Application.Organizations.Commands.Create;
+﻿using Application.Organizations.Commands.AcceptInvite;
+using Application.Organizations.Commands.Create;
 using Application.Organizations.Commands.Delete;
+using Application.Organizations.Commands.SendInvite;
 using Application.Organizations.Queries.FindUserOrganizations;
 using Domain.Auth;
 using MediatR;
@@ -72,5 +74,20 @@ public class OrganizationController : ControllerBase
 
         List<Domain.Organizations.Organization> organizations = await _sender.Send(new FindUserOrganizationsQuery(Guid.Parse(userId)));
         return Ok(OrganizationPresenter.MapOrganizationsToOrganizationPresenters(organizations));
+    }
+
+    [HttpPost("{orgId}/members/{memberId}/invite")]
+    public async Task<IActionResult> SendOrgInvitation(string orgId, string memberId)
+    {
+        string authorized = _userIdentityService.FindUserIdentity(HttpContext.User);
+        await _sender.Send(new SendInviteCommand(new Guid(authorized), new Guid(orgId), new Guid(memberId)));
+        return Ok();
+    }
+
+    [HttpPost("/accept-invite")]
+    public async Task<IActionResult> AcceptOrgInvitation([FromQuery] string token)
+    {
+        await _sender.Send(new AcceptInviteCommand(token));
+        return Ok();
     }
 }
