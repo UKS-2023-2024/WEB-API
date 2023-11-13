@@ -5,8 +5,10 @@ using Application.Repositories.Commands.Create;
 using Application.Repositories.Commands.Create.CreateForOrganization;
 using Application.Repositories.Commands.Create.CreateForUser;
 using Application.Repositories.Commands.Delete;
-using Application.Repositories.Commands.StarRepository;
-using Application.Repositories.Commands.UnstarRepository;
+using Application.Repositories.Commands.HandleRepositoryMembers.AddRepositoryMember;
+using Application.Repositories.Commands.HandleRepositoryMembers.RemoveRepositoryMember;
+using Application.Repositories.Commands.StarringRepository.StarRepository;
+using Application.Repositories.Commands.StarringRepository.UnstarRepository;
 using Application.Repositories.Queries.FindAllByOrganizationId;
 using Application.Repositories.Queries.FindAllByOwnerId;
 using Domain.Auth;
@@ -122,6 +124,36 @@ public class RepositoryController : ControllerBase
         if (user is null)
             return Unauthorized();
         await _sender.Send(new UnstarRepositoryCommand(user,repositoryId));
+        return Ok();
+    }
+
+    [HttpPost("send-invite/{repositoryId:guid}/{userId:guid}")]
+    [Authorize]
+    public async Task<IActionResult> SendRepositoryInvite(Guid repositoryId, Guid userId)
+    {
+        var user = await _userIdentityService.FindUserFromToken(HttpContext.User);
+        if (user is null)
+            return Unauthorized();
+        await _sender.Send(new UnstarRepositoryCommand(user,repositoryId));
+        return Ok();
+    }
+    
+    [HttpPost("add-user/{token}")]
+    [Authorize]
+    public async Task<IActionResult> AddUserToRepository(string token)
+    {
+        await _sender.Send(new AddRepositoryMemberCommand(token));
+        return Ok();
+    }
+    
+    [HttpPost("remove-user/{repositoryId:guid}/{userId:guid}")]
+    [Authorize]
+    public async Task<IActionResult> RemoveUserToRepository(Guid repositoryId, Guid userId)
+    {
+        var ownerId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        if (ownerId is null)
+            return Unauthorized();
+        await _sender.Send(new RemoveRepositoryMemberCommand(Guid.Parse(ownerId), userId, repositoryId));
         return Ok();
     }
 
