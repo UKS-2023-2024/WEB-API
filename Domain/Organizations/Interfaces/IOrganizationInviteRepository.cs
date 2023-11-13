@@ -4,6 +4,6 @@ namespace Domain.Organizations.Interfaces;
 
 public interface IOrganizationInviteRepository: IBaseRepository<OrganizationInvite>
 {
-    Task<OrganizationInvite> FindByToken(string token);
+    Task<OrganizationInvite?> FindById(Guid id);
     OrganizationInvite? FindByOrgAndMember(Guid organizationId, Guid memberId);
 }

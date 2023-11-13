@@ -84,10 +84,11 @@ public class OrganizationController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("/accept-invite")]
-    public async Task<IActionResult> AcceptOrgInvitation([FromQuery] string token)
+    [HttpPost("/invite/${inviteId}")]
+    public async Task<IActionResult> AcceptOrgInvitation(string inviteId)
     {
-        await _sender.Send(new AcceptInviteCommand(token));
+        string authorized = _userIdentityService.FindUserIdentity(HttpContext.User);
+        await _sender.Send(new AcceptInviteCommand(new Guid(authorized) ,new Guid(inviteId)));
         return Ok();
     }
 }

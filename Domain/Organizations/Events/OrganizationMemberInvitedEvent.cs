@@ -2,4 +2,4 @@ using MediatR;
 
 namespace Domain.Organizations.Events;
 
-public record OrganizationMemberInvitedEvent(OrganizationInvite Invite): INotification;
+public record OrganizationMemberInvitedEvent(Guid InviteId): INotification;

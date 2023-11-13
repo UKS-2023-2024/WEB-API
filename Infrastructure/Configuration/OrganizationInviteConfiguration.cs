@@ -8,10 +8,18 @@ public class OrganizationInviteConfiguration: IEntityTypeConfiguration<Organizat
 {
     public void Configure(EntityTypeBuilder<OrganizationInvite> builder)
     {
-        builder.HasKey(o => new { o.OrganizationId, o.MemberId, o.Token });
+        builder.HasKey(o => o.Id);
+        
         builder
-            .HasOne(i => i.OrganizationMember)
-            .WithMany(mem => mem.Invites)
-            .HasForeignKey(i => new { i.OrganizationId, i.MemberId });
+            .HasIndex(o => new { o.OrganizationId, MemberId = o.UserId })
+            .IsUnique();
+        
+        builder.HasOne(o => o.Organization)
+            .WithMany(o => o.PendingInvites)
+            .HasForeignKey(o => o.OrganizationId);
+
+        builder.HasOne(o => o.User)
+            .WithMany(u => u.Invites)
+            .HasForeignKey(o => o.UserId);
     }
 }

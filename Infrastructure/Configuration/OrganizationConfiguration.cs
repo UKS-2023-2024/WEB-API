@@ -14,7 +14,7 @@ public class OrganizationConfiguration: IEntityTypeConfiguration<Organization>
             .HasForeignKey(o => o.OrganizationId);
 
         builder
-            .HasMany(o => o.PendingMembers)
-            .WithMany(u => u.PendingOrganizations);
+            .HasMany(o => o.PendingInvites)
+            .WithOne(u => u.Organization);
     }
 }

@@ -40,14 +40,6 @@ public class OrganizationRepository: BaseRepository<Organization>, IOrganization
             .FirstOrDefaultAsync(r => r.Name.Equals(name));
     }
 
-
-    public Task<OrganizationMember?> FindMember(Guid organizationId, Guid memberId)
-    {
-        return _context.OrganizationMembers.FirstOrDefaultAsync(member =>
-            member.OrganizationId.Equals(organizationId)
-            && member.MemberId.Equals(memberId));
-    }
-
     public Task<Organization?> FindById(Guid organizationId)
     {
         return _context.Organizations

@@ -28,14 +28,15 @@ public class AcceptInviteCommandHandler: ICommandHandler<AcceptInviteCommand>
     
     public async Task Handle(AcceptInviteCommand request, CancellationToken cancellationToken)
     {
-        var invite = await _organizationInviteRepository.FindByToken(request.Token);
+        var invite = await _organizationInviteRepository.FindById(request.InviteId);
         OrganizationInvite.ThrowIfDoesntExist(invite);
         invite.ThrowIfExpired();
+        invite.ThrowIfNotAnOwner(request.Authorized);
 
         var organization = await _organizationRepository.FindById(invite.OrganizationId);
         Organization.ThrowIfDoesntExist(organization);
         
-        var user = await _userRepository.FindUserById(invite.MemberId);
+        var user = await _userRepository.FindUserById(invite.UserId);
         User.ThrowIfDoesntExist(user);
 
         var role = await _organizationRoleRepository.FindByName("MEMBER");

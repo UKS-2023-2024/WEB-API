@@ -11,9 +11,9 @@ public class Organization
     private List<OrganizationMember> _members = new();
     public IReadOnlyList<OrganizationMember> Members => new List<OrganizationMember>(_members);
     public string? Description { get; private set; }
-    public List<User> PendingMembers { get; private set; }
     public string? Url { get; private set; }
     public string? Location { get; private set; }
+    public List<OrganizationInvite> PendingInvites { get; private set; }
     private Organization()
     {
     }
@@ -23,7 +23,9 @@ public class Organization
         Name = name;
         ContactEmail = contactEmail;
         _members = new List<OrganizationMember>();
-        PendingMembers = pendingMembers;
+        PendingInvites = pendingMembers
+            .Select(mem => OrganizationInvite.Create(mem.Id, Id))
+            .ToList();
     }
 
     public void AddMember(OrganizationMember member)

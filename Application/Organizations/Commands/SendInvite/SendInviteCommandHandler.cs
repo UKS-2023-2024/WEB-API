@@ -3,6 +3,7 @@ using Application.Shared.Email;
 using Domain.Auth.Interfaces;
 using Domain.Organizations;
 using Domain.Organizations.Events;
+using Domain.Organizations.Exceptions;
 using Domain.Organizations.Interfaces;
 using Domain.Organizations.Services;
 using Domain.Organizations.Types;
@@ -13,20 +14,16 @@ namespace Application.Organizations.Commands.SendInvite;
 public class SendInviteCommandHandler: ICommandHandler<SendInviteCommand>
 {
     private readonly IMediator _mediator;
-    private readonly IHashingService _hashingService;
-    private readonly IOrganizationRepository _organizationRepository;
     private readonly IPermissionService _permissionService;
     private readonly IOrganizationInviteRepository _organizationInviteRepository;
-
+    private readonly IOrganizationMemberRepository _organizationMemberRepository;
     public SendInviteCommandHandler(
         IMediator mediator,
-        IHashingService hashingService,
-        IOrganizationRepository organizationRepository,
+        IOrganizationMemberRepository organizationMemberRepository,
         IPermissionService permissionService,
         IOrganizationInviteRepository organizationInviteRepository)
     {
-        _hashingService = hashingService;
-        _organizationRepository = organizationRepository;
+        _organizationMemberRepository = organizationMemberRepository;
         _permissionService = permissionService;
         _mediator = mediator;
         _organizationInviteRepository = organizationInviteRepository;
@@ -41,17 +38,17 @@ public class SendInviteCommandHandler: ICommandHandler<SendInviteCommand>
             Permission = "admin"
         });
         
-        var member = await _organizationRepository.FindMember(request.OrganizationId, request.MemberId);
-        OrganizationMember.ThrowIfDoesntExist(member);
+        var member = await _organizationMemberRepository.FindByUserIdAndOrganizationId(request.MemberId, request.OrganizationId);
+        if (member is not null) 
+            throw new AlreadyOrganizationMemberException();
 
         var existingInvitation = _organizationInviteRepository.FindByOrgAndMember(request.OrganizationId, request.MemberId);
         if (existingInvitation is not null)
              _organizationInviteRepository.Delete(existingInvitation);
         
-        var token = _hashingService.GenerateRandomToken();
-        var invite = OrganizationInvite.Create(request.OrganizationId, request.MemberId, token);
+        var invite = OrganizationInvite.Create(request.MemberId, request.OrganizationId);
         
         await _organizationInviteRepository.Create(invite);
-        await _mediator.Publish(new OrganizationMemberInvitedEvent(invite), default);
+        await _mediator.Publish(new OrganizationMemberInvitedEvent(invite.Id), default);
     }
 }

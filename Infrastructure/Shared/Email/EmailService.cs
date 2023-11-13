@@ -25,4 +25,5 @@ public class EmailService: IEmailService
         SendGridMessage message = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
         await _sendgrid.SendEmailAsync(message);
     }
+    
 }

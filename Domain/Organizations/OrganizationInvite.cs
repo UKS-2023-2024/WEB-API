@@ -1,4 +1,5 @@
 using System.Data.Entity.Migrations.Model;
+using Domain.Auth;
 using Domain.Exceptions;
 using Domain.Organizations.Exceptions;
 
@@ -6,36 +7,36 @@ namespace Domain.Organizations;
 
 public class OrganizationInvite
 {
-    public Guid MemberId { get; private set; }
+    public Guid Id { get; private set; }
+    public Guid UserId { get; private set; }
     public Guid OrganizationId { get; private set; }
-    public string Token { get; private set; }
     public DateTime ExpiresAt { get; private set; }
-    public OrganizationMember? OrganizationMember { get; private set; }
+    public Organization? Organization { get; private set; }
+    public User? User { get; private set; }
 
-    private OrganizationInvite(Guid memberId, Guid organizationId, string token, DateTime expiresAt)
+    private OrganizationInvite(Guid userId, Guid organizationId, DateTime expiresAt)
     {
-        MemberId = memberId;
+        UserId = userId;
         OrganizationId = organizationId;
-        Token = token;
         ExpiresAt = expiresAt;
     }
 
     public void ThrowIfExpired()
     {
-
         var expired = DateTime.Now.ToUniversalTime().CompareTo(ExpiresAt);
-        if (expired > 0)
-        {
-            throw new InvitationExpiredException();
-        }
+        if (expired > 0) throw new InvitationExpiredException();
+    }
+
+    public void ThrowIfNotAnOwner(Guid authorized)
+    {
+        if (!authorized.Equals(UserId)) throw new NotInviteOwnerException();
     }
 
 
-    public static OrganizationInvite Create(Guid memberId, Guid organizationId, string token)
+    public static OrganizationInvite Create(Guid memberId, Guid organizationId)
     {
-        var expiresAt = new DateTime().AddDays(5).ToUniversalTime();
-        if (token.Trim().Equals("")) throw new InvalidInvitationTokenException();
-        return new OrganizationInvite(memberId, organizationId, token, expiresAt);
+        var expiresAt = DateTime.Now.AddDays(5).ToUniversalTime();
+        return new OrganizationInvite(memberId, organizationId, expiresAt);
     }
 
     public static void ThrowIfDoesntExist(OrganizationInvite? invite)

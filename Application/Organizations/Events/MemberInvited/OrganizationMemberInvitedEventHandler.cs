@@ -1,4 +1,6 @@
 using Application.Shared.Email;
+using Domain.Auth;
+using Domain.Auth.Interfaces;
 using Domain.Organizations;
 using Domain.Organizations.Events;
 using Domain.Organizations.Interfaces;
@@ -10,25 +12,29 @@ namespace Application.Organizations.Events.MemberInvited;
 public class OrganizationMemberInvitedEventHandler: INotificationHandler<OrganizationMemberInvitedEvent>
 {
     private readonly IEmailService _emailService;
-    private readonly IOrganizationMemberRepository _memberRepository;
     private readonly IConfiguration _configuration;
+    private readonly IOrganizationInviteRepository _organizationInviteRepository;
+    private readonly IUserRepository _userRepository;
     
-    public OrganizationMemberInvitedEventHandler(IConfiguration configuration,IEmailService emailService, IOrganizationMemberRepository memberRepository)
+    public OrganizationMemberInvitedEventHandler(
+        IOrganizationInviteRepository organizationInviteRepository, 
+        IConfiguration configuration,
+        IEmailService emailService, 
+        IUserRepository userRepository)
     {
         _emailService = emailService;
-        _memberRepository = memberRepository;
         _configuration = configuration;
+        _organizationInviteRepository = organizationInviteRepository;
+        _userRepository = userRepository;
     }
     
     public async Task Handle(OrganizationMemberInvitedEvent notification, CancellationToken cancellationToken)
     {
-        var memberId = notification.Invite.MemberId;
-        var organizationId = notification.Invite.OrganizationId;
-        var member = await this._memberRepository.FindPopulated(organizationId, memberId);
-        OrganizationMember.ThrowIfDoesntExist(member);
-        var email = member.Member.PrimaryEmail;
-
-        var link = _configuration["PublicAppUrl"] + "/invite/" + notification.Invite.Token;
-        _emailService.SendOrgInvitationLink(email, link);
+        Console.WriteLine("Event triggered for sending invitation email!");
+        var invite = await _organizationInviteRepository.FindById(notification.InviteId);
+        var user = await _userRepository.FindUserById(invite.UserId);
+        User.ThrowIfDoesntExist(user);
+        var link = $"{_configuration["PublicApp"]}/invites/{invite.Id}";
+        await _emailService.SendOrgInvitationLink(user.PrimaryEmail, link);
     }
 }
