@@ -9,4 +9,6 @@ public interface IUserRepository : IBaseRepository<User>
     public Task<User?> FindUserById(Guid id);
 
     public Task<List<User>> SearchUsers(String value);
+
+    public Task<List<User>> FindByStarredRepository(Guid repositoryId);
 }

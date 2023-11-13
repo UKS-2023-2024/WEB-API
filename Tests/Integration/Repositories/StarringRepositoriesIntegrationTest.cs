@@ -1,8 +1,10 @@
-﻿using Application.Repositories.Commands.StarringRepository.StarRepository;
+﻿using Application.Auth.Queries.FindAllByStarredRepository;
+using Application.Repositories.Commands.StarringRepository.StarRepository;
 using Application.Repositories.Commands.StarringRepository.UnstarRepository;
 using Domain.Auth;
 using Domain.Auth.Enums;
 using Domain.Repositories.Exceptions;
+using FluentResults;
 using Shouldly;
 using Tests.Integration.Setup;
 
@@ -130,5 +132,19 @@ public class StarringRepositoriesIntegrationTest : BaseIntegrationTest
         
         //Assert
         await Should.NotThrowAsync(Handle);
+    }
+    
+    [Fact]
+    public async void Handle_ShouldReturn2Users_ThatStarredRepository()
+    {
+        //Arrange
+        var command = new FindAllByStarredRepositoryQuery(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d14a5"));
+        
+        //Act
+
+        async Task<IEnumerable<User>> Handle() => await _sender.Send(command);
+        
+        //Assert
+        Handle().Result.Count().ShouldBe(2);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Application.Shared;
+using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
 
@@ -19,14 +20,13 @@ public class StarRepositoryCommandHandler: ICommandHandler<StarRepositoryCommand
     {
         var repository =  _repositoryRepository.Find(request.RepositoryId);
         
-        if (repository is null)
-            throw new RepositoryNotFoundException();
+        Repository.ThrowIfDoesntExist(repository);
+        
         var repositoryMember = await
             _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.User.Id, request.RepositoryId);
-        if(repository.IsPrivate && repositoryMember == null)
-            throw new RepositoryInaccessibleException();
-        if(repository.StarredBy.Any(user=> user.Id == request.User.Id))
-            throw new RepositoryAlreadyStarredException();
+        
+        repository!.ThrowIfUserNotMemberAndRepositoryPrivate(repositoryMember);
+        repository.ThrowIfAlreadyStarredBy(request.User.Id);
         
         repository.AddToStarredBy(request.User);
         _repositoryRepository.Update(repository);

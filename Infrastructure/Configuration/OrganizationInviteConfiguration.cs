@@ -19,7 +19,7 @@ public class OrganizationInviteConfiguration: IEntityTypeConfiguration<Organizat
             .HasForeignKey(o => o.OrganizationId);
 
         builder.HasOne(o => o.User)
-            .WithMany(u => u.Invites)
+            .WithMany(u => u.OrganizationInvites)
             .HasForeignKey(o => o.UserId);
     }
 }

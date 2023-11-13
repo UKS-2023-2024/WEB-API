@@ -21,8 +21,11 @@ public static class ExceptionHandler
                 or UserNotFoundException => HttpStatusCode.NotFound,
             UserWithThisEmailExistsException 
                 or RepositoryWithThisNameExistsException
+                or RepositoryAlreadyStarredException
+                or RepositoryNotStarredException
                 or AlreadyOrganizationMemberException => HttpStatusCode.Conflict,
             PermissionDeniedException 
+                or RepositoryInaccessibleException
                 or NotInviteOwnerException => HttpStatusCode.Forbidden,
             InvitationExpiredException => HttpStatusCode.BadRequest
         };

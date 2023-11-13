@@ -42,4 +42,11 @@ public class UserRepository : BaseRepository<User>, IUserRepository
             .Take(10)
             .ToListAsync();
     }
+    
+    public Task<List<User>> FindByStarredRepository(Guid repositoryId)
+    {
+        return _context.Users
+            .Where(x => x.Starred.Any(r => r.Id == repositoryId))
+            .ToListAsync();
+    }
 }

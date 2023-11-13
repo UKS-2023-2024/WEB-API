@@ -1,4 +1,5 @@
 ﻿using Application.Shared;
+using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
 
@@ -17,10 +18,8 @@ public class UnstarRepositoryCommandHandler: ICommandHandler<UnstarRepositoryCom
     {
         var repository =  _repositoryRepository.Find(request.RepositoryId);
         
-        if (repository is null)
-            throw new RepositoryNotFoundException();
-        if(repository.StarredBy.All(u => u.Id != request.User.Id))
-            throw new RepositoryNotStarredException();
+        Repository.ThrowIfDoesntExist(repository);
+        repository!.ThrowIfNotStarredBy(request.User.Id);
 
         repository.RemoveFromStarredBy(request.User);
         _repositoryRepository.Update(repository);
