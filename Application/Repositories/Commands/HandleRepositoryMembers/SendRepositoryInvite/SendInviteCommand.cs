@@ -2,4 +2,4 @@
 
 namespace Application.Repositories.Commands.HandleRepositoryMembers.SendRepositoryInvite;
 
-public sealed record  SendRepositoryInviteCommand(Guid OwnerId, Guid UserId, Guid RepositoryId) : ICommand;
+public sealed record  SendInviteCommand(Guid OwnerId, Guid UserId, Guid RepositoryId) : ICommand;

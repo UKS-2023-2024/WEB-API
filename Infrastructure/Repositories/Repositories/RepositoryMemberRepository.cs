@@ -30,4 +30,6 @@ public class RepositoryMemberRepository: BaseRepository<RepositoryMember>, IRepo
             .Where(r => r.Repository.Id == repositoryId && r.Role == RepositoryMemberRole.OWNER)
             .FirstOrDefaultAsync();
     }
+    
+    
 }

@@ -24,6 +24,7 @@ public class MainDbContext: DbContext
     public DbSet<OrganizationPermission> OrganizationPermissions { get; set; } = null!;
     public DbSet<OrganizationRolePermission> OrganizationRolePermissions { get; set; } = null!;
     public DbSet<OrganizationInvite> OrganizationInvites { get; set; } = null!;
+    public DbSet<RepositoryInvite> RepositoryInvites { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

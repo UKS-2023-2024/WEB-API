@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Domain.Repositories.Exceptions;
 
 namespace Domain.Repositories
 {
@@ -28,6 +29,15 @@ namespace Domain.Repositories
         public static RepositoryMember Create(User member, Repository repository, RepositoryMemberRole role)
         {
             return new RepositoryMember(member, repository, role);
+        }
+        
+        public static void ThrowIfDoesntExist(RepositoryMember? member)
+        {
+            if (member is null) throw new RepositoryMemberNotFoundException();
+        }
+        public void ThrowIfNotOwner()
+        {
+            if (Role != RepositoryMemberRole.OWNER) throw new MemberNotOwnerException();
         }
     }
 }

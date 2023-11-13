@@ -88,6 +88,9 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         var repositoryOwner3 = RepositoryMember.Create(user1, repository3, RepositoryMemberRole.OWNER);
         repository1.AddMember(repositoryOwner3);
         
+        var repositoryMember1 = RepositoryMember.Create(user1, repository3, RepositoryMemberRole.CONTRIBUTOR);
+        repository1.AddMember(repositoryOwner3);
+        
         var repository4 = Repository.Create(new Guid("8e9b1cc1-35d3-4bf2-9f2c-9e00a21d94a5"), "repo3", "test", true, null);
         var repositoryOwner4 = RepositoryMember.Create(user1, repository4, RepositoryMemberRole.OWNER);
         repository4.AddMember(repositoryOwner4);
