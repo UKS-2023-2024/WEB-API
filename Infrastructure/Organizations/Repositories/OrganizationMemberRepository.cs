@@ -39,4 +39,12 @@ public class OrganizationMemberRepository: BaseRepository<OrganizationMember>, I
           .FirstOrDefaultAsync();
     }
 
+    public Task<OrganizationMember?> FindPopulated(Guid organizationId, Guid memberId)
+    {
+        return _context.OrganizationMembers
+            .Include(mem => mem.Member)
+            .FirstOrDefaultAsync(mem =>
+                mem.OrganizationId.Equals(organizationId)
+                && mem.MemberId.Equals(memberId));
+    }
 }

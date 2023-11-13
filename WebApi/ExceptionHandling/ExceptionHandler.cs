@@ -11,13 +11,21 @@ public static class ExceptionHandler
     {
         HttpStatusCode code = exception switch
         {
-            InvalidCredentialsException or UnautorizedAccessException => HttpStatusCode.Unauthorized,
-            UserNotFoundException or RepositoryNotFoundException or OrganizationNotFoundException => HttpStatusCode.NotFound,
-            UserWithThisEmailExistsException or RepositoryWithThisNameExistsException => HttpStatusCode.Conflict,
-            PermissionDeniedException => HttpStatusCode.Forbidden,
-
+            InvalidCredentialsException 
+                or UnautorizedAccessException => HttpStatusCode.Unauthorized,
+            UserNotFoundException 
+                or RepositoryNotFoundException 
+                or OrganizationNotFoundException
+                or OrganizationInviteNotFoundException
+                or OrganizationMemberNotFoundException
+                or UserNotFoundException => HttpStatusCode.NotFound,
+            UserWithThisEmailExistsException 
+                or RepositoryWithThisNameExistsException
+                or AlreadyOrganizationMemberException => HttpStatusCode.Conflict,
+            PermissionDeniedException 
+                or NotInviteOwnerException => HttpStatusCode.Forbidden,
+            InvitationExpiredException => HttpStatusCode.BadRequest
         };
-
         return (int)code;
     }
 }

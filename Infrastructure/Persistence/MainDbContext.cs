@@ -3,7 +3,6 @@ using Domain.Auth;
 using Domain.Organizations;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Infrastructure.Persistence;
 
@@ -24,6 +23,7 @@ public class MainDbContext: DbContext
     public DbSet<OrganizationRole> OrganizationRoles { get; set; } = null!;
     public DbSet<OrganizationPermission> OrganizationPermissions { get; set; } = null!;
     public DbSet<OrganizationRolePermission> OrganizationRolePermissions { get; set; } = null!;
+    public DbSet<OrganizationInvite> OrganizationInvites { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

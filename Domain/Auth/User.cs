@@ -1,4 +1,5 @@
 ﻿using Domain.Auth.Enums;
+using Domain.Auth.Exceptions;
 using Domain.Organizations;
 using Domain.Repositories;
 
@@ -19,10 +20,10 @@ public class User
     public List<SocialAccount>? SocialAccounts { get; private set; }
     public List<Email>? SecondaryEmails { get; private set; } = new();
     public bool Deleted { get; private set; }
-    public List<Organization> PendingOrganizations { get; private set; }
     public List<Repository> PendingRepositories { get; private set; }
-    
     public List<Repository> Starred { get; private set; }
+    public List<OrganizationMember> Members { get; private set; }
+    public List<OrganizationInvite> Invites { get; private set; }
     private User() { }
     private User(string primaryEmail, string fullName, string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails,List<Repository> starred)
     {
@@ -89,6 +90,11 @@ public class User
         Location = location;
         Website = website;
         SocialAccounts = socialAccounts;
+    }
+
+    public static void ThrowIfDoesntExist(User? user)
+    {
+        if (user is null) throw new UserNotFoundException();
     }
     
 }

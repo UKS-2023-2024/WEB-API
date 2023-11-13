@@ -28,10 +28,10 @@ namespace Infrastructure.Shared.Repositories
             return _context.Set<T>().ToList();
         }
 
-        public async virtual Task<T> Create(T entity)
+        public virtual async Task<T> Create(T entity)
         {
-            _context.Set<T>().Add(entity);
-            _context.SaveChanges();
+            await _context.Set<T>().AddAsync(entity);
+            await _context.SaveChangesAsync();
             return entity;
         }
 

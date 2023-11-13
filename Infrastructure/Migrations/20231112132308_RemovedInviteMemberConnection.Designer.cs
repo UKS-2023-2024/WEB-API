@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231112132308_RemovedInviteMemberConnection")]
+    partial class RemovedInviteMemberConnection
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -145,6 +148,12 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("OrganizationId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("OrganizationMemberMemberId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("OrganizationMemberOrganizationId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
@@ -154,6 +163,8 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("OrganizationId", "UserId")
                         .IsUnique();
+
+                    b.HasIndex("OrganizationMemberOrganizationId", "OrganizationMemberMemberId");
 
                     b.ToTable("OrganizationInvites");
                 });
@@ -402,6 +413,10 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Organizations.OrganizationMember", null)
+                        .WithMany("Invites")
+                        .HasForeignKey("OrganizationMemberOrganizationId", "OrganizationMemberMemberId");
+
                     b.Navigation("Organization");
 
                     b.Navigation("User");
@@ -527,6 +542,11 @@ namespace Infrastructure.Migrations
                     b.Navigation("Members");
 
                     b.Navigation("PendingInvites");
+                });
+
+            modelBuilder.Entity("Domain.Organizations.OrganizationMember", b =>
+                {
+                    b.Navigation("Invites");
                 });
 
             modelBuilder.Entity("Domain.Organizations.OrganizationPermission", b =>
