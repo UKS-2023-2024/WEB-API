@@ -1,0 +1,30 @@
+﻿version: "3.9" # optional since v1.27.0
+services:
+  web_api:
+    build:
+      context: .
+      dockerfile: Dockerfile # build the Docker image
+    container_name: web_api_application
+    ports:
+      - "5173:80"
+    depends_on:
+      - postgresql_database
+    environment:
+      - Sendgrid__ApiKey=${SENDGRID_API_KEY}
+      - JwtSettings__Key=${JWT_KEY}
+      - ConnectionString=${CONNECTION_STRING}
+    networks:
+      - network
+  postgresql_database:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=ftn
+      - POSTGRES_DB=UKS
+    ports:
+      - "4201:5432"
+    restart: always
+    networks:
+      - network
+networks:
+  network:

@@ -27,7 +27,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173")
+            policy.WithOrigins("http://localhost:5174")
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
@@ -40,7 +40,6 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 var config = builder.Configuration;
-Console.WriteLine("Connection string: " + config["ConnectionString"]);
 
 builder.Services.AddDbContext<MainDbContext>(options => 
     options.UseNpgsql(config["ConnectionString"]));
@@ -114,6 +113,17 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseCors(MyAllowSpecificOrigins);
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<MainDbContext>();
+    if (context.Database.GetPendingMigrations().Any())
+    {
+        context.Database.Migrate();
+    }
+}
 
 
 app.Run();
