@@ -25,6 +25,7 @@ public static class DependencyInjection
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IOrganizationInviteRepository, OrganizationInviteRepository>();
         services.AddScoped<IOrganizationRoleRepository, OrganizationRoleRepository>();
+        services.AddScoped<IRepositoryInviteRepository, RepositoryInviteRepository>();
         return services;
     }    
 }

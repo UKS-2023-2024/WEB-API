@@ -18,7 +18,7 @@ public class UserDto
         PrimaryEmail = primaryEmail;
     }
 
-    public static List<UserDto> MapUsersToUserDtos(List<User> users)
+    public static IEnumerable<UserDto> MapUsersToUserDtos(IEnumerable<User> users)
     {
         List<UserDto> userDtos = new List<UserDto>();
         foreach (User user in users)

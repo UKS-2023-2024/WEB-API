@@ -1,10 +1,9 @@
-﻿using Application.Repositories.Commands.Delete;
-using Application.Shared;
+﻿using Application.Shared;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
 
-namespace Application.Repositories.Commands.StarRepository;
+namespace Application.Repositories.Commands.StarringRepository.StarRepository;
 
 public class StarRepositoryCommandHandler: ICommandHandler<StarRepositoryCommand>
 {
@@ -19,18 +18,17 @@ public class StarRepositoryCommandHandler: ICommandHandler<StarRepositoryCommand
 
     public async Task Handle(StarRepositoryCommand request, CancellationToken cancellationToken)
     {
-        var repository =  _repositoryRepository.Find(request.repositoryId);
+        var repository =  _repositoryRepository.Find(request.RepositoryId);
         
-        if (repository is null)
-            throw new RepositoryNotFoundException();
+        Repository.ThrowIfDoesntExist(repository);
+        
         var repositoryMember = await
-            _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.user.Id, request.repositoryId);
-        if(repository.IsPrivate && repositoryMember == null)
-            throw new RepositoryInaccessibleException();
-        if(repository.StarredBy.Any(user=> user.Id == request.user.Id))
-            throw new RepositoryAlreadyStarredException();
+            _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.User.Id, request.RepositoryId);
         
-        repository.AddToStarredBy(request.user);
+        repository!.ThrowIfUserNotMemberAndRepositoryPrivate(repositoryMember);
+        repository.ThrowIfAlreadyStarredBy(request.User.Id);
+        
+        repository.AddToStarredBy(request.User);
         _repositoryRepository.Update(repository);
     }
 }

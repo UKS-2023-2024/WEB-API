@@ -45,12 +45,8 @@ public class AuthController: ControllerBase
     [Route("/user")]
     public async Task<IActionResult> Delete()
     {
-        var idString = _userIdentityService.FindUserIdentity(HttpContext.User);
-
-        if (idString == null)
-            return Unauthorized();
-
-        var id = Guid.Parse(idString);
+        var id = _userIdentityService.FindUserIdentity(HttpContext.User);
+        
         await _sender.Send(new DeleteUserCommand(id));
         return Ok();
     }
@@ -60,12 +56,8 @@ public class AuthController: ControllerBase
     [Route("current")]
     public async Task<IActionResult> GetCurrentUser()
     {
-        var idString = _userIdentityService.FindUserIdentity(HttpContext.User);
+        var id = _userIdentityService.FindUserIdentity(HttpContext.User);
         
-        if (idString == null)
-            return Unauthorized();
-        
-        var id = Guid.Parse(idString);
         var result = await _sender.Send(new FindUserByIdQuery(id));
         return Ok(new CurrentUserDto(result));
     }
@@ -92,12 +84,8 @@ public class AuthController: ControllerBase
     [Route("/user")]
     public async Task<IActionResult> Update([FromBody] UpdateUserDto data)
     {
-        var idString = _userIdentityService.FindUserIdentity(HttpContext.User);
-
-        if (idString == null)
-            return Unauthorized();
-
-        var id = Guid.Parse(idString);
+        var id = _userIdentityService.FindUserIdentity(HttpContext.User);
+        
         await _sender.Send(new UpdateUserCommand(id, data.FullName, data.Bio, data.Company, data.Location, data.Website, data.SocialAccounts));
         return Ok();
     }

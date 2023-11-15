@@ -12,23 +12,21 @@ public class UserIdentityService: IUserIdentityService
         _userRepository = userRepository;
     }
 
-    public string? FindUserIdentity(ClaimsPrincipal user)
+    public Guid FindUserIdentity(ClaimsPrincipal user)
     {
-        if (user.Identity is not ClaimsIdentity identity) return null;
+        if (user.Identity is not ClaimsIdentity identity) throw new UnauthorizedAccessException();
         
         var userClaims = identity.Claims;
         IEnumerable<Claim> enumerable = userClaims as Claim[] ?? userClaims.ToArray();
-        var idString = enumerable.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value;
+        var id = enumerable.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value;
 
-        if (idString is null) throw new UnauthorizedAccessException();
-        return idString;
+        if (string.IsNullOrEmpty(id)) throw new UnauthorizedAccessException();
+        return Guid.Parse(id);
     }
 
-    public Task<User> FindUserFromToken(ClaimsPrincipal user)
+    public Task<User?> FindUserFromToken(ClaimsPrincipal user)
     {
-        string id = FindUserIdentity(user);
-        if (id == null)
-            throw new UnauthorizedAccessException();
-        return _userRepository.FindUserById(new Guid(id));
+        var id = FindUserIdentity(user);
+        return _userRepository.FindUserById(id);
     }
 }

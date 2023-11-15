@@ -1,15 +1,12 @@
 ﻿using Application.Auth.Commands.Update;
-using Application.Auth.Queries.FindAll;
-using Application.Organizations.Commands.Delete;
-using Application.Repositories.Commands.Create;
 using Application.Repositories.Commands.Create.CreateForOrganization;
 using Application.Repositories.Commands.Create.CreateForUser;
 using Application.Repositories.Commands.Delete;
-using Application.Repositories.Commands.StarRepository;
-using Application.Repositories.Commands.UnstarRepository;
+using Application.Repositories.Commands.HandleRepositoryMembers.AddRepositoryMember;
+using Application.Repositories.Commands.StarringRepository.StarRepository;
+using Application.Repositories.Commands.StarringRepository.UnstarRepository;
 using Application.Repositories.Queries.FindAllByOrganizationId;
 using Application.Repositories.Queries.FindAllByOwnerId;
-using Domain.Auth;
 using Domain.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -40,12 +37,10 @@ public class RepositoryController : ControllerBase
     [Authorize]
     public async Task<IActionResult> CreateForUser([FromBody] UserRepositoryDto repositoryDto)
     {
-        string? creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        if (creatorId is null)
-            return Unauthorized();
+        var creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
 
         var createdRepositoryId = await _sender.Send(new CreateRepositoryForUserCommand(repositoryDto.Name, repositoryDto.Description, 
-            repositoryDto.IsPrivate, Guid.Parse(creatorId)));
+            repositoryDto.IsPrivate, creatorId));
 
         return Ok(createdRepositoryId);
     }
@@ -55,12 +50,10 @@ public class RepositoryController : ControllerBase
     [Authorize]
     public async Task<IActionResult> CreateForOrganization([FromBody] OrganizationRepositoryDto dto)
     {
-        string? creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        if (creatorId is null)
-            return Unauthorized();
+        var creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
 
         var createdRepositoryId = await _sender.Send(new CreateRepositoryForOrganizationCommand(dto.Name, dto.Description,
-            dto.IsPrivate, Guid.Parse(creatorId), dto.OrganizationId));
+            dto.IsPrivate, creatorId, dto.OrganizationId));
 
         return Ok(createdRepositoryId);
     }
@@ -69,11 +62,9 @@ public class RepositoryController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Delete(string id)
     {
-        string? userId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        if (userId is null)
-            return Unauthorized();
+        var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
 
-        await _sender.Send(new DeleteRepositoryCommand(Guid.Parse(userId), Guid.Parse(id)));
+        await _sender.Send(new DeleteRepositoryCommand(userId, Guid.Parse(id)));
 
         return Ok();
     }
@@ -83,11 +74,8 @@ public class RepositoryController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Update([FromBody] UpdateRepositoryDto dto)
     {
-        string? userId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        if (userId is null)
-            return Unauthorized();
-
-        Repository repository = await _sender.Send(new UpdateRepositoryCommand(Guid.Parse(userId), dto.Id, dto.Name, dto.Description, dto.IsPrivate));
+        var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Repository repository = await _sender.Send(new UpdateRepositoryCommand(userId, dto.Id, dto.Name, dto.Description, dto.IsPrivate));
 
         return Ok(repository);
     }
@@ -96,10 +84,8 @@ public class RepositoryController : ControllerBase
     [Authorize]
     public async Task<IActionResult> FindLoggedUserRepositories()
     {
-        string? userId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        if (userId is null)
-            return Unauthorized();
-        var repositories = await _sender.Send(new FindAllRepositoriesByOwnerIdQuery(Guid.Parse(userId)));
+        var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        var repositories = await _sender.Send(new FindAllRepositoriesByOwnerIdQuery(userId));
         return Ok(repositories);
     }
     
@@ -124,6 +110,27 @@ public class RepositoryController : ControllerBase
         await _sender.Send(new UnstarRepositoryCommand(user,repositoryId));
         return Ok();
     }
+
+    [HttpPost("send-invite/{repositoryId:guid}/{userId:guid}")]
+    [Authorize]
+    public async Task<IActionResult> SendRepositoryInvite(Guid repositoryId, Guid userId)
+    {
+        var user = await _userIdentityService.FindUserFromToken(HttpContext.User);
+        if (user is null)
+            return Unauthorized();
+        await _sender.Send(new UnstarRepositoryCommand(user,repositoryId));
+        return Ok();
+    }
+    
+    [HttpPost("add-user/{inviteId:guid}")]
+    [Authorize]
+    public async Task<IActionResult> AddUserToRepository(Guid inviteId)
+    {
+        var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        await _sender.Send(new AddRepositoryMemberCommand(userId, inviteId));
+        return Ok();
+    }
+    
 
     [HttpGet("organization/{organizationId}")]
     [Authorize]

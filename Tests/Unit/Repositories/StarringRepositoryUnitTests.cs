@@ -1,5 +1,5 @@
-﻿using Application.Repositories.Commands.StarRepository;
-using Application.Repositories.Commands.UnstarRepository;
+﻿using Application.Repositories.Commands.StarringRepository.StarRepository;
+using Application.Repositories.Commands.StarringRepository.UnstarRepository;
 using Domain.Auth;
 using Domain.Auth.Enums;
 using Domain.Repositories;

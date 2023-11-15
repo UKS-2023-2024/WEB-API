@@ -11,7 +11,8 @@ public class OrganizationConfiguration: IEntityTypeConfiguration<Organization>
         builder
             .HasMany(o => o.Members)
             .WithOne(m => m.Organization)
-            .HasForeignKey(o => o.OrganizationId);
+            .HasForeignKey(o => o.OrganizationId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder
             .HasMany(o => o.PendingInvites)

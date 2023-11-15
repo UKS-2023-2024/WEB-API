@@ -27,7 +27,7 @@ public class DeleteOrganizationCommandHandler: ICommandHandler<DeleteOrganizatio
              Permission = "owner" 
             });
         
-        Organization organization = _organizationRepository.Find(request.OrganizationId);
+        var organization = _organizationRepository.Find(request.OrganizationId);
         _organizationRepository.Delete(organization);
     }
 }

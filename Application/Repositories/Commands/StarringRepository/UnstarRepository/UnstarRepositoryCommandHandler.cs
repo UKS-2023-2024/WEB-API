@@ -1,8 +1,9 @@
 ﻿using Application.Shared;
+using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
 
-namespace Application.Repositories.Commands.UnstarRepository;
+namespace Application.Repositories.Commands.StarringRepository.UnstarRepository;
 
 public class UnstarRepositoryCommandHandler: ICommandHandler<UnstarRepositoryCommand>
 {
@@ -15,14 +16,12 @@ public class UnstarRepositoryCommandHandler: ICommandHandler<UnstarRepositoryCom
 
     public async Task Handle(UnstarRepositoryCommand request, CancellationToken cancellationToken)
     {
-        var repository =  _repositoryRepository.Find(request.repositoryId);
+        var repository =  _repositoryRepository.Find(request.RepositoryId);
         
-        if (repository is null)
-            throw new RepositoryNotFoundException();
-        if(repository.StarredBy.All(u => u.Id != request.user.Id))
-            throw new RepositoryNotStarredException();
+        Repository.ThrowIfDoesntExist(repository);
+        repository!.ThrowIfNotStarredBy(request.User.Id);
 
-        repository.RemoveFromStarredBy(request.user);
+        repository.RemoveFromStarredBy(request.User);
         _repositoryRepository.Update(repository);
     }
 }

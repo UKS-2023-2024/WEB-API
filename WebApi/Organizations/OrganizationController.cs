@@ -3,7 +3,6 @@ using Application.Organizations.Commands.Create;
 using Application.Organizations.Commands.Delete;
 using Application.Organizations.Commands.SendInvite;
 using Application.Organizations.Queries.FindUserOrganizations;
-using Domain.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +11,7 @@ using WEB_API.Organization.Presenters;
 using WEB_API.Shared.TokenHandler;
 using WEB_API.Shared.UserIdentityService;
 
-namespace WEB_API.Organization;
+namespace WEB_API.Organizations;
 
 
 [ApiController]
@@ -34,12 +33,8 @@ public class OrganizationController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Create([FromBody] OrganizationDto organizationDto)
     {
-        var idString = _userIdentityService.FindUserIdentity(HttpContext.User);
+        var creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
         
-        if (idString == null)
-            return Unauthorized();
-        
-        var creatorId = Guid.Parse(idString);
         List<Guid> pendingMembersGuids = new List<Guid>();
         foreach (string id in organizationDto.PendingMembers)
         {
@@ -55,11 +50,9 @@ public class OrganizationController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Delete(string id)
     {
-        string? userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
         
-        if (userId is null)
-            return Unauthorized();
-        await _sender.Send(new DeleteOrganizationCommand(Guid.Parse(id), Guid.Parse(userId)));
+        await _sender.Send(new DeleteOrganizationCommand(Guid.Parse(id), userId));
         return Ok();
     }
 
@@ -67,28 +60,25 @@ public class OrganizationController : ControllerBase
     [Authorize]
     public async Task<IActionResult> FindUserOrganizations()
     {
-        string? userId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        
-        if (userId is null)
-            return Unauthorized();
+        var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
 
-        List<Domain.Organizations.Organization> organizations = await _sender.Send(new FindUserOrganizationsQuery(Guid.Parse(userId)));
+        List<Domain.Organizations.Organization> organizations = await _sender.Send(new FindUserOrganizationsQuery(userId));
         return Ok(OrganizationPresenter.MapOrganizationsToOrganizationPresenters(organizations));
     }
 
     [HttpPost("{orgId}/members/{memberId}/invite")]
     public async Task<IActionResult> SendOrgInvitation(string orgId, string memberId)
     {
-        string authorized = _userIdentityService.FindUserIdentity(HttpContext.User);
-        await _sender.Send(new SendInviteCommand(new Guid(authorized), new Guid(orgId), new Guid(memberId)));
+        var authorized = _userIdentityService.FindUserIdentity(HttpContext.User);
+        await _sender.Send(new SendInviteCommand(authorized, new Guid(orgId), new Guid(memberId)));
         return Ok();
     }
 
     [HttpPost("/invite/${inviteId}")]
     public async Task<IActionResult> AcceptOrgInvitation(string inviteId)
     {
-        string authorized = _userIdentityService.FindUserIdentity(HttpContext.User);
-        await _sender.Send(new AcceptInviteCommand(new Guid(authorized) ,new Guid(inviteId)));
+        var authorized = _userIdentityService.FindUserIdentity(HttpContext.User);
+        await _sender.Send(new AcceptInviteCommand(authorized ,new Guid(inviteId)));
         return Ok();
     }
 }

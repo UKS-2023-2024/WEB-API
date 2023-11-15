@@ -9,7 +9,7 @@ public static class ExceptionHandler
 {
     public static int GetStatusCode(this BaseException exception)
     {
-        HttpStatusCode code = exception switch
+        var code = exception switch
         {
             InvalidCredentialsException 
                 or UnautorizedAccessException => HttpStatusCode.Unauthorized,
@@ -18,13 +18,20 @@ public static class ExceptionHandler
                 or OrganizationNotFoundException
                 or OrganizationInviteNotFoundException
                 or OrganizationMemberNotFoundException
+                or RepositoryMemberNotFoundException
+                or RepositoryInviteNotFound
                 or UserNotFoundException => HttpStatusCode.NotFound,
             UserWithThisEmailExistsException 
                 or RepositoryWithThisNameExistsException
                 or AlreadyOrganizationMemberException => HttpStatusCode.Conflict,
             PermissionDeniedException 
-                or NotInviteOwnerException => HttpStatusCode.Forbidden,
-            InvitationExpiredException => HttpStatusCode.BadRequest
+                or MemberNotOwnerException
+                or RepositoryInaccessibleException
+                or NotInviteOwnerException
+                or UserNotAOrganizationMemberException => HttpStatusCode.Forbidden,
+            InvitationExpiredException
+                or RepositoryAlreadyStarredException
+                or RepositoryNotStarredException => HttpStatusCode.BadRequest
         };
         return (int)code;
     }

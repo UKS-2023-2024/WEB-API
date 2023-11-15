@@ -30,11 +30,10 @@ public class OrganizationMemberInvitedEventHandler: INotificationHandler<Organiz
     
     public async Task Handle(OrganizationMemberInvitedEvent notification, CancellationToken cancellationToken)
     {
-        Console.WriteLine("Event triggered for sending invitation email!");
         var invite = await _organizationInviteRepository.FindById(notification.InviteId);
         var user = await _userRepository.FindUserById(invite.UserId);
         User.ThrowIfDoesntExist(user);
-        var link = $"{_configuration["PublicApp"]}/invites/{invite.Id}";
+        var link = $"{_configuration["PublicApp"]}/organization/invites/{invite.Id}";
         await _emailService.SendOrgInvitationLink(user.PrimaryEmail, link);
     }
 }

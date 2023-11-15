@@ -1,5 +1,6 @@
 ﻿using Domain.Auth;
 using Domain.Organizations;
+using Domain.Repositories.Exceptions;
 
 namespace Domain.Repositories
 {
@@ -10,31 +11,32 @@ namespace Domain.Repositories
         public string Description { get; private set; }
         public bool IsPrivate { get; private set; }
         public Organization? Organization { get; private set; }
-        public List<RepositoryMember> Members { get; private set; }
-        public List<User> PendingMembers { get; private set; }
+        private List<RepositoryMember> _members = new();
+        private List<RepositoryInvite> _pendingInvites = new();
+        public IReadOnlyList<RepositoryMember> Members => new List<RepositoryMember>(_members);
+        public IReadOnlyList<RepositoryInvite> PendingInvites => new List<RepositoryInvite>(_pendingInvites);
         public List<User> StarredBy { get; private set; }
+        
 
         private Repository() { }
 
-        private Repository(string name, string description, bool isPrivate, Organization? organization, List<RepositoryMember> members, List<User> pendingMembers, List<User> starredBy)
+        private Repository(string name, string description, bool isPrivate, Organization? organization, List<User> starredBy)
         {
             Name = name;
             Description = description;
             IsPrivate = isPrivate;  
             Organization = organization;
-            Members = members;
-            PendingMembers = pendingMembers;
             StarredBy = starredBy;
         }
 
         public static Repository Create(string name, string description, bool isPrivate, Organization? organization)
         {
-            return new Repository(name, description, isPrivate, organization, new(), new(), new());
+            return new Repository(name, description, isPrivate, organization, new());
         }
 
         public static Repository Create(Guid id, string name, string description, bool isPrivate, Organization? organization)
         {
-            var repository = new Repository(name, description, isPrivate, organization, new(), new(), new())
+            var repository = new Repository(name, description, isPrivate, organization, new())
              {
                  Id = id
              };
@@ -43,7 +45,7 @@ namespace Domain.Repositories
 
         public void AddMember(RepositoryMember member)
         {
-            Members.Add(member);
+            _members.Add(member);
         }
         
         public void AddToStarredBy(User user)
@@ -68,6 +70,26 @@ namespace Domain.Repositories
             }
 
             IsPrivate = isPrivate;
+        }
+
+        public void ThrowIfAlreadyStarredBy(Guid userId)
+        {
+            if(StarredBy.Any(user=> user.Id == userId))
+                throw new RepositoryAlreadyStarredException();
+        }
+        public void ThrowIfNotStarredBy(Guid userId)
+        {
+            if(StarredBy.All(u => u.Id != userId))
+                throw new RepositoryNotStarredException();
+        }
+        public static void ThrowIfDoesntExist(Repository? user)
+        {
+            if (user is null) throw new RepositoryNotFoundException();
+        }
+        public void ThrowIfUserNotMemberAndRepositoryPrivate(RepositoryMember? repositoryMember)
+        {
+            if(IsPrivate && repositoryMember == null)
+                throw new RepositoryInaccessibleException();
         }
     }
 }

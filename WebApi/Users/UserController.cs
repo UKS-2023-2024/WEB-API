@@ -1,4 +1,5 @@
-﻿using Application.Auth.Queries.Search;
+﻿using Application.Auth.Queries.FindAllByStarredRepository;
+using Application.Auth.Queries.Search;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,14 @@ public class UserController: ControllerBase
     public async Task<IActionResult> Search([FromQuery] string value)
     {
         var users = await _sender.Send(new SearchUsersQuery(value));
+        return Ok(UserDto.MapUsersToUserDtos(users));
+    }
+    
+    [HttpGet("starred/{repositoryId:guid}")]
+    [Authorize]
+    public async Task<IActionResult> Search(Guid repositoryId)
+    {
+        var users = await _sender.Send(new FindAllByStarredRepositoryQuery(repositoryId));
         return Ok(UserDto.MapUsersToUserDtos(users));
     }
 }

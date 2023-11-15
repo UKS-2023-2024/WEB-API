@@ -25,5 +25,15 @@ public class EmailService: IEmailService
         SendGridMessage message = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
         await _sendgrid.SendEmailAsync(message);
     }
-    
+
+    public async Task SendRepoInvitationLink(string email, string link)
+    {
+        EmailAddress from = new EmailAddress(_sender);
+        EmailAddress to = new EmailAddress(email);
+        const string subject = "You have been invited!";
+        string plainTextContent = $"You have been invited to repository {link}";
+        string htmlContent = "";
+        SendGridMessage message = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+        await _sendgrid.SendEmailAsync(message);
+    }
 }

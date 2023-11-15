@@ -36,9 +36,12 @@ public class CreateRepositoryIntegrationTest : BaseIntegrationTest
     async Task CreateRepositoryForOrganization_ShouldBeSuccess_WhenCommandValid()
     {
         //Arrange
+        var organization = _context.Organizations.FirstOrDefault(o => o.Name.Equals("organization1"));
+        
         var command = new CreateRepositoryForOrganizationCommand("repository", "test repository", false,
-            Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
-
+            Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), organization!.Id);
+        
+        
         //Act
         Guid repositoryId = await _sender.Send(command);
         Repository repository = await _context.Repositories.FindAsync(repositoryId);
@@ -70,8 +73,11 @@ public class CreateRepositoryIntegrationTest : BaseIntegrationTest
     async Task CreateRepositoryForOrganization_ShouldFail_WhenOrganizationAlreadyHasRepositoryWithSameName()
     {
         //Arrange
-        var command = new CreateRepositoryForOrganizationCommand("repo", "test repo", false,
-            Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
+        
+        var organization = _context.Organizations.FirstOrDefault(o => o.Name.Equals("organization1"));
+        
+        var command = new CreateRepositoryForOrganizationCommand("repo2", "test repo", false,
+            Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), organization!.Id);
 
         //Act
 
