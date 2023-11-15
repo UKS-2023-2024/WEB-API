@@ -40,7 +40,7 @@ public class DeleteRepositoryIntegrationTest: BaseIntegrationTest
     {
         //Arrange
         var command = new DeleteRepositoryCommand(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"),
-            new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d14a5"));
+            new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7"));
 
         //Act
         Func<Task> handle = async () =>

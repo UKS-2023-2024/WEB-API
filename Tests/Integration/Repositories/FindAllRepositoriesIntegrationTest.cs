@@ -32,7 +32,8 @@ public class FindAllRepositoriesByOrganizationIdIntegrationTest : BaseIntegratio
     async Task FindAllRepositoriesByOrganizationId_ShouldReturnNonEmptyList()
     {
         //Arrange
-        var query = new FindAllRepositoriesByOrganizationIdQuery(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
+        var organization = _context.Organizations.FirstOrDefault(o => o.Name.Equals("organization1"));
+        var query = new FindAllRepositoriesByOrganizationIdQuery(organization!.Id);
 
         //Act
         var repositories = await _sender.Send(query);

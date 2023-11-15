@@ -17,10 +17,14 @@ public class RepositoryConfiguration: IEntityTypeConfiguration<Repository>
         builder
             .HasMany(o => o.PendingInvites)
             .WithOne(u => u.Repository)
-            .OnDelete(DeleteBehavior.Cascade);;
+            .OnDelete(DeleteBehavior.Cascade);
         
         builder
             .HasMany(o => o.StarredBy)
             .WithMany(u => u.Starred);
+
+        builder.HasOne(r => r.Organization)
+            .WithMany(o => o.Repositories)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

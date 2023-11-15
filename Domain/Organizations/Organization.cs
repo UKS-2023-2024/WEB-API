@@ -1,5 +1,6 @@
 ﻿using Domain.Auth;
 using Domain.Organizations.Exceptions;
+using Domain.Repositories;
 
 namespace Domain.Organizations;
 
@@ -14,6 +15,7 @@ public class Organization
     public string? Url { get; private set; }
     public string? Location { get; private set; }
     public List<OrganizationInvite> PendingInvites { get; private set; }
+    public List<Repository> Repositories { get; private set; }
     private Organization()
     {
     }

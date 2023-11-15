@@ -4,6 +4,7 @@ using Domain.Auth.Enums;
 using Domain.Auth.Exceptions;
 using Domain.Auth.Interfaces;
 using Domain.Organizations;
+using Domain.Organizations.Exceptions;
 using Domain.Organizations.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
@@ -22,6 +23,7 @@ public class SendInviteForRepositoryUnitTests
     private readonly Mock<IRepositoryInviteRepository> _repositoryInviteRepository = new();
     private readonly Mock<IRepositoryRepository> _repositoryRepository = new();
     private readonly Mock<IOrganizationMemberRepository> _organizationMemberRepository = new();
+    private readonly Mock<IPermissionService> _permissionService = new();
     private readonly User _user1;
     private readonly User _user2;
     private readonly User _user3;
@@ -37,10 +39,19 @@ public class SendInviteForRepositoryUnitTests
 
         var organization = Organization.Create(new Guid("8e9b1cc2-ffaa-4bf2-9f2c-5e00a21d92a9"),"orgName", "dusanjanosevic007@gmail.com",
             new List<User>());
+
+        var orgMember1 = OrganizationMember.Create(_user2.Id, organization.Id, OrganizationRole.Create("some", "some"));
+        var orgMember2 = OrganizationMember.Create(_user1.Id, organization.Id, OrganizationRole.Create("some", "some"));
+        _organizationMemberRepository
+            .Setup(x => x.FindByUserIdAndOrganizationId(orgMember1.MemberId, orgMember1.OrganizationId))
+            .ReturnsAsync(orgMember1);
+        _organizationMemberRepository
+            .Setup(x => x.FindByUserIdAndOrganizationId(orgMember2.MemberId, orgMember2.OrganizationId))
+            .ReturnsAsync(orgMember2);
         
-        organization.AddMember(OrganizationMember.Create(_user2.Id,organization.Id,OrganizationRole.Create("some","some")));
-        organization.AddMember(OrganizationMember.Create(_user1.Id,organization.Id,OrganizationRole.Create("some","some")));
-        
+        organization.AddMember(orgMember1);
+        organization.AddMember(orgMember2);
+
         _repository1 = Repository.Create(new Guid("8e9b1cc1-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository1", "test", false, null);
         _repository2 = Repository.Create(new Guid("8e9b1cc2-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository2", "test", false, null);
         _repository3 = Repository.Create(new Guid("8e9b1cc3-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository3", "test", false, organization);
@@ -69,7 +80,7 @@ public class SendInviteForRepositoryUnitTests
         _mediator.Setup(o =>
             o.Publish(It.IsAny<INotification>(), It.IsAny<CancellationToken>()));
     }
-    
+
     [Fact]
     public async void Handle_ShouldReturnError_WhenUserAlreadyMember()
     {
@@ -78,7 +89,8 @@ public class SendInviteForRepositoryUnitTests
             _user2.Id,_repository2.Id);
         
         var handler = new SendInviteCommandHandler(_mediator.Object, _repositoryMemberRepositoryMock.Object,
-            _repositoryInviteRepository.Object,_userRepository.Object,_repositoryRepository.Object,_organizationMemberRepository.Object);
+            _repositoryInviteRepository.Object,_userRepository.Object,_repositoryRepository.Object,_organizationMemberRepository.Object,
+            _permissionService.Object);
         
         //Act
         async Task Handle() => await handler.Handle(command, default);
@@ -96,7 +108,8 @@ public class SendInviteForRepositoryUnitTests
         
         //Act
         var result = new SendInviteCommandHandler(_mediator.Object, _repositoryMemberRepositoryMock.Object,
-            _repositoryInviteRepository.Object,_userRepository.Object,_repositoryRepository.Object,_organizationMemberRepository.Object).Handle(command,default);
+            _repositoryInviteRepository.Object,_userRepository.Object,_repositoryRepository.Object,_organizationMemberRepository.Object,
+            _permissionService.Object).Handle(command,default);
 
         //Assert
         result.IsFaulted.ShouldBe(false);
@@ -110,7 +123,8 @@ public class SendInviteForRepositoryUnitTests
             _user3.Id,_repository2.Id);
         
         var handler = new SendInviteCommandHandler(_mediator.Object, _repositoryMemberRepositoryMock.Object,
-            _repositoryInviteRepository.Object,_userRepository.Object,_repositoryRepository.Object,_organizationMemberRepository.Object);
+            _repositoryInviteRepository.Object,_userRepository.Object,_repositoryRepository.Object,_organizationMemberRepository.Object,
+            _permissionService.Object);
         
         //Act
         async Task Handle() => await handler.Handle(command, default);
@@ -126,7 +140,8 @@ public class SendInviteForRepositoryUnitTests
             _user3.Id,_repository2.Id);
         
         var handler = new SendInviteCommandHandler(_mediator.Object, _repositoryMemberRepositoryMock.Object,
-            _repositoryInviteRepository.Object,_userRepository.Object,_repositoryRepository.Object,_organizationMemberRepository.Object);
+            _repositoryInviteRepository.Object,_userRepository.Object,_repositoryRepository.Object,_organizationMemberRepository.Object,
+            _permissionService.Object);
         
         //Act
         async Task Handle() => await handler.Handle(command, default);
@@ -143,7 +158,8 @@ public class SendInviteForRepositoryUnitTests
             new Guid("8e9b1aaa-35d3-4bf2-9f2c-5e00a21d92a8"),_repository2.Id);
         
         var handler = new SendInviteCommandHandler(_mediator.Object, _repositoryMemberRepositoryMock.Object,
-            _repositoryInviteRepository.Object,_userRepository.Object,_repositoryRepository.Object,_organizationMemberRepository.Object);
+            _repositoryInviteRepository.Object,_userRepository.Object,_repositoryRepository.Object,_organizationMemberRepository.Object,
+            _permissionService.Object);
         
         //Act
         async Task Handle() => await handler.Handle(command, default);
@@ -161,9 +177,29 @@ public class SendInviteForRepositoryUnitTests
         
         //Act
         var result = new SendInviteCommandHandler(_mediator.Object, _repositoryMemberRepositoryMock.Object,
-            _repositoryInviteRepository.Object,_userRepository.Object,_repositoryRepository.Object,_organizationMemberRepository.Object).Handle(command,default);
+            _repositoryInviteRepository.Object,_userRepository.Object,_repositoryRepository.Object,_organizationMemberRepository.Object,
+            _permissionService.Object).Handle(command,default);
 
         //Assert
         result.IsFaulted.ShouldBe(false);
+    }
+    
+    [Fact]
+    public async void Handle_ShouldReturnError_WhenUserNotAMemberAndUserNotInOrganization()
+    {
+        //Arrange
+        var command = new SendInviteCommand(_user1.Id,
+            _user3.Id,_repository3.Id);
+        
+        var handler = new SendInviteCommandHandler(_mediator.Object, _repositoryMemberRepositoryMock.Object,
+            _repositoryInviteRepository.Object, _userRepository.Object, _repositoryRepository.Object,
+            _organizationMemberRepository.Object,_permissionService.Object);
+        
+        //Act
+
+        async Task Handle() => await handler.Handle(command, default);
+
+        //Assert
+        await Should.ThrowAsync<UserNotAOrganizationMemberException>(Handle);
     }
 }
