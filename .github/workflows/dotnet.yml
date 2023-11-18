@@ -30,4 +30,4 @@ jobs:
     - name: Integration Tests
       run: dotnet test Tests --filter Integration
       env:
-        TestConnectionString: "123"
+        ConnectionString: "123"
