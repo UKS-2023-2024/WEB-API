@@ -8,8 +8,6 @@ on:
     branches: [ "develop" ]
   pull_request:
     branches: [ "develop" ]
-env:
-  TestConnectionString: ${{secrets.REPO_DATABASE_KEY}}
 jobs:
   build:
 
@@ -27,9 +25,9 @@ jobs:
       run: dotnet build WebApi --no-restore
     - name: Unit tests
       run: dotnet test Tests --filter Unit
-    - name: Print env
-      run: echo "$TestConnectionString"
     - name: Print secrets
       run: echo "${{secrets.REPO_DATABASE_KEY}}"
     - name: Integration Tests
       run: dotnet test Tests --filter Integration
+      env:
+        TestConnectionString: ${{secrets.REPO_DATABASE_KEY}}
