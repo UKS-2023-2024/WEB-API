@@ -42,6 +42,7 @@ public class SendInviteIntegrationTest: BaseIntegrationTest
     async Task SendInvite_ShouldFail_WhenMemberAlreadyExists()
     {
 
+        
         //Arrange
         Guid authorized = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5");
         Guid memberId = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7");
