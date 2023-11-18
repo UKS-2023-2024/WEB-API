@@ -20,6 +20,8 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 7.0.x
+      env:
+        TestConnectionString: ${{secrets.REPO_DATABASE_KEY}}
     - name: Restore dependencies
       run: dotnet restore "WebApi/WebApi.csproj"
     - name: Build
