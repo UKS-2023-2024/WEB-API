@@ -27,4 +27,4 @@ jobs:
     - name: Unit tests
       run: dotnet test Tests --filter Unit
     - name: Print env
-      run: echo "${{secrets.INTEGRATION_TESTS_KEY}}"
+      run: echo "${{secrets.REPO_DATABASE_KEY}}"
