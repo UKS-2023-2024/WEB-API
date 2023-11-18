@@ -30,4 +30,4 @@ jobs:
     - name: Integration Tests
       run: dotnet test Tests --filter Integration
       env:
-        TestConnectionString: ${{secrets.REPO_DATABASE_KEY}}
+        TestConnectionString: "123"
