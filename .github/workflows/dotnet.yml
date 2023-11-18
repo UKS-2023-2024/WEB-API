@@ -31,3 +31,4 @@ jobs:
       run: dotnet test Tests --filter Integration
       env:
         ConnectionString: ${{secrets.REPO_DATABASE_KEY}}
+        Sendgrid__ApiKey: ${{secrets.SENDGRID_API_KEY}}
