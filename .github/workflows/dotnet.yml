@@ -9,7 +9,7 @@ on:
   pull_request:
     branches: [ "develop" ]
 env:
-  TestConnectionString: 123
+  TestConnectionString: ${{secrets.REPO_DATABASE_KEY}}
 jobs:
   build:
 
