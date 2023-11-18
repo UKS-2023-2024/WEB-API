@@ -8,7 +8,8 @@ on:
     branches: [ "develop" ]
   pull_request:
     branches: [ "develop" ]
-
+env:
+  TestConnectionString: 123
 jobs:
   build:
 
@@ -20,8 +21,6 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 7.0.x
-      env:
-        TestConnectionString: 123
     - name: Restore dependencies
       run: dotnet restore "WebApi/WebApi.csproj"
     - name: Build
