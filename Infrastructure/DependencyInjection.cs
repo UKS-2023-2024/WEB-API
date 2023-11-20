@@ -1,9 +1,11 @@
 ﻿using Application.Shared.Email;
 using Domain.Auth.Interfaces;
+using Domain.Milestones.Interfaces;
 using Domain.Organizations.Interfaces;
 using Domain.Repositories.Interfaces;
 using Infrastructure.Auth.Repositories;
 using Infrastructure.Auth.Services;
+using Infrastructure.Milestones;
 using Infrastructure.Organizations.Repositories;
 using Infrastructure.Repositories.Repositories;
 using Infrastructure.Shared.Email;
@@ -26,6 +28,7 @@ public static class DependencyInjection
         services.AddScoped<IOrganizationInviteRepository, OrganizationInviteRepository>();
         services.AddScoped<IOrganizationRoleRepository, OrganizationRoleRepository>();
         services.AddScoped<IRepositoryInviteRepository, RepositoryInviteRepository>();
+        services.AddScoped<IMilestoneRepository, MilestoneRepository>();
         return services;
     }    
 }
