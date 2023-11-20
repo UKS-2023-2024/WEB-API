@@ -15,9 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Set up Docker
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
 
       - name: Build and Push Docker Images
         run: |
@@ -26,5 +26,9 @@ jobs:
           docker-compose push
 
         env:
-          CONNECTION_STRING: ${{secrets.REPO_DATABASE_KEY}}
+          CONNECTION_STRING: ${{secrets.CONNECTION_STRING}}
           SENDGRID_API_KEY: ${{secrets.SENDGRID_API_KEY}}
+          JWT_KEY: ${{secrets.JWT_KEY}}
+          POSTGRES_USER: ${{secrets.POSTGRES_USER}}
+          POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
+          POSTGRES_DB: ${{secrets.POSTGRES_DB}}

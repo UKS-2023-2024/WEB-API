@@ -9,12 +9,10 @@ services:
       - "5173:80"
     depends_on:
       - postgresql_database
-      - test_postgresql_database
     environment:
       - Sendgrid__ApiKey=${SENDGRID_API_KEY}
       - JwtSettings__Key=${JWT_KEY}
       - ConnectionString=${CONNECTION_STRING}
-      - TestConnectionString=${TEST_CONNECTION_STRING}
     networks:
       - network
   postgresql_database:
