@@ -5,30 +5,28 @@ using Domain.Repositories;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
+using Testcontainers.PostgreSql;
 
 namespace Tests.Integration.Setup;
 
-public class TestDatabaseFactory : WebApplicationFactory<Program>
+public class TestDatabaseFactory : WebApplicationFactory<Program>,IAsyncLifetime
 {
     public MainDbContext dbContext;
-    public IConfiguration _configuration;
+    private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()
+        .WithImage("postgres:latest")
+        .WithDatabase("some")
+        .WithUsername("postgres")
+        .WithPassword("postgres")
+        .Build();
+    
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        
-        builder.ConfigureAppConfiguration((context, conf) =>
-        {
-            // expand default config with settings designed for Integration Tests
-            conf.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json"));
-            conf.AddEnvironmentVariables();
-
-            // here we can "compile" the settings. Api.Setup will do the same, it doesn't matter.
-            _configuration = conf.Build();
-        });
         builder.ConfigureServices(services =>
         {
             using var scope = BuildServiceProvider(services).CreateScope();
@@ -36,7 +34,22 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
             var db = scopedServices.GetRequiredService<MainDbContext>();
             dbContext = db;
             InitializeDatabase(db);
+
+            services.AddDbContext<MainDbContext>(options =>
+            {
+                options.UseNpgsql(_dbContainer.GetConnectionString());
+            });
         });
+    }
+    
+    public Task InitializeAsync()
+    {
+       return _dbContainer.StartAsync();
+    }
+
+    public new Task DisposeAsync()
+    {
+        return _dbContainer.StopAsync();
     }
 
     private ServiceProvider BuildServiceProvider(IServiceCollection services)
@@ -47,7 +60,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
             services.Remove(descriptor);
         }
 
-        services.AddDbContext<MainDbContext>(opt => opt.UseNpgsql(_configuration["ConnectionString"]));
+        services.AddDbContext<MainDbContext>(opt => opt.UseNpgsql(_dbContainer.GetConnectionString()));
         return services.BuildServiceProvider();
     }
 
@@ -97,5 +110,4 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         context.Repositories.AddRange(repository1,repository2,repository3,repository4);
         context.SaveChanges();
     }
-
 }

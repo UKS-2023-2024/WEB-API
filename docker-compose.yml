@@ -9,18 +9,20 @@ services:
       - "5173:80"
     depends_on:
       - postgresql_database
+      - test_postgresql_database
     environment:
       - Sendgrid__ApiKey=${SENDGRID_API_KEY}
       - JwtSettings__Key=${JWT_KEY}
       - ConnectionString=${CONNECTION_STRING}
+      - TestConnectionString=${TEST_CONNECTION_STRING}
     networks:
       - network
   postgresql_database:
     image: postgres:latest
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=ftn
-      - POSTGRES_DB=UKS
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     ports:
       - "4201:5432"
     restart: always

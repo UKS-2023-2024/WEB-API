@@ -75,6 +75,8 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+Console.WriteLine(config["TestConnectionString"]);
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x =>
     x.TokenValidationParameters = new TokenValidationParameters
     {
@@ -114,14 +116,17 @@ app.UseAuthorization();
 
 app.UseCors(MyAllowSpecificOrigins);
 
-using (var scope = app.Services.CreateScope())
+if (!builder.Environment.IsDevelopment())
 {
-    var services = scope.ServiceProvider;
-
-    var context = services.GetRequiredService<MainDbContext>();
-    if (context.Database.GetPendingMigrations().Any())
+    using (var scope = app.Services.CreateScope())
     {
-        context.Database.Migrate();
+        var services = scope.ServiceProvider;
+
+        var context = services.GetRequiredService<MainDbContext>();
+        if (context.Database.GetPendingMigrations().Any())
+        {
+            context.Database.Migrate();
+        }
     }
 }
 
