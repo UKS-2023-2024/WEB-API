@@ -6,6 +6,7 @@ using Tests.Integration.Setup;
 
 namespace Tests.Integration.Milestones;
 
+[Collection("Sequential")]
 public class DeleteMilestoneIntegrationTests: BaseIntegrationTest
 {
     public DeleteMilestoneIntegrationTests(TestDatabaseFactory factory) : base(factory)
