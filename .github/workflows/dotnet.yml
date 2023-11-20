@@ -19,7 +19,9 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Execute tests
-        run: dotnet test Tests
+        run: |
+        docker exec -it web_api /bin/bash
+        dotnet test
 
       - name: Build and Push Docker Images
         run: |
