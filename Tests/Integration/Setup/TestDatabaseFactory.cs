@@ -1,5 +1,6 @@
 ﻿using Domain.Auth;
 using Domain.Auth.Enums;
+using Domain.Milestones;
 using Domain.Organizations;
 using Domain.Repositories;
 using Infrastructure.Persistence;
@@ -92,9 +93,12 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         var repositoryOwner4 = RepositoryMember.Create(user1, repository4, RepositoryMemberRole.OWNER);
         repository4.AddMember(repositoryOwner4);
 
+        var milestone1 = Milestone.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"), "title", "description", new DateOnly(), new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"));
+        
         context.Users.AddRange(user1, user2, user3, user4);
         context.Organizations.AddRange(organization1);
         context.Repositories.AddRange(repository1,repository2,repository3,repository4);
+        context.Milestones.AddRange(milestone1);
         context.SaveChanges();
     }
 

@@ -25,4 +25,11 @@ public class Milestone
     {
         return new Milestone(title, description, dueDate, repositoryId);
     }
+
+    public static Milestone Create(Guid id, string title, string description, DateOnly? dueDate, Guid repositoryId)
+    {
+        Milestone milestone = new Milestone(title, description, dueDate, repositoryId);
+        milestone.Id = id;
+        return milestone;
+    }
 }

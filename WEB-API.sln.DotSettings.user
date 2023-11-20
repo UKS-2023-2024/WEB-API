@@ -12,5 +12,6 @@
   &lt;Or&gt;&#xD;
     &lt;ProjectFile&gt;1C585274-3F29-447E-991D-5BE6A12EE105/d:Unit/d:Milestones/f:CreateMilestoneUnitTests.cs&lt;/ProjectFile&gt;&#xD;
     &lt;ProjectFile&gt;1C585274-3F29-447E-991D-5BE6A12EE105/d:Integration/d:Milestones/f:CreateMilestoneIntegrationTests.cs&lt;/ProjectFile&gt;&#xD;
+    &lt;ProjectFile&gt;1C585274-3F29-447E-991D-5BE6A12EE105/d:Unit/d:Milestones/f:DeleteMilestoneUnitTests.cs&lt;/ProjectFile&gt;&#xD;
   &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
