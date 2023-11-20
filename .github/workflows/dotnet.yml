@@ -13,20 +13,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout Repository
       - uses: actions/checkout@v3
-   - name: Set up Docker
-      uses: docker/setup-qemu-action@v2
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      - name: Set up Docker
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
-    - name: Build and Push Docker Images
-      run: |
-        echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-        docker-compose build
-        docker-compose push
+      - name: Build and Push Docker Images
+        run: |
+          echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+          docker-compose build
+          docker-compose push
 
-      env:
-        ConnectionString: ${{secrets.REPO_DATABASE_KEY}}
-        Sendgrid__ApiKey: ${{secrets.SENDGRID_API_KEY}}
+        env:
+          ConnectionString: ${{secrets.REPO_DATABASE_KEY}}
+          Sendgrid__ApiKey: ${{secrets.SENDGRID_API_KEY}}
