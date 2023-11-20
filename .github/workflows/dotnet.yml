@@ -18,10 +18,12 @@ jobs:
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+      - name: Execute tests
+        run: run: dotnet test Tests
 
       - name: Build and Push Docker Images
         run: |
-          docker login -u ${{secrets.DOCKERHUB_USERNAME}} -p ${{secrets.DOCKERHUB_PASSWORD}}
+          echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
           docker-compose build
           docker-compose push
 
