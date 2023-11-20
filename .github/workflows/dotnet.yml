@@ -26,5 +26,5 @@ jobs:
           docker-compose push
 
         env:
-          ConnectionString: ${{secrets.REPO_DATABASE_KEY}}
-          Sendgrid__ApiKey: ${{secrets.SENDGRID_API_KEY}}
+          CONNECTION_STRING: ${{secrets.REPO_DATABASE_KEY}}
+          SENDGRID_API_KEY: ${{secrets.SENDGRID_API_KEY}}
