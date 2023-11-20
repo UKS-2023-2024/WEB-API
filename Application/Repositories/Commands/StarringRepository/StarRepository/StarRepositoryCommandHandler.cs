@@ -26,6 +26,7 @@ public class StarRepositoryCommandHandler: ICommandHandler<StarRepositoryCommand
             _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.User.Id, request.RepositoryId);
         
         repository!.ThrowIfUserNotMemberAndRepositoryPrivate(repositoryMember);
+        repository.ThrowIfAlreadyStarredBy(request.User.Id);
         
         repository.AddToStarredBy(request.User);
         _repositoryRepository.Update(repository);
