@@ -35,6 +35,7 @@ jobs:
         run: |
           echo ${{secrets.DOCKERHUB_PASSWORD}} | docker login -u ${{secrets.DOCKERHUB_USERNAME}} --password-stdin
           docker-compose build
+          docker-compose push dusanjanosevic123/uks:test
           docker-compose up -d
 
       - name: Execute tests
