@@ -20,7 +20,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
       - name: Execute tests
         run: |
-          docker exec -it web_api /bin/bash
+          docker exec -it web_api_application /bin/bash
           dotnet test Tests.dll
 
       - name: Build and Push Docker Images
