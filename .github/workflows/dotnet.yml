@@ -35,9 +35,8 @@ jobs:
         run: |
           echo ${{secrets.DOCKERHUB_PASSWORD}} | docker login -u ${{secrets.DOCKERHUB_USERNAME}} --password-stdin
           docker-compose build
-          docker-compose push
+          docker-compose up -d
 
       - name: Execute tests
         run: |
-          docker exec -it web_api /bin/bash
-          dotnet test Tests.dll
+          docker exec -it web_api /bin/bash -c "dotnet test Tests.dll"
