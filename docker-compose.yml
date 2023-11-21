@@ -1,18 +1,23 @@
 ﻿version: "3.9" # optional since v1.27.0
 services:
   web_api:
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     build:
       context: .
       dockerfile: Dockerfile # build the Docker image
+    command: dotnet test
     container_name: web_api_application
     ports:
       - "5173:80"
     depends_on:
       - postgresql_database
+      - test_postgresql_database
     environment:
       - Sendgrid__ApiKey=${SENDGRID_API_KEY}
       - JwtSettings__Key=${JWT_KEY}
       - ConnectionString=${CONNECTION_STRING}
+      - TestConnectionString=${TEST_CONNECTION_STRING}
     networks:
       - network
   postgresql_database:
@@ -23,6 +28,17 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     ports:
       - "4201:5432"
+    restart: always
+    networks:
+      - network
+  test_postgresql_database:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=${TEST_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${TEST_POSTGRES_PASSWORD}
+      - POSTGRES_DB=${TEST_POSTGRES_DB}
+    ports:
+      - "4212:5432"
     restart: always
     networks:
       - network

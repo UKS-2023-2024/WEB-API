@@ -15,18 +15,22 @@ using Testcontainers.PostgreSql;
 
 namespace Tests.Integration.Setup;
 
-public class TestDatabaseFactory : WebApplicationFactory<Program>,IAsyncLifetime
+public class TestDatabaseFactory : WebApplicationFactory<Program>
 {
     public MainDbContext dbContext;
-    private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()
-        .WithImage("postgres:latest")
-        .WithDatabase("some")
-        .WithUsername("postgres")
-        .WithPassword("postgres")
-        .Build();
-    
+    public IConfiguration _configuration;
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        
+        builder.ConfigureAppConfiguration((context, conf) =>
+        {
+            // expand default config with settings designed for Integration Tests
+            conf.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json"));
+            conf.AddEnvironmentVariables();
+
+            // here we can "compile" the settings. Api.Setup will do the same, it doesn't matter.
+            _configuration = conf.Build();
+        });
         builder.ConfigureServices(services =>
         {
             using var scope = BuildServiceProvider(services).CreateScope();
@@ -34,22 +38,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>,IAsyncLifetime
             var db = scopedServices.GetRequiredService<MainDbContext>();
             dbContext = db;
             InitializeDatabase(db);
-
-            services.AddDbContext<MainDbContext>(options =>
-            {
-                options.UseNpgsql(_dbContainer.GetConnectionString());
-            });
         });
-    }
-    
-    public Task InitializeAsync()
-    {
-       return _dbContainer.StartAsync();
-    }
-
-    public new Task DisposeAsync()
-    {
-        return _dbContainer.StopAsync();
     }
 
     private ServiceProvider BuildServiceProvider(IServiceCollection services)
@@ -60,7 +49,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>,IAsyncLifetime
             services.Remove(descriptor);
         }
 
-        services.AddDbContext<MainDbContext>(opt => opt.UseNpgsql(_dbContainer.GetConnectionString()));
+        services.AddDbContext<MainDbContext>(opt => opt.UseNpgsql(_configuration["TestConnectionString"]));
         return services.BuildServiceProvider();
     }
 

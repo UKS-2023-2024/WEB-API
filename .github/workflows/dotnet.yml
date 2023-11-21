@@ -21,7 +21,7 @@ jobs:
       - name: Execute tests
         run: |
         docker exec -it web_api /bin/bash
-        dotnet test
+        dotnet test Tests.dll
 
       - name: Build and Push Docker Images
         run: |
