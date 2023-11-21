@@ -39,4 +39,4 @@ jobs:
 
       - name: Execute tests
         run: |
-          docker exec -it web_api /bin/bash -c "dotnet test Tests.dll"
+          docker exec -it web_api_application /bin/bash -c "dotnet test Tests.dll"
