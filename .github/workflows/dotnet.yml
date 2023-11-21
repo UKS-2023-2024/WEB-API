@@ -13,11 +13,15 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CONNECTION_STRING: ${{secrets.CONNECTION_STRING}}
+      TEST_CONNECTION_STRING: ${{secrets.TEST_CONNECTION_STRING}}
       SENDGRID_API_KEY: ${{secrets.SENDGRID_API_KEY}}
       JWT_KEY: ${{secrets.JWT_KEY}}
       POSTGRES_USER: ${{secrets.POSTGRES_USER}}
       POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
       POSTGRES_DB: ${{secrets.POSTGRES_DB}}
+      TEST_POSTGRES_USER: ${{secrets.TEST_POSTGRES_USER}}
+      TEST_POSTGRES_PASSWORD: ${{secrets.TEST_POSTGRES_PASSWORD}}
+      TEST_POSTGRES_DB: ${{secrets.TEST_POSTGRES_DB}}
     steps:
       - uses: actions/checkout@v3
 
