@@ -10,7 +10,7 @@ on:
     branches: ["feature/docker-setup"]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     env:
       CONNECTION_STRING: ${{secrets.CONNECTION_STRING}}
       TEST_CONNECTION_STRING: ${{secrets.TEST_CONNECTION_STRING}}
