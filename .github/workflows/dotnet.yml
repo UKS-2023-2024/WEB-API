@@ -17,7 +17,7 @@ jobs:
         with:
           compose-file: "./docker-compose.yml"
           test-container: "web_api_application"
-          test-command: "dotnet Test Tests.dll"
+          test-command: "dotnet Test
         env:
           CONNECTION_STRING: ${{secrets.CONNECTION_STRING}}
           TEST_CONNECTION_STRING: ${{secrets.TEST_CONNECTION_STRING}}
