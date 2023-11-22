@@ -20,7 +20,7 @@ jobs:
           echo "${{ secrets.ENV }}" >> .env
 
       - name: Start containers
-        run: docker-compose -f "docker-compose.yml" up -d --build --wait
+        run: docker-compose -f "docker-compose.yml" up -d --build
 
       - name: Execute tests
         run: |
