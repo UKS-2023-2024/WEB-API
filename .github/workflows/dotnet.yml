@@ -13,18 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
       - name: Create env file
-        run:  |
-              touch .env
-              echo "${{ secrets.ENV }}" >> .env
-
-      - name: Start containers
-        run: docker-compose -f "docker-compose.yml" up -d --build
-
-      - name: Execute tests
         run: |
-          docker exec web_api_application dotnet test Tests.dll
-
-      - name: Stop containers
-        run: docker-compose -f "docker-compose.yml" down
+          touch .env
+          echo "${{ secrets.ENV }}" >> .env
+      - uses: adambirds/docker-compose-action@v1.3.0
+        with:
+          compose-file: "./docker-compose.yml"
+          test-container: "web_api_application"
+          test-command: "dotnet Test Tests.dll"
