@@ -37,13 +37,12 @@ public class MilestoneController : ControllerBase
 
     [HttpPut("update")]
     [Authorize]
-    public async Task<IActionResult> Update([FromBody] MilestoneDto milestoneDto)
+    public async Task<IActionResult> Update([FromBody] UpdateMilestoneDto milestoneDto)
     {
         Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        var updatedMilestoneId = await _sender.Send(new UpdateMilestoneCommand(Guid.Parse(milestoneDto.Id),
-            Guid.Parse(milestoneDto.RepositoryId),
+        var updatedMilestone = await _sender.Send(new UpdateMilestoneCommand(Guid.Parse(milestoneDto.Id),
             milestoneDto.Title, milestoneDto.Description, creatorId, milestoneDto.DueDate));
-        return Ok(updatedMilestoneId);
+        return Ok(updatedMilestone);
     }
 
     [HttpDelete("{id}")]

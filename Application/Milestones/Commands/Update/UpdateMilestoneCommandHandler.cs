@@ -9,7 +9,7 @@ using Domain.Repositories.Interfaces;
 
 namespace Application.Milestones.Commands.Update;
 
-public class UpdateMilestoneCommandHandler : ICommandHandler<UpdateMilestoneCommand, Guid>
+public class UpdateMilestoneCommandHandler : ICommandHandler<UpdateMilestoneCommand, Milestone>
 {
     private readonly IRepositoryMemberRepository _repositoryMemberRepository;
     private readonly IMilestoneRepository _milestoneRepository;
@@ -21,21 +21,21 @@ public class UpdateMilestoneCommandHandler : ICommandHandler<UpdateMilestoneComm
         _milestoneRepository = milestoneRepository;
     }
 
-    public async Task<Guid> Handle(UpdateMilestoneCommand request, CancellationToken cancellationToken)
+    public async Task<Milestone> Handle(UpdateMilestoneCommand request, CancellationToken cancellationToken)
     {
-        RepositoryMember? member =
-            await _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.CreatorId,
-                request.RepositoryId);
-        if (member is null)
-            throw new RepositoryMemberNotFoundException();
-
         Milestone? foundMilestone = _milestoneRepository.Find(request.MilestoneId);
         if (foundMilestone is null)
             throw new MilestoneNotFoundException();
+        RepositoryMember? member =
+            await _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.CreatorId,
+                foundMilestone.RepositoryId);
+        if (member is null)
+            throw new RepositoryMemberNotFoundException();
+    
         Milestone updatedMilestone =
             Milestone.Update(foundMilestone, request.Title, request.Description, request.DueDate);
         _milestoneRepository.Update(updatedMilestone);
-        return updatedMilestone.Id;
+        return updatedMilestone;
     }
     
 }
