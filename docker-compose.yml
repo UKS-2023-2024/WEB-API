@@ -20,6 +20,7 @@ services:
     deploy:
       resources:
         limits:
+          cpus: "1.50"
           memory: 2500M
   postgresql_database:
     image: postgres:latest
@@ -33,6 +34,7 @@ services:
     deploy:
       resources:
         limits:
+          cpus: "0.40"
           memory: 1000M
     networks:
       - network
@@ -48,6 +50,7 @@ services:
     deploy:
       resources:
         limits:
+          cpus: "0.40"
           memory: 1000M
     networks:
       - network
