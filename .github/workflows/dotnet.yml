@@ -23,7 +23,7 @@ jobs:
       TEST_POSTGRES_PASSWORD: ${{secrets.TEST_POSTGRES_PASSWORD}}
       TEST_POSTGRES_DB: ${{secrets.TEST_POSTGRES_DB}}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
