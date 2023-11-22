@@ -10,7 +10,7 @@ on:
     branches: ["feature/docker-setup"]
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: linux-latest
     env:
       CONNECTION_STRING: ${{secrets.CONNECTION_STRING}}
       TEST_CONNECTION_STRING: ${{secrets.TEST_CONNECTION_STRING}}
@@ -23,7 +23,11 @@ jobs:
       TEST_POSTGRES_PASSWORD: ${{secrets.TEST_POSTGRES_PASSWORD}}
       TEST_POSTGRES_DB: ${{secrets.TEST_POSTGRES_DB}}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7.0.x
       - name: Start containers
         run: docker-compose -f "docker-compose.yml" up -d --build
 
