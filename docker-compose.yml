@@ -18,13 +18,6 @@ services:
       - TestConnectionString=${TEST_CONNECTION_STRING}
     networks:
       - network
-    resources:
-      limits:
-        cpus: "0.01"
-        memory: 1000M
-      reservations:
-        cpus: "0.001"
-        memory: 500M
   postgresql_database:
     image: postgres:latest
     environment:
