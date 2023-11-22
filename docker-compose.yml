@@ -20,7 +20,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 3000M
+          memory: 2500M
   postgresql_database:
     image: postgres:latest
     environment:
@@ -33,7 +33,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1500M
+          memory: 1000M
     networks:
       - network
   test_postgresql_database:
@@ -48,7 +48,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1500M
+          memory: 1000M
     networks:
       - network
 networks:
