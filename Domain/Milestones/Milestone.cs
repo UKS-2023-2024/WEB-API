@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices.JavaScript;
+﻿using System.Data.Entity.Infrastructure.Design;
+using System.Runtime.InteropServices.JavaScript;
 using Domain.Repositories;
 
 namespace Domain.Milestones;
@@ -24,5 +25,20 @@ public class Milestone
     public static Milestone Create(string title, string description, DateOnly? dueDate, Guid repositoryId)
     {
         return new Milestone(title, description, dueDate, repositoryId);
+    }
+
+    public static Milestone Create(Guid id, string title, string description, DateOnly? dueDate, Guid repositoryId)
+    {
+        Milestone milestone = new Milestone(title, description, dueDate, repositoryId);
+        milestone.Id = id;
+        return milestone;
+    }
+
+    public static Milestone Update(Milestone milestone, string title, string description, DateOnly dueDate)
+    {
+        milestone.Description = description;
+        milestone.DueDate = dueDate;
+        milestone.Title = title;
+        return milestone;
     }
 }
