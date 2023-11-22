@@ -24,7 +24,7 @@ jobs:
 
       - name: Execute tests
         run: |
-          docker exec web_api_application dotnet test Tests.dll
+          docker exec web_api dotnet test Tests.dll
 
       - name: Stop containers
         run: docker-compose -f "docker-compose.yml" down
