@@ -13,19 +13,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: adambirds/docker-compose-action@v1.3.0
-        with:
-          compose-file: "./docker-compose.yml"
-          test-container: "web_api_application"
-          test-command: "dotnet Test Tests.dll"
-        env:
-          CONNECTION_STRING: ${{secrets.CONNECTION_STRING}}
-          TEST_CONNECTION_STRING: ${{secrets.TEST_CONNECTION_STRING}}
-          SENDGRID_API_KEY: ${{secrets.SENDGRID_API_KEY}}
-          JWT_KEY: ${{secrets.JWT_KEY}}
-          POSTGRES_USER: ${{secrets.POSTGRES_USER}}
-          POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
-          POSTGRES_DB: ${{secrets.POSTGRES_DB}}
-          TEST_POSTGRES_USER: ${{secrets.TEST_POSTGRES_USER}}
-          TEST_POSTGRES_PASSWORD: ${{secrets.TEST_POSTGRES_PASSWORD}}
-          TEST_POSTGRES_DB: ${{secrets.TEST_POSTGRES_DB}}
+
+      - name: Create env file
+        run: |
+          touch .env
+          echo "${{ secrets.ENV }}" >> .env
+
+      - name: Start containers
+        run: docker-compose -f "docker-compose.yml" up -d --build --wait
+
+      - name: Execute tests
+        run: |
+          docker exec web_api_application dotnet test Tests.dll
+
+      - name: Stop containers
+        run: docker-compose -f "docker-compose.yml" down
