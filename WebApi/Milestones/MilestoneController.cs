@@ -1,4 +1,6 @@
 ﻿using Application.Milestones.Commands.Create;
+using Application.Milestones.Commands.Update;
+using Application.Milestones.Commands.Delete;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,5 +33,24 @@ public class MilestoneController : ControllerBase
         var createdMilestoneId = await _sender.Send(new CreateMilestoneCommand(milestoneDto.RepositoryId, milestoneDto.Title, 
             milestoneDto.Description, creatorId, milestoneDto.DueDate));
         return Ok(createdMilestoneId);
+    }
+
+    [HttpPut("update")]
+    [Authorize]
+    public async Task<IActionResult> Update([FromBody] UpdateMilestoneDto milestoneDto)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        var updatedMilestone = await _sender.Send(new UpdateMilestoneCommand(Guid.Parse(milestoneDto.Id),
+            milestoneDto.Title, milestoneDto.Description, creatorId, milestoneDto.DueDate));
+        return Ok(updatedMilestone);
+    }
+
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<IActionResult> Delete(string id)
+    {
+        Guid userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Guid deletedMilestone = await _sender.Send(new DeleteMilestoneCommand(userId, Guid.Parse(id)));
+        return Ok(deletedMilestone);
     }
 }
