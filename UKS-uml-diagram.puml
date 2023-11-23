@@ -115,6 +115,7 @@ User "1" *-- "*" Email : has
 User "1" *-- "*" Organization: has
 User "*" -- "*" Organization: isIn
 User "1" *-- "*" Repository: has
+User "*" -- "*" Repository: starred
 
 Organization "1" *-- "*" Repository: has
 
