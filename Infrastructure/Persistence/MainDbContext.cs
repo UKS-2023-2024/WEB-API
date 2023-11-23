@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Domain.Auth;
+using Domain.Milestones;
 using Domain.Organizations;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,7 @@ public class MainDbContext: DbContext
     public DbSet<OrganizationRolePermission> OrganizationRolePermissions { get; set; } = null!;
     public DbSet<OrganizationInvite> OrganizationInvites { get; set; } = null!;
     public DbSet<RepositoryInvite> RepositoryInvites { get; set; } = null!;
+    public DbSet<Milestone> Milestones { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
