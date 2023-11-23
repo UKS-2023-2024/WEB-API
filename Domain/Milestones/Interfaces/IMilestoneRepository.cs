@@ -4,5 +4,5 @@ namespace Domain.Milestones.Interfaces;
 
 public interface IMilestoneRepository : IBaseRepository<Milestone>
 {
-    
+    Task<List<Milestone>> FindActiveRepositoryMilestones(Guid repositoryId);
 }
