@@ -1,7 +1,4 @@
-﻿using Application.Milestones.Commands.Create;
-using Application.Milestones.Commands.Update;
-using Application.Milestones.Commands.Delete;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WEB_API.Milestones.Dtos;
@@ -42,6 +39,14 @@ public class BranchController : ControllerBase
     public async Task<IActionResult> Update([FromBody] UpdateBranchDto dto)
     {
         var updatedBranch = await _sender.Send(new UpdateBranchNameCommand(dto.BranchId, dto.Name));
+        return Ok(updatedBranch);
+    }
+
+    [HttpPatch("/make-default/{id}")]
+    [Authorize]
+    public async Task<IActionResult> MakeDefault(Guid id)
+    {
+        var updatedBranch = await _sender.Send(new MakeBranchDefaultCommand(id));
         return Ok(updatedBranch);
     }
 }
