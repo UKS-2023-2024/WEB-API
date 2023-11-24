@@ -1,6 +1,6 @@
 ﻿using Domain.Auth;
 using Domain.Repositories;
-
+using System.Data.Entity.Migrations.Model;
 
 namespace Domain.Branches
 {
@@ -25,5 +25,10 @@ namespace Domain.Branches
         {
             return new Branch(name, repositoryId, isDefault, ownerId);
         }
-    }
+
+        public void Update(string name)
+        {
+            Name = name;
+        }
+     }
 }
