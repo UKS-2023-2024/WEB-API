@@ -96,13 +96,17 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
 
         var milestone1 = Milestone.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"), "title", "description", new DateOnly(), new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"));
 
-        var branch1 = Branch.Create("branch", new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d94a5"), false, new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
-        
+        var branch1 = Branch.Create(new Guid("7e9b1cc0-36d4-4bf2-9f2b-6e90a21d92a1"), "branch1", new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d94a5"), true, new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
+        var branch2 = Branch.Create(new Guid("7e9b1cc1-36d4-4bf2-9f2b-6e90a21d92a2"), "branch2", new Guid("8e9b1cc1-35d3-4bf2-9f2c-5e00a21d14a5"), true, new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
+        var branch3 = Branch.Create(new Guid("7e9b1cc2-36d4-4bf2-9f2b-6e90a21d92a3"), "branch3", new Guid("8e9b1cc1-35d3-4bf2-9f2c-5e00a21d14a5"), false, new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
+        var branch4 = Branch.Create(new Guid("7e9b1cc3-36d4-4bf2-9f2b-6e90a21d92a4"), "branch4", new Guid("8e9b1cc2-35d3-4bf2-9f2c-9e00a21d94a5"), false, new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
+        var branch5 = Branch.Create(new Guid("7e9b1cc4-36d4-4bf2-9f2b-6e90a21d92a5"), "branch5", new Guid("8e9b1cc2-35d3-4bf2-9f2c-9e00a21d94a5"), true, new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
+
         context.Users.AddRange(user1, user2, user3, user4);
         context.Organizations.AddRange(organization1);
         context.Repositories.AddRange(repository1,repository2,repository3,repository4);
+        context.Branches.AddRange(branch1, branch2, branch3, branch4, branch5);
         context.Milestones.AddRange(milestone1);
-        context.Branches.AddRange(branch1);
         context.SaveChanges();
     }
 

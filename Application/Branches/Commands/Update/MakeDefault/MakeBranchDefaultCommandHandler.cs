@@ -19,6 +19,8 @@ public class MakeBranchDefaultCommandHandler : ICommandHandler<MakeBranchDefault
         Branch? branch = _branchRepository.Find(request.BranchId);
         if (branch is null)
             throw new BranchNotFoundException();
+        if (branch.IsDefault)
+            throw new BranchIsAlreadyDefaultException();
 
         branch.UpdateDefault();
         _branchRepository.Update(branch);
