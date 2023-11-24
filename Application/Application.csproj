@@ -18,6 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Branches\Commands\Update\MakeDefault\" />
       <Folder Include="Milestones\Queries\" />
       <Folder Include="Repositories\Commands\StarringRepository" />
     </ItemGroup>
