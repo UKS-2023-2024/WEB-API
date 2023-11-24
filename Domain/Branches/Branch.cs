@@ -27,6 +27,14 @@ namespace Domain.Branches
             return new Branch(name, repositoryId, isDefault, ownerId);
         }
 
+
+        public static Branch Create(Guid id, string name, Guid repositoryId, bool isDefault, Guid ownerId)
+        {
+            Branch branch = new Branch(name, repositoryId, isDefault, ownerId);
+            branch.Id = id;
+            return branch;
+        }
+
         public void Update(string name)
         {
             Name = name;
