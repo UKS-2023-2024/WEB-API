@@ -9,6 +9,7 @@ using WEB_API.Shared.TokenHandler;
 using WEB_API.Shared.UserIdentityService;
 using WEB_API.Branches.Dtos;
 using Application.Branches.Commands.Create;
+using Application.Branches.Commands.Update;
 
 namespace WEB_API.Branches;
 
@@ -34,5 +35,13 @@ public class BranchController : ControllerBase
         var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
         var createdBranchId = await _sender.Send(new CreateBranchCommand(dto.Name, dto.RepositoryId, false, userId));
         return Ok(createdBranchId);
+    }
+
+    [HttpPatch("")]
+    [Authorize]
+    public async Task<IActionResult> Update([FromBody] UpdateBranchDto dto)
+    {
+        var updatedBranch = await _sender.Send(new UpdateBranchNameCommand(dto.BranchId, dto.Name));
+        return Ok(updatedBranch);
     }
 }
