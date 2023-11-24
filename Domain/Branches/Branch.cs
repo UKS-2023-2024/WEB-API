@@ -1,6 +1,7 @@
 ﻿using Domain.Auth;
 using Domain.Repositories;
 using System.Data.Entity.Migrations.Model;
+using System.Security.Policy;
 
 namespace Domain.Branches
 {
@@ -29,6 +30,11 @@ namespace Domain.Branches
         public void Update(string name)
         {
             Name = name;
+        }
+
+        public void UpdateDefault()
+        {
+            IsDefault = !IsDefault;
         }
      }
 }
