@@ -21,6 +21,7 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
     {
         return _context.Repositories
             .Include(x => x.Organization)
+            .ThenInclude(o => o.Members)
             .Include(x => x.Members)
             .Include(x=>x.StarredBy)
             .FirstOrDefault(x => x.Id == id);

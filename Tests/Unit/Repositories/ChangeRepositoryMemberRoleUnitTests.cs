@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Application.Repositories.Commands.HandleRepositoryMembers.RemoveRepositoryMember;
+using Application.Repositories.Commands.HandleRepositoryMembers.ChangeRole;
 using Domain.Auth;
 using Domain.Auth.Enums;
 using Domain.Repositories;
@@ -10,7 +10,7 @@ using Shouldly;
 
 namespace Tests.Unit.Repositories;
 
-public class RemoveRepositoryMemberUnitTests
+public class ChangeRepositoryMemberRoleUnitTests
 {
     private readonly Mock<IRepositoryMemberRepository> _repositoryMemberRepositoryMock = new();
     private readonly Mock<IRepositoryRepository> _repositoryRepository = new();
@@ -23,7 +23,7 @@ public class RemoveRepositoryMemberUnitTests
     private readonly RepositoryMember _repoMember3;
     private readonly RepositoryMember _repoMember4;
 
-    public RemoveRepositoryMemberUnitTests()
+    public ChangeRepositoryMemberRoleUnitTests()
     {
         _user1 = User.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), "dusanjanosevic007@gmail.com", "full name", "username1", "password", UserRole.USER);
         _user2 = User.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"), "dusan.janosevic123@gmail.com", "full name", "username2", "password", UserRole.USER);
@@ -50,6 +50,9 @@ public class RemoveRepositoryMemberUnitTests
         _repositoryMemberRepositoryMock.Setup(x => x.Find(_repoMember1.Id)).Returns(_repoMember1);
         _repositoryMemberRepositoryMock.Setup(x => x.Find(_repoMember3.Id)).Returns(_repoMember3);
         _repositoryMemberRepositoryMock.Setup(x => x.Find(_repoMember4.Id)).Returns(_repoMember4);
+        _repositoryMemberRepositoryMock.Setup(x => x.FindByRepositoryMemberIdAndRepositoryId(_repoMember1.Id,_repository1.Id)).ReturnsAsync(_repoMember1);
+        _repositoryMemberRepositoryMock.Setup(x => x.FindByRepositoryMemberIdAndRepositoryId(_repoMember3.Id,_repository1.Id)).ReturnsAsync(_repoMember3);
+        _repositoryMemberRepositoryMock.Setup(x => x.FindByRepositoryMemberIdAndRepositoryId(_repoMember4.Id,_repository2.Id)).ReturnsAsync(_repoMember4);
     }
     
     private T OverrideId<T>(T obj, Guid id)
@@ -68,15 +71,15 @@ public class RemoveRepositoryMemberUnitTests
         return repo;
     }
     
-    [Fact]
+     [Fact]
     public void Handle_ShouldReturnSuccess_WhenUserMemberAndOwnerHasPrivileges()
     {
         //Arrange
-        var command = new RemoveRepositoryMemberCommand(_user1.Id,
-            _repoMember3.Id, _repository1.Id);
+        var command = new ChangeMemberRoleCommand(_user1.Id,
+            _repoMember3.Id, _repository1.Id,RepositoryMemberRole.ADMIN);
 
         //Act
-        var result = new RemoveRepositoryMemberCommandHandler(_repositoryRepository.Object,_repositoryMemberRepositoryMock.Object)
+        var result = new ChangeMemberRoleCommandHandler(_repositoryMemberRepositoryMock.Object,_repositoryRepository.Object)
             .Handle(command,default);
 
         //Assert
@@ -87,9 +90,9 @@ public class RemoveRepositoryMemberUnitTests
     public async void Handle_ShouldReturnError_WhenUserMemberAndOwnerHasNoPrivileges()
     {
         //Arrange
-        var command = new RemoveRepositoryMemberCommand(_user2.Id,
-            _repoMember1.Id, _repository1.Id);
-        var handler = new RemoveRepositoryMemberCommandHandler(_repositoryRepository.Object,_repositoryMemberRepositoryMock.Object);
+        var command = new ChangeMemberRoleCommand(_user2.Id,
+            _repoMember1.Id, _repository1.Id,RepositoryMemberRole.ADMIN);
+        var handler = new ChangeMemberRoleCommandHandler(_repositoryMemberRepositoryMock.Object,_repositoryRepository.Object);
         
         //Act
         async Task Handle() => await handler.Handle(command, default);
@@ -102,9 +105,9 @@ public class RemoveRepositoryMemberUnitTests
     public async void Handle_ShouldReturnError_WhenOwnerNotFound()
     {
         //Arrange
-        var command = new RemoveRepositoryMemberCommand(_user3.Id,
-            _repoMember1.Id, _repository1.Id);
-        var handler = new RemoveRepositoryMemberCommandHandler(_repositoryRepository.Object,_repositoryMemberRepositoryMock.Object);
+        var command = new ChangeMemberRoleCommand(_user3.Id,
+            _repoMember1.Id, _repository1.Id,RepositoryMemberRole.ADMIN);
+        var handler = new ChangeMemberRoleCommandHandler(_repositoryMemberRepositoryMock.Object,_repositoryRepository.Object);
         
         //Act
         async Task Handle() => await handler.Handle(command, default);
@@ -117,9 +120,10 @@ public class RemoveRepositoryMemberUnitTests
     public async void Handle_ShouldReturnError_WhenMemberNotFound()
     {
         //Arrange
-        var command = new RemoveRepositoryMemberCommand(_user1.Id,
-            new Guid("8e9b2233-ffaa-4bf2-9f2c-5e00a21d92a9"), _repository1.Id);
-        var handler = new RemoveRepositoryMemberCommandHandler(_repositoryRepository.Object,_repositoryMemberRepositoryMock.Object);
+        var command = new ChangeMemberRoleCommand(_user1.Id,
+            new Guid("8e9b2233-ffaa-4bf2-9f2c-5e00a21d92a9"),
+            _repository1.Id,RepositoryMemberRole.ADMIN);
+        var handler = new ChangeMemberRoleCommandHandler(_repositoryMemberRepositoryMock.Object,_repositoryRepository.Object);
         
         //Act
         async Task Handle() => await handler.Handle(command, default);
@@ -132,9 +136,9 @@ public class RemoveRepositoryMemberUnitTests
     public async void Handle_ShouldReturnError_WhenMemberFoundButDeleted()
     {
         //Arrange
-        var command = new RemoveRepositoryMemberCommand(_user1.Id,
-            _repoMember4.Id, _repository2.Id);
-        var handler = new RemoveRepositoryMemberCommandHandler(_repositoryRepository.Object,_repositoryMemberRepositoryMock.Object);
+        var command = new ChangeMemberRoleCommand(_user1.Id,
+            _repoMember4.Id, _repository2.Id,RepositoryMemberRole.ADMIN);
+        var handler = new ChangeMemberRoleCommandHandler(_repositoryMemberRepositoryMock.Object,_repositoryRepository.Object);
         
         //Act
         async Task Handle() => await handler.Handle(command, default);

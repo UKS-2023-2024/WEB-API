@@ -48,16 +48,17 @@ namespace Domain.Repositories
             return repository;
         }
 
-        public void AddMember(User user)
+        public RepositoryMember AddMember(User user)
         {
             var member = _members.FirstOrDefault(m => m.Member.Id == user.Id);
             if (member is not null)
             {
                 member.ActivateMemberAgain();
-                return;
+                return member;
             }
             member = RepositoryMember.Create(user, this, RepositoryMemberRole.CONTRIBUTOR); ;
             _members.Add(member);
+            return member;
         }
         
         public void RemoveMember(RepositoryMember repositoryMember)
@@ -66,6 +67,23 @@ namespace Domain.Repositories
             if (member is null)
                 throw new RepositoryMemberNotFoundException();
             member.Delete();
+        }
+        
+        public void ThrowIfUserCantAccessRepositoryData(Guid userId)
+        {
+            if (!IsPrivate) return;
+            
+            var userIsRepositoryMember = Members.Any(mem => mem.Member.Id == userId && !mem.Deleted);
+            if (userIsRepositoryMember) return;
+            
+            var repositoryIsInOrganization = Organization != null;
+            if (!repositoryIsInOrganization) throw new RepositoryInaccessibleException();
+
+            var userIsOrganizationMember = Organization!.Members.Any(mem => mem.MemberId == userId);
+
+            if (userIsOrganizationMember) return;
+            
+            throw new RepositoryInaccessibleException();
         }
         
         public void AddToStarredBy(User user)
