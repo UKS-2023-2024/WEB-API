@@ -28,5 +28,14 @@ namespace Infrastructure.Branches
                     .Where(b => b.RepositoryId.Equals(repositoryId) && b.IsDefault == isDefault)
                     .FirstOrDefaultAsync();
         }
+
+
+        public async Task<IEnumerable<Branch>> FindAllNotDeletedByRepositoryId(Guid repositoryId)
+        {
+            return _context.Branches
+                .Where(b => b.RepositoryId == repositoryId && !b.Deleted)
+                .ToList();
+        }
+
     }
 }

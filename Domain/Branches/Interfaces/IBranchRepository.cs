@@ -1,4 +1,5 @@
-﻿using Domain.Shared.Interfaces;
+﻿using Domain.Repositories;
+using Domain.Shared.Interfaces;
 
 namespace Domain.Branches.Interfaces;
 
@@ -6,4 +7,5 @@ public interface IBranchRepository : IBaseRepository<Branch>
 {
     public Task<Branch?> FindByNameAndRepositoryId(string name, Guid repositoryId);
     public Task<Branch?> FindByRepositoryIdAndIsDefault(Guid repositoryId, bool isDefault);
+    public Task<IEnumerable<Branch>> FindAllNotDeletedByRepositoryId(Guid repositoryId);
 }

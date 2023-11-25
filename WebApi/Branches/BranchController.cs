@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WEB_API.Milestones.Dtos;
 using WEB_API.Shared.TokenHandler;
 using WEB_API.Shared.UserIdentityService;
 using WEB_API.Branches.Dtos;
@@ -9,6 +8,7 @@ using Application.Branches.Commands.Create;
 using Application.Branches.Commands.Update;
 using Application.Branches.Commands.Delete;
 using Application.Branches.Commands.Restore;
+using Application.Repositories.Queries.FindAllNotDeletedByRepositoryId;
 
 namespace WEB_API.Branches;
 
@@ -66,5 +66,13 @@ public class BranchController : ControllerBase
     {
         var restoredBranch = await _sender.Send(new RestoreBranchCommand(id));
         return Ok(restoredBranch);
+    }
+
+    [HttpGet("/not-delete/{repositoryId}")]
+    [Authorize]
+    public async Task<IActionResult> FindAllNotDeleted(Guid repositoryId)
+    {
+        var branches = await _sender.Send(new FindAllNotDeletedBranchesByRepositoryIdQuery(repositoryId));
+        return Ok(branches);
     }
 }
