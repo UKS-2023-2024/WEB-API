@@ -68,7 +68,13 @@ namespace Domain.Repositories
                 throw new RepositoryMemberNotFoundException();
             member.Delete();
         }
-        
+
+        private void ThrowIfNoOrganizationRepositoryAccess(Guid userId)
+        {
+            var userIsOrganizationMember = Organization!.Members.Any(mem => mem.MemberId == userId);
+            if (!userIsOrganizationMember) throw new RepositoryInaccessibleException();
+        }
+
         public void ThrowIfUserCantAccessRepositoryData(Guid userId)
         {
             if (!IsPrivate) return;
@@ -78,12 +84,7 @@ namespace Domain.Repositories
             
             var repositoryIsInOrganization = Organization != null;
             if (!repositoryIsInOrganization) throw new RepositoryInaccessibleException();
-
-            var userIsOrganizationMember = Organization!.Members.Any(mem => mem.MemberId == userId);
-
-            if (userIsOrganizationMember) return;
-            
-            throw new RepositoryInaccessibleException();
+            ThrowIfNoOrganizationRepositoryAccess(userId);
         }
         
         public void AddToStarredBy(User user)
