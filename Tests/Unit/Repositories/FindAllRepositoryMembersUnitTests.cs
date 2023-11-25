@@ -102,8 +102,7 @@ public class FindAllRepositoryMembersUnitTests
     public async void Handle_ShouldReturnError_WhenUserNotMemberOfPrivateRepository()
     {
         //Arrange
-        var command = new FindAllRepositoryMembersQuery(_user2.Id,
-            _repository1.Id);
+        var command = new FindAllRepositoryMembersQuery(_user2.Id, _repository1.Id);
         
         var handler = new FindAllRepositoryMembersQueryHandler(_repositoryRepository.Object,_repositoryMemberRepositoryMock.Object);
         

@@ -23,6 +23,7 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
             .Include(x => x.Organization)
             .ThenInclude(o => o.Members)
             .Include(x => x.Members)
+            .ThenInclude(mem=>mem.Member)
             .Include(x=>x.StarredBy)
             .FirstOrDefault(x => x.Id == id);
     }
