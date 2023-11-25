@@ -1,6 +1,6 @@
 ﻿using Application.Shared;
 using Domain.Branches;
 
-namespace Application.Branches.Commands.Delete;
+namespace Application.Branches.Commands.Restore;
 
-public sealed record DeleteBranchCommand(Guid BranchId) : ICommand<Branch>;
+public sealed record RestoreBranchCommand(Guid BranchId) : ICommand<Branch>;

@@ -1,0 +1,62 @@
+﻿using Application.Branches.Commands.Create;
+using Application.Branches.Commands.Delete;
+using Application.Branches.Commands.Restore;
+using Application.Branches.Commands.Update;
+using Domain.Branches;
+using Domain.Branches.Exceptions;
+using Domain.Branches.Interfaces;
+using Moq;
+using Shouldly;
+
+namespace Tests.Unit.Branches;
+
+public class RestoreBranchUnitTests
+{
+    private readonly Mock<IBranchRepository> _branchRepositoryMock;
+
+    public RestoreBranchUnitTests()
+    {
+        _branchRepositoryMock = new();
+    }
+
+    [Fact]
+    public async void RestoreBranch_ShouldBeSuccessful_WhenCommandIsValid()
+    {
+        //Arrange
+        var command = new RestoreBranchCommand(new Guid("705a6c69-5b51-4156-b4cc-71e8dd111579"));
+        Branch branch = Branch.Create("name", new Guid("705a6c69-5b51-4156-b4cc-71e8dd111579"), false, new Guid("805a6c69-5b51-4156-b4cc-71e8dd111579"));
+
+        _branchRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>())).Returns(branch);
+        _branchRepositoryMock.Setup(x => x.Update(It.IsAny<Branch>()));
+
+        var handler = new RestoreBranchCommandHandler(_branchRepositoryMock.Object);
+
+        //Act
+        Branch deletedBranch = await handler.Handle(command, default);
+
+        //Assert
+        deletedBranch.Deleted.ShouldBeEquivalentTo(false);
+    }
+
+    [Fact]
+    public async void RestoreBranch_ShouldFail_WhenBranchDoesntExist()
+    {
+        //Arrange
+        var command = new RestoreBranchCommand(new Guid("705a6c69-5b51-4156-b4cc-71e8dd111579"));
+        
+        _branchRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>())).Returns((Guid id) => null);
+
+        var handler = new RestoreBranchCommandHandler(_branchRepositoryMock.Object);
+
+        //Act
+        Func<Task> handle = async () =>
+        {
+            await handler.Handle(command, default);
+
+        };
+
+        //Assert
+        await Should.ThrowAsync<BranchNotFoundException>(() => handle());
+    }
+
+}

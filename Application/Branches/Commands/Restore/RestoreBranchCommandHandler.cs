@@ -1,15 +1,12 @@
 ﻿using Application.Shared;
 using Domain.Branches;
 using Domain.Branches.Interfaces;
-using Domain.Repositories.Exceptions;
-using Domain.Repositories.Interfaces;
-using Domain.Repositories;
 using Domain.Branches.Exceptions;
 using Application.Branches.Commands.Restore;
 
 namespace Application.Branches.Commands.Delete;
 
-public class RestoreBranchCommandHandler : ICommandHandler<DeleteBranchCommand, Branch>
+public class RestoreBranchCommandHandler : ICommandHandler<RestoreBranchCommand, Branch>
 {
     private readonly IBranchRepository _branchRepository;
 
