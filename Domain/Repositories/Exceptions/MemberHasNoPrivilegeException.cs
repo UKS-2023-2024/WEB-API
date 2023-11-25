@@ -4,7 +4,7 @@ namespace Domain.Repositories.Exceptions;
 
 public class MemberHasNoPrivilegeException : BaseException
 {
-    public MemberHasNoPrivilegeException(string message) : base(message)
+    public MemberHasNoPrivilegeException() : base("You have no privileges for this operation")
     {
     }
 }

@@ -21,7 +21,7 @@ public class RemoveRepositoryMemberCommandHandler: ICommandHandler<RemoveReposit
     {
         var owner = await _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.OwnerId, request.RepositoryId);
         RepositoryMember.ThrowIfDoesntExist(owner);
-        owner!.ThrowIfNotAdminPrivileges("You cant remove member!");
+        owner!.ThrowIfNotAdminPrivileges();
 
         var member = _repositoryMemberRepository.Find(request.RepositoryMemberId);
         if (member is null || member.Deleted) throw new RepositoryMemberNotFoundException();
