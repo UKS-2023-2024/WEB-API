@@ -1,4 +1,5 @@
 ﻿using Application.Shared;
+using Domain.Auth;
 using Domain.Auth.Interfaces;
 using Domain.Organizations;
 using Domain.Organizations.Exceptions;
@@ -28,10 +29,9 @@ public class CreateRepositoryForUserCommandHandler : ICommandHandler<CreateRepos
             throw new RepositoryWithThisNameExistsException();
 
         var creator = await _userRepository.FindUserById(request.CreatorId);
-
-        var repository = Repository.Create(request.Name, request.Description, request.IsPrivate, null);
-        var memberOwner = RepositoryMember.Create(creator, repository, RepositoryMemberRole.OWNER);
-        repository.AddMember(memberOwner);
+        User.ThrowIfDoesntExist(creator);
+        
+        var repository = Repository.Create(request.Name, request.Description, request.IsPrivate, null,creator!);
 
         repository = await _repositoryRepository.Create(repository);
 

@@ -50,8 +50,7 @@ public class SendInviteCommandHandler: ICommandHandler<SendInviteCommand>
         User.ThrowIfDoesntExist(userToAdd);
         
         var member = await _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.UserId, request.RepositoryId);
-        if (member is not null) 
-            throw new AlreadyRepositoryMemberException();
+        if (member is not null && !member.Deleted) throw new AlreadyRepositoryMemberException();
 
         var existingInvitation = _repositoryInviteRepository.FindByRepoAndMember(request.RepositoryId, request.UserId);
         if (existingInvitation is not null)
