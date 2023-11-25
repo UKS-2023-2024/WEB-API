@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Domain.Auth;
+using Domain.Branches;
 using Domain.Milestones;
 using Domain.Organizations;
 using Domain.Repositories;
@@ -27,6 +28,7 @@ public class MainDbContext: DbContext
     public DbSet<OrganizationInvite> OrganizationInvites { get; set; } = null!;
     public DbSet<RepositoryInvite> RepositoryInvites { get; set; } = null!;
     public DbSet<Milestone> Milestones { get; set; } = null!;
+    public DbSet<Branch> Branches { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -1,4 +1,5 @@
 ﻿using Domain.Auth;
+using Domain.Branches;
 using Domain.Milestones;
 using Domain.Organizations;
 using Domain.Repositories.Exceptions;
@@ -18,6 +19,7 @@ namespace Domain.Repositories
         public IReadOnlyList<RepositoryInvite> PendingInvites => new List<RepositoryInvite>(_pendingInvites);
         public List<User> StarredBy { get; private set; }
         public List<Milestone> Milestones { get; private set; }
+        public List<Branch> Branches { get; private set; }
 
 
         private Repository() { }

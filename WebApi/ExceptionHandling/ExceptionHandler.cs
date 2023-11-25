@@ -1,5 +1,6 @@
 using System.Net;
 using Domain.Auth.Exceptions;
+using Domain.Branches.Exceptions;
 using Domain.Exceptions;
 using Domain.Organizations.Exceptions;
 using Domain.Repositories.Exceptions;
@@ -23,7 +24,8 @@ public static class ExceptionHandler
                 or UserNotFoundException => HttpStatusCode.NotFound,
             UserWithThisEmailExistsException 
                 or RepositoryWithThisNameExistsException
-                or AlreadyOrganizationMemberException => HttpStatusCode.Conflict,
+                or AlreadyOrganizationMemberException
+                or BranchWithThisNameExistsException => HttpStatusCode.Conflict,
             PermissionDeniedException 
                 or MemberHasNoPrivilegeException
                 or RepositoryInaccessibleException
