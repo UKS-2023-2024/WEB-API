@@ -14,12 +14,14 @@ namespace Domain.Branches
         public bool IsDefault { get; private set; }
         public Guid OwnerId { get; private set; }
         public User Owner { get; private set; }
+        public bool Deleted { get; private set; }
         private Branch(string name, Guid repositoryId, bool isDefault, Guid ownerId)
         {
             Name = name;
             RepositoryId = repositoryId;
             IsDefault = isDefault;
             OwnerId = ownerId;
+            Deleted = false;
         }
 
         public static Branch Create(string name, Guid repositoryId, bool isDefault, Guid ownerId)
@@ -43,6 +45,11 @@ namespace Domain.Branches
         public void UpdateDefault()
         {
             IsDefault = !IsDefault;
+        }
+
+        public void Delete()
+        {
+            Deleted = true;
         }
      }
 }
