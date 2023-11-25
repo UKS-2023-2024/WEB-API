@@ -45,7 +45,7 @@ public class SendInviteCommandHandler: ICommandHandler<SendInviteCommand>
 
         var owner = await _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.OwnerId, request.RepositoryId);
         RepositoryMember.ThrowIfDoesntExist(owner);
-        owner!.ThrowIfNotAdminPrivileges();
+        owner!.ThrowIfNotAdminPrivileges("You cant add member!");
 
         var userToAdd = _userRepository.Find(request.UserId);
         User.ThrowIfDoesntExist(userToAdd);

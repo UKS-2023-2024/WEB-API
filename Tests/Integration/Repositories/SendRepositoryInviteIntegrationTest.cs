@@ -104,7 +104,7 @@ public class SendRepositoryInviteIntegrationTest: BaseIntegrationTest
         async Task Handle() => await _sender.Send(inviteCommand);
     
         //Assert
-        await Should.ThrowAsync<MemberNotOwnerException>(Handle);
+        await Should.ThrowAsync<MemberHasNoPrivilegeException>(Handle);
     }
     
     [Fact]

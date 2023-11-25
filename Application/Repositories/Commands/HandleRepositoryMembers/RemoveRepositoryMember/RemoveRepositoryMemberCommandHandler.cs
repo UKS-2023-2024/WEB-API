@@ -21,14 +21,13 @@ public class RemoveRepositoryMemberCommandHandler: ICommandHandler<RemoveReposit
     {
         var owner = await _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.OwnerId, request.RepositoryId);
         RepositoryMember.ThrowIfDoesntExist(owner);
-        owner!.ThrowIfNotAdminPrivileges();
+        owner!.ThrowIfNotAdminPrivileges("You cant remove member!");
 
         var member = _repositoryMemberRepository.Find(request.RepositoryMemberId);
         if (member is null || member.Deleted) throw new RepositoryMemberNotFoundException();
         
         var repository = _repositoryRepository.Find(request.RepositoryId);
-        Repository.ThrowIfDoesntExist(repository);
-        
+
         repository!.RemoveMember(member);
         _repositoryRepository.Update(repository);
     }

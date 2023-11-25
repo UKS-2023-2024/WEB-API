@@ -137,7 +137,7 @@ public class SendInviteForRepositoryUnitTests
         async Task Handle() => await handler.Handle(command, default);
 
         //Assert
-        await Should.ThrowAsync<MemberNotOwnerException>(Handle);
+        await Should.ThrowAsync<MemberHasNoPrivilegeException>(Handle);
     }
     [Fact]
     public async void Handle_ShouldReturnError_WhenOwnerNotExists()

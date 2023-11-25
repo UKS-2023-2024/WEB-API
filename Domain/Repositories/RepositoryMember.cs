@@ -31,9 +31,9 @@ namespace Domain.Repositories
         {
             if (member is null) throw new RepositoryMemberNotFoundException();
         }
-        public void ThrowIfNotAdminPrivileges()
+        public void ThrowIfNotAdminPrivileges(string errorMessage)
         {
-            if (Role is not (RepositoryMemberRole.OWNER or RepositoryMemberRole.ADMIN)) throw new MemberNotOwnerException();
+            if (Role is not (RepositoryMemberRole.OWNER or RepositoryMemberRole.ADMIN)) throw new MemberHasNoPrivilegeException(errorMessage);
         }
 
         public void ActivateMemberAgain()
