@@ -3,6 +3,7 @@ using Application.Repositories.Commands.Create.CreateForOrganization;
 using Application.Repositories.Commands.Create.CreateForUser;
 using Application.Repositories.Commands.Delete;
 using Application.Repositories.Commands.HandleRepositoryMembers.AddRepositoryMember;
+using Application.Repositories.Commands.HandleRepositoryMembers.RemoveRepositoryMember;
 using Application.Repositories.Commands.StarringRepository.StarRepository;
 using Application.Repositories.Commands.StarringRepository.UnstarRepository;
 using Application.Repositories.Queries.FindAllByOrganizationId;
@@ -128,6 +129,15 @@ public class RepositoryController : ControllerBase
     {
         var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
         await _sender.Send(new AddRepositoryMemberCommand(userId, inviteId));
+        return Ok();
+    }
+    
+    [HttpPost("remove-user/{repositoryId:guid}/{repositoryMemberId:guid}")]
+    [Authorize]
+    public async Task<IActionResult> RemoveUserFromRepository(Guid repositoryId, Guid repositoryMemberId)
+    {
+        var ownerId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        await _sender.Send(new RemoveRepositoryMemberCommand(ownerId, repositoryMemberId,repositoryId));
         return Ok();
     }
     

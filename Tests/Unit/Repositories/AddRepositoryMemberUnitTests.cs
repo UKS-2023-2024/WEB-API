@@ -28,7 +28,7 @@ public class AddRepositoryMemberUnitTests
         _user1 = User.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), "dusanjanosevic007@gmail.com", "full name", "username1", "password", UserRole.USER);
         _user2 = User.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"), "dusan.janosevic123@gmail.com", "full name", "username2", "password", UserRole.USER);
         
-        _repository1 = Repository.Create(new Guid("8e9b1cc1-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository", "test", false, null);
+        _repository1 = Repository.Create(new Guid("8e9b1cc1-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository", "test", false, null, _user1);
         _userRepository.Setup(x => x.FindUserById(_user1.Id)).ReturnsAsync(_user1);
         _userRepository.Setup(x => x.FindUserById(_user2.Id)).ReturnsAsync(_user2);
         _repositoryRepository.Setup(x => x.Find(_repository1.Id)).Returns(_repository1);

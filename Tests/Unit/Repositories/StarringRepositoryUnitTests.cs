@@ -19,11 +19,11 @@ public class StarringRepositoryUnitTests
     public StarringRepositoryUnitTests()
     {
         _user = User.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), "email@gmail.com", "full name", "username", "password", UserRole.USER);
-        var repository1 = Repository.Create(new Guid("8e9b1cc1-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository", "test", false, null);
-        var repository2 = Repository.Create(new Guid("8e9b1cc2-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository", "test", true, null);
-        var repository3 = Repository.Create(new Guid("8e9b1cc3-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository", "test", true, null);
-        var repository4 = Repository.Create(new Guid("8e9b1cc4-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository", "test", false, null);
-        repository3.AddMember(RepositoryMember.Create(_user,repository3, RepositoryMemberRole.CONTRIBUTOR));
+        var repository1 = Repository.Create(new Guid("8e9b1cc1-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository", "test", false, null, _user);
+        var repository2 = Repository.Create(new Guid("8e9b1cc2-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository", "test", true, null, _user);
+        var repository3 = Repository.Create(new Guid("8e9b1cc3-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository", "test", true, null, _user);
+        var repository4 = Repository.Create(new Guid("8e9b1cc4-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository", "test", false, null, _user);
+        repository3.AddMember(_user);
         repository4.AddToStarredBy(_user);
         _repositoryRepositoryMock = new Mock<IRepositoryRepository>();
         _repositoryMemberRepositoryMock = new Mock<IRepositoryMemberRepository>();

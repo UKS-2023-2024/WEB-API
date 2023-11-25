@@ -84,7 +84,7 @@ public class CreateRepositoryUnitTests
 
         User foundUser = User.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), "email@gmail.com", "full name", "username", "password", UserRole.USER);
         _userRepositoryMock.Setup(x => x.FindUserById(foundUser.Id)).ReturnsAsync(foundUser);
-        Repository repository = Repository.Create(new Guid("8e9b1cd0-35d3-4bf2-9f2c-5e00a21d92a8"), "test-repository", "test", false, null);
+        Repository repository = Repository.Create(new Guid("8e9b1cd0-35d3-4bf2-9f2c-5e00a21d92a8"), "test-repository", "test", false, null, foundUser);
         _repositoryRepositoryMock.Setup(x => x.FindByNameAndOwnerId("test-repository", foundUser.Id)).ReturnsAsync((string name, Guid ownerId) => repository);
 
         var handler = new CreateRepositoryForUserCommandHandler(_userRepositoryMock.Object, _repositoryRepositoryMock.Object);
@@ -112,7 +112,7 @@ public class CreateRepositoryUnitTests
         _userRepositoryMock.Setup(x => x.FindUserById(foundUser.Id)).ReturnsAsync(foundUser);
         Organization organization = Organization.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d95a8"), "organizacija", "email@gmail.com", new());
         _organizationRepositoryMock.Setup(x => x.Find(organization.Id)).Returns(organization);
-        Repository repository = Repository.Create(new Guid("8e9b1cd0-35d3-4bf2-9f2c-5e00a21d92a8"), "test-repository", "test", false, organization);
+        Repository repository = Repository.Create(new Guid("8e9b1cd0-35d3-4bf2-9f2c-5e00a21d92a8"), "test-repository", "test", false, organization, foundUser);
         _repositoryRepositoryMock.Setup(x => x.FindByNameAndOrganizationId("test-repository", organization.Id)).ReturnsAsync((string name, Guid organizationId) => repository);
       
         var handler = new CreateRepositoryForOrganizationCommandHandler(_userRepositoryMock.Object, _repositoryRepositoryMock.Object, _organizationRepositoryMock.Object);

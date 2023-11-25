@@ -68,31 +68,23 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         var organization1 = Organization.Create("organization1", "contact@example.com", new List<User>());
         var organizationMember1 = OrganizationMember.Create(user1, organization1, ownerPermission);
         var organizationMember2 = OrganizationMember.Create(user2, organization1, memberPermission);
+        var organizationMember3 = OrganizationMember.Create(user4, organization1, memberPermission);
 
         organization1.AddMember(organizationMember1);
         organization1.AddMember(organizationMember2);
+        organization1.AddMember(organizationMember3);
 
-        var repository1 = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d94a5"), "repo", "test", false, null);
-        var repositoryOwner = RepositoryMember.Create(user1, repository1, RepositoryMemberRole.OWNER);
-        repository1.AddMember(repositoryOwner);
-        
-        var repository2 = Repository.Create(new Guid("8e9b1cc1-35d3-4bf2-9f2c-5e00a21d14a5"), "repo2", "test", false, organization1);
-        var repositoryOwner2 = RepositoryMember.Create(user1, repository2, RepositoryMemberRole.OWNER);
-        repository2.AddMember(repositoryOwner2);
+        var repository1 = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d94a5"), "repo", "test", false, null, user1);
+
+        var repository2 = Repository.Create(new Guid("8e9b1cc1-35d3-4bf2-9f2c-5e00a21d14a5"), "repo2", "test", false, organization1, user1);
         repository2.AddToStarredBy(user3);
         repository2.AddToStarredBy(user4);
 
-        var repository3 = Repository.Create(new Guid("8e9b1cc2-35d3-4bf2-9f2c-9e00a21d94a5"), "repo3", "test", false, null);
-        var repositoryOwner3 = RepositoryMember.Create(user1, repository3, RepositoryMemberRole.OWNER);
-        repository3.AddMember(repositoryOwner3);
+        var repository3 = Repository.Create(new Guid("8e9b1cc2-35d3-4bf2-9f2c-9e00a21d94a5"), "repo3", "test", false, null, user1);
+        repository3.AddMember(user2);
+        repository3.RemoveMember(repository3.Members.FirstOrDefault(rm=>rm.Member == user2)!);
         
-        var repositoryMember1 = RepositoryMember.Create(user2, repository3, RepositoryMemberRole.CONTRIBUTOR);
-        repository3.AddMember(repositoryMember1);
-        
-        var repository4 = Repository.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"), "repo4", "test", true, null);
-        var repositoryOwner4 = RepositoryMember.Create(user1, repository4, RepositoryMemberRole.OWNER);
-        repository4.AddMember(repositoryOwner4);
-
+        var repository4 = Repository.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"), "repo4", "test", true, null, user1);
         var milestone1 = Milestone.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"), "title", "description", new DateOnly(), new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"));
         
         context.Users.AddRange(user1, user2, user3, user4);
