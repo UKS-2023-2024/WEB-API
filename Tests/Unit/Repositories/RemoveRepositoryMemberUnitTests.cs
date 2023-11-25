@@ -1,0 +1,72 @@
+﻿using Application.Repositories.Commands.HandleRepositoryMembers.RemoveRepositoryMember;
+using Domain.Auth;
+using Domain.Auth.Enums;
+using Domain.Repositories;
+using Domain.Repositories.Interfaces;
+using Moq;
+using Shouldly;
+
+namespace Tests.Unit.Repositories;
+
+public class RemoveRepositoryMemberUnitTests
+{
+    private readonly Mock<IRepositoryMemberRepository> _repositoryMemberRepositoryMock = new();
+    private readonly Mock<IRepositoryRepository> _repositoryRepository = new();
+    private readonly User _user1;
+    private readonly User _user2;
+    private readonly User _user3;
+    private readonly User _user4;
+    private readonly Repository _repository1;
+    private readonly Repository _repository2;
+    private readonly Repository _repository3;
+    private readonly RepositoryMember _repoMember1;
+    private readonly RepositoryMember _repoMember2;
+    private readonly RepositoryMember _repoMember3;
+    private readonly RepositoryMember _repoMember4;
+    private readonly RepositoryMember _repoMember5;
+
+    public RemoveRepositoryMemberUnitTests()
+    {
+        _user1 = User.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), "dusanjanosevic007@gmail.com", "full name", "username1", "password", UserRole.USER);
+        _user2 = User.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"), "dusan.janosevic123@gmail.com", "full name", "username2", "password", UserRole.USER);
+        _user3 = User.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92b9"), "dusan.janosevic123@gmail.com", "full name", "username2", "password", UserRole.USER);
+        _user4 = User.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d9211"), "dusan.janosevicasd@gmail.com", "full name", "username4", "password", UserRole.USER);
+
+        _repository1 = Repository.Create(new Guid("8e9b1cc1-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository1", "test", false, null,_user1);
+        _repository2 = Repository.Create(new Guid("8e9b1cc2-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository2", "test", false, null,_user1);
+        _repository3 = Repository.Create(new Guid("8e9b1cc3-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository3", "test", false, null,_user1);
+        _repository2.AddMember(_user2);
+        _repoMember1 = RepositoryMember.Create(_user1, _repository1, RepositoryMemberRole.OWNER);
+        _repoMember2 = RepositoryMember.Create(_user1, _repository1, RepositoryMemberRole.OWNER);
+        _repoMember3 = RepositoryMember.Create(_user2, _repository1, RepositoryMemberRole.CONTRIBUTOR);
+        _repoMember4 = RepositoryMember.Create(_user1, _repository3, RepositoryMemberRole.OWNER);
+        _repoMember5 = RepositoryMember.Create(_user4, _repository3, RepositoryMemberRole.CONTRIBUTOR);
+        _repoMember5.Delete();
+
+        _repositoryRepository.Setup(x => x.Find(_repository1.Id)).Returns(_repository1);
+        _repositoryRepository.Setup(x => x.Find(_repository2.Id)).Returns(_repository2);
+        _repositoryRepository.Setup(x => x.Find(_repository3.Id)).Returns(_repository3);
+
+        _repositoryMemberRepositoryMock.Setup(x => x.Find(_repoMember1.Id)).Returns(_repoMember1);
+        _repositoryMemberRepositoryMock.Setup(x => x.Find(_repoMember2.Id)).Returns(_repoMember2);
+        _repositoryMemberRepositoryMock.Setup(x => x.Find(_repoMember3.Id)).Returns(_repoMember3);
+        _repositoryMemberRepositoryMock.Setup(x => x.Find(_repoMember4.Id)).Returns(_repoMember4);
+        _repositoryMemberRepositoryMock.Setup(x => x.Find(_repoMember5.Id)).Returns(_repoMember5);
+    }
+    
+    [Fact]
+    public void Handle_ShouldReturnSuccess_WhenUserMemberAndOwnerHasPrivileges()
+    {
+        //Arrange
+
+        var command = new RemoveRepositoryMemberCommand(_user1.Id,
+            _repoMember3.Id, _repository3.Id);
+
+        //Act
+        var result = new RemoveRepositoryMemberCommandHandler(_repositoryRepository.Object,_repositoryMemberRepositoryMock.Object)
+            .Handle(command,default);
+
+        //Assert
+        result.IsFaulted.ShouldBe(false);
+    }
+}

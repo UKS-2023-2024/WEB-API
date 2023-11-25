@@ -27,7 +27,8 @@ public class SendInviteCommandHandler: ICommandHandler<SendInviteCommand>
         IRepositoryMemberRepository repositoryMemberRepository,
         IRepositoryInviteRepository repositoryInviteRepository,
         IUserRepository userRepository,
-        IRepositoryRepository repositoryRepository, IOrganizationMemberRepository organizationMemberRepository,
+        IRepositoryRepository repositoryRepository, 
+        IOrganizationMemberRepository organizationMemberRepository,
         IPermissionService permissionService)
     {
         _repositoryMemberRepository = repositoryMemberRepository;
@@ -44,7 +45,7 @@ public class SendInviteCommandHandler: ICommandHandler<SendInviteCommand>
 
         var owner = await _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.OwnerId, request.RepositoryId);
         RepositoryMember.ThrowIfDoesntExist(owner);
-        owner!.ThrowIfNotOwner();
+        owner!.ThrowIfNotAdminPrivileges();
 
         var userToAdd = _userRepository.Find(request.UserId);
         User.ThrowIfDoesntExist(userToAdd);

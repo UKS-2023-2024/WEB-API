@@ -58,6 +58,14 @@ namespace Domain.Repositories
             _members.Add(member);
         }
         
+        public void RemoveMember(RepositoryMember repositoryMember)
+        {
+            var member = _members.FirstOrDefault(m => m.Id == repositoryMember.Id);
+            if (member is null)
+                throw new RepositoryMemberNotFoundException();
+            member.Delete();
+        }
+        
         public void AddToStarredBy(User user)
         {
             StarredBy.Add(user);
