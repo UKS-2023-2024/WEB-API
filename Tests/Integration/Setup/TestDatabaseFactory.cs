@@ -82,6 +82,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
 
         var repository3 = Repository.Create(new Guid("8e9b1cc2-35d3-4bf2-9f2c-9e00a21d94a5"), "repo3", "test", false, null, user1);
         repository3.AddMember(user2);
+        repository3.RemoveMember(repository3.Members.FirstOrDefault(rm=>rm.Member == user2)!);
         
         var repository4 = Repository.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"), "repo4", "test", true, null, user1);
         var milestone1 = Milestone.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"), "title", "description", new DateOnly(), new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"));

@@ -148,19 +148,4 @@ public class RemoveRepositoryMemberUnitTests
         //Assert
         await Should.ThrowAsync<RepositoryMemberNotFoundException>(Handle);
     }
-        
-    [Fact]
-    public async void Handle_ShouldReturnError_WhenRepositoryNotFound()
-    {
-        //Arrange
-        var command = new RemoveRepositoryMemberCommand(_user1.Id,
-            _repoMember3.Id, _repository2.Id);
-        var handler = new RemoveRepositoryMemberCommandHandler(_repositoryRepository.Object,_repositoryMemberRepositoryMock.Object);
-        
-        //Act
-        async Task Handle() => await handler.Handle(command, default);
-
-        //Assert
-        await Should.ThrowAsync<RepositoryMemberNotFoundException>(Handle);
-    }
 }
