@@ -9,6 +9,8 @@ using Application.Branches.Commands.Update;
 using Application.Branches.Commands.Delete;
 using Application.Branches.Commands.Restore;
 using Application.Repositories.Queries.FindAllNotDeletedByRepositoryId;
+using Application.Repositories.Queries.FindAllActiveByRepositoryId;
+using Application.Repositories.Queries.FindAllUserActiveByRepositoryId;
 
 namespace WEB_API.Branches;
 
@@ -44,7 +46,7 @@ public class BranchController : ControllerBase
         return Ok(updatedBranch);
     }
 
-    [HttpPatch("/make-default/{id}")]
+    [HttpPatch("make-default/{id}")]
     [Authorize]
     public async Task<IActionResult> MakeDefault(Guid id)
     {
@@ -52,7 +54,7 @@ public class BranchController : ControllerBase
         return Ok(updatedBranch);
     }
 
-    [HttpDelete("/{id}")]
+    [HttpDelete("{id}")]
     [Authorize]
     public async Task<IActionResult> Delete(Guid id)
     {
@@ -60,7 +62,7 @@ public class BranchController : ControllerBase
         return Ok(deletedBranch);
     }
 
-    [HttpPatch("/restore/{id}")]
+    [HttpPatch("restore/{id}")]
     [Authorize]
     public async Task<IActionResult> Restore(Guid id)
     {
@@ -68,11 +70,38 @@ public class BranchController : ControllerBase
         return Ok(restoredBranch);
     }
 
-    [HttpGet("/not-delete/{repositoryId}")]
+    [HttpGet("not-deleted/{repositoryId}")]
     [Authorize]
     public async Task<IActionResult> FindAllNotDeleted(Guid repositoryId)
     {
         var branches = await _sender.Send(new FindAllNotDeletedBranchesByRepositoryIdQuery(repositoryId));
+        return Ok(branches);
+    }
+
+    [HttpGet("active/{repositoryId}/{pageSize}/{pageNumber}")]
+    [Authorize]
+    public async Task<IActionResult> FindAllActive(Guid repositoryId, int pageSize, int pageNumber)
+    {
+        var branches = await _sender.Send(new FindAllActiveBranchesByRepositoryIdQuery(repositoryId, pageSize, pageNumber));
+        return Ok(branches);
+    }
+
+    [HttpGet("user-active/{repositoryId}/{pageSize}/{pageNumber}")]
+    [Authorize]
+    public async Task<IActionResult> FindAllUserActive(Guid repositoryId, int pageSize, int pageNumber)
+    {
+        var ownerId = _userIdentityService.FindUserIdentity(HttpContext.User);
+
+        var branches = await _sender.Send(new FindAllUserActiveBranchesByRepositoryIdQuery(repositoryId, ownerId, pageSize, pageNumber));
+        return Ok(branches);
+    }
+
+
+    [HttpGet("default/{repositoryId}")]
+    [Authorize]
+    public async Task<IActionResult> FindDefault(Guid repositoryId)
+    {
+        var branches = await _sender.Send(new FindDefaultBranchByRepositoryIdQuery(repositoryId));
         return Ok(branches);
     }
 }
