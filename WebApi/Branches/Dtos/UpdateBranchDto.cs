@@ -2,7 +2,7 @@
 {
     public class UpdateBranchDto
     {
-        required public Guid BranchId { get; set; }
+        required public Guid Id { get; set; }
         required public string Name { get; set; }
 
     }

@@ -4,7 +4,6 @@ using Domain.Shared;
 using Infrastructure.Persistence;
 using Infrastructure.Shared.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System.Xml.Linq;
 
 namespace Infrastructure.Branches
 {
@@ -31,10 +30,10 @@ namespace Infrastructure.Branches
         }
 
 
-        public async Task<IEnumerable<Branch>> FindAllNotDeletedByRepositoryId(Guid repositoryId)
+        public async Task<IEnumerable<Branch>> FindAllByRepositoryIdAndIsDefault(Guid repositoryId, bool isDefault)
         {
             return _context.Branches
-                .Where(b => b.RepositoryId == repositoryId && !b.Deleted)
+                .Where(b => b.RepositoryId == repositoryId && b.IsDefault == isDefault && !b.Deleted)
                 .ToList();
         }
 
@@ -67,7 +66,5 @@ namespace Infrastructure.Branches
 
             return new PagedResult<Branch>(data, totalItems);
         }
-
-
     }
 }

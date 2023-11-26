@@ -1,9 +1,8 @@
-﻿using Application.Repositories.Queries.FindAllNotDeletedByRepositoryId;
-using Domain.Branches;
+﻿using Domain.Branches;
 using Domain.Branches.Interfaces;
 using MediatR;
 
-namespace Application.Repositories.Queries.FindAllByOrganizationId;
+namespace Application.Repositories.Queries.FindDefaultBranchByRepositoryId;
 
 public class FindDefaultBranchByRepositoryIdQueryHandler : IRequestHandler<FindDefaultBranchByRepositoryIdQuery, Branch>
 {
