@@ -1,7 +1,4 @@
-﻿using Application.Milestones.Commands.Create;
-using Application.Milestones.Commands.Update;
-using Application.Milestones.Commands.Delete;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WEB_API.Milestones.Dtos;
@@ -9,6 +6,7 @@ using WEB_API.Shared.TokenHandler;
 using WEB_API.Shared.UserIdentityService;
 using WEB_API.Branches.Dtos;
 using Application.Branches.Commands.Create;
+using Application.Branches.Commands.Update;
 
 namespace WEB_API.Branches;
 
@@ -34,5 +32,21 @@ public class BranchController : ControllerBase
         var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
         var createdBranchId = await _sender.Send(new CreateBranchCommand(dto.Name, dto.RepositoryId, false, userId));
         return Ok(createdBranchId);
+    }
+
+    [HttpPatch("")]
+    [Authorize]
+    public async Task<IActionResult> Update([FromBody] UpdateBranchDto dto)
+    {
+        var updatedBranch = await _sender.Send(new UpdateBranchNameCommand(dto.BranchId, dto.Name));
+        return Ok(updatedBranch);
+    }
+
+    [HttpPatch("/make-default/{id}")]
+    [Authorize]
+    public async Task<IActionResult> MakeDefault(Guid id)
+    {
+        var updatedBranch = await _sender.Send(new MakeBranchDefaultCommand(id));
+        return Ok(updatedBranch);
     }
 }
