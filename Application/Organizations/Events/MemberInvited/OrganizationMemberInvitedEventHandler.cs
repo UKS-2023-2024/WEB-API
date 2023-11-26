@@ -1,9 +1,9 @@
-using Application.Shared.Email;
 using Domain.Auth;
 using Domain.Auth.Interfaces;
 using Domain.Organizations;
 using Domain.Organizations.Events;
 using Domain.Organizations.Interfaces;
+using Domain.Shared.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 
@@ -34,6 +34,6 @@ public class OrganizationMemberInvitedEventHandler: INotificationHandler<Organiz
         var user = await _userRepository.FindUserById(invite.UserId);
         User.ThrowIfDoesntExist(user);
         var link = $"{_configuration["PublicApp"]}/organization/invites/{invite.Id}";
-        await _emailService.SendOrgInvitationLink(user.PrimaryEmail, link);
+        await _emailService.SendOrgInvitationLink(user.PrimaryEmail, link, invite.Organization.Name);
     }
 }

@@ -1,5 +1,4 @@
 using Application.Shared;
-using Application.Shared.Email;
 using Domain.Auth.Interfaces;
 using Domain.Organizations;
 using Domain.Organizations.Events;
