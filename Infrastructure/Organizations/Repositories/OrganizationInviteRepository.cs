@@ -17,7 +17,7 @@ public class OrganizationInviteRepository: BaseRepository<OrganizationInvite>, I
 
     public Task<OrganizationInvite?> FindById(Guid id)
     {
-        return _context.OrganizationInvites
+        return _context.OrganizationInvites.Include(invite => invite.Organization)
             .FirstOrDefaultAsync(i => i.Id.Equals(id));
     }
 

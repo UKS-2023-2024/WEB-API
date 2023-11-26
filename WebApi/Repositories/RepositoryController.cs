@@ -5,6 +5,7 @@ using Application.Repositories.Commands.Delete;
 using Application.Repositories.Commands.HandleRepositoryMembers.AddRepositoryMember;
 using Application.Repositories.Commands.HandleRepositoryMembers.ChangeRole;
 using Application.Repositories.Commands.HandleRepositoryMembers.RemoveRepositoryMember;
+using Application.Repositories.Commands.HandleRepositoryMembers.SendRepositoryInvite;
 using Application.Repositories.Commands.StarringRepository.StarRepository;
 using Application.Repositories.Commands.StarringRepository.UnstarRepository;
 using Application.Repositories.Queries.FindAllByOrganizationId;
@@ -119,10 +120,8 @@ public class RepositoryController : ControllerBase
     [Authorize]
     public async Task<IActionResult> SendRepositoryInvite(Guid repositoryId, Guid userId)
     {
-        var user = await _userIdentityService.FindUserFromToken(HttpContext.User);
-        if (user is null)
-            return Unauthorized();
-        await _sender.Send(new UnstarRepositoryCommand(user,repositoryId));
+        var ownerId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        await _sender.Send(new SendInviteCommand(ownerId, userId,repositoryId));
         return Ok();
     }
     
@@ -144,7 +143,7 @@ public class RepositoryController : ControllerBase
         return Ok();
     }
     
-    [HttpGet("{repositoryId:guid}/repository-members/")]
+    [HttpGet("{repositoryId:guid}/members")]
     [Authorize]
     public async Task<IActionResult> GetRepositoryMembers(Guid repositoryId)
     {
