@@ -1,5 +1,6 @@
 ﻿using Application.Shared;
 using Domain.Auth.Interfaces;
+using Domain.Branches;
 using Domain.Organizations;
 using Domain.Organizations.Exceptions;
 using Domain.Organizations.Interfaces;
@@ -32,6 +33,7 @@ public class CreateRepositoryForUserCommandHandler : ICommandHandler<CreateRepos
         var repository = Repository.Create(request.Name, request.Description, request.IsPrivate, null);
         var memberOwner = RepositoryMember.Create(creator, repository, RepositoryMemberRole.OWNER);
         repository.AddMember(memberOwner);
+        repository.AddBranch(Branch.Create("main", Guid.Empty, true, creator.Id));
 
         repository = await _repositoryRepository.Create(repository);
 
