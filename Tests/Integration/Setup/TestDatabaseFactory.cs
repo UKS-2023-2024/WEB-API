@@ -82,17 +82,24 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         repository2.AddToStarredBy(user4);
 
         var repository3 = Repository.Create(new Guid("8e9b1cc2-35d3-4bf2-9f2c-9e00a21d94a5"), "repo3", "test", false, null, user1);
-        repository3.AddMember(user2);
-        repository3.RemoveMember(repository3.Members.FirstOrDefault(rm=>rm.Member == user2)!);
+        var member = repository3.AddMember(user2);
+        repository3.AddMember(user3);
+        member.Delete();
         
         var repository4 = Repository.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"), "repo4", "test", true, null, user1);
+        var member2 = repository3.AddMember(user2);
+        member2.Delete();
+        
+        var repository5 = Repository.Create(new Guid("8e9b1cc3-35d6-4bf2-9f2c-9e00a21d94a5"), "repo5", "test", true, organization1, user1);
+
+        
         var milestone1 = Milestone.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"), "title", "description", new DateOnly(), new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"));
 
         var branch1 = Branch.Create("branch", new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d94a5"), false, new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
         
         context.Users.AddRange(user1, user2, user3, user4);
         context.Organizations.AddRange(organization1);
-        context.Repositories.AddRange(repository1,repository2,repository3,repository4);
+        context.Repositories.AddRange(repository1,repository2,repository3,repository4,repository5);
         context.Milestones.AddRange(milestone1);
         context.Branches.AddRange(branch1);
         context.SaveChanges();

@@ -78,7 +78,7 @@ public class SendRepositoryInviteIntegrationTest: BaseIntegrationTest
     {
         //Arrange
         var ownerId = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5");
-        var userId = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7");
+        var userId = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9");
         
         var repository = _context.Repositories.FirstOrDefault(o => o.Name.Equals("repo3"));
         var inviteCommand = new SendInviteCommand(ownerId, userId, repository!.Id);
@@ -94,7 +94,7 @@ public class SendRepositoryInviteIntegrationTest: BaseIntegrationTest
     public async void Handle_ShouldReturnError_WhenOwnerNotAnOwner()
     {
         //Arrange
-        var ownerId = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7");
+        var ownerId = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9");
         var userId = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5");
         
         var repository = _context.Repositories.FirstOrDefault(o => o.Name.Equals("repo3"));
@@ -111,7 +111,7 @@ public class SendRepositoryInviteIntegrationTest: BaseIntegrationTest
     public async void Handle_ShouldReturnError_WhenOwnerNotExists()
     {
         //Arrange
-        var ownerId = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9");
+        var ownerId = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d9211");
         var userId = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5");
         
         var repository = _context.Repositories.FirstOrDefault(o => o.Name.Equals("repo3"));

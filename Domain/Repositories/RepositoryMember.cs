@@ -29,9 +29,9 @@ namespace Domain.Repositories
         
         public static void ThrowIfDoesntExist(RepositoryMember? member)
         {
-            if (member is null) throw new RepositoryMemberNotFoundException();
+            if (member is null || member.Deleted) throw new RepositoryMemberNotFoundException();
         }
-        public void ThrowIfNotAdminPrivileges()
+        public void ThrowIfNoAdminPrivileges()
         {
             if (Role is not (RepositoryMemberRole.OWNER or RepositoryMemberRole.ADMIN)) throw new MemberHasNoPrivilegeException();
         }
@@ -44,6 +44,11 @@ namespace Domain.Repositories
         public void Delete()
         {
             Deleted = true;
+        }
+        
+        public void SetRole(RepositoryMemberRole role)
+        {
+            Role = role;
         }
     }
 }

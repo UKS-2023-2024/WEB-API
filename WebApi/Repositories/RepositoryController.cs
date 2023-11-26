@@ -3,16 +3,19 @@ using Application.Repositories.Commands.Create.CreateForOrganization;
 using Application.Repositories.Commands.Create.CreateForUser;
 using Application.Repositories.Commands.Delete;
 using Application.Repositories.Commands.HandleRepositoryMembers.AddRepositoryMember;
+using Application.Repositories.Commands.HandleRepositoryMembers.ChangeRole;
 using Application.Repositories.Commands.HandleRepositoryMembers.RemoveRepositoryMember;
 using Application.Repositories.Commands.StarringRepository.StarRepository;
 using Application.Repositories.Commands.StarringRepository.UnstarRepository;
 using Application.Repositories.Queries.FindAllByOrganizationId;
 using Application.Repositories.Queries.FindAllByOwnerId;
+using Application.Repositories.Queries.FindAllRepositoryMembers;
 using Domain.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WEB_API.Repositories.Dtos;
+using WEB_API.Repositories.Presenters;
 using WEB_API.Shared.TokenHandler;
 using WEB_API.Shared.UserIdentityService;
 
@@ -132,12 +135,30 @@ public class RepositoryController : ControllerBase
         return Ok();
     }
     
-    [HttpPost("remove-user/{repositoryId:guid}/{repositoryMemberId:guid}")]
+    [HttpDelete("remove-user/{repositoryId:guid}/{repositoryMemberId:guid}")]
     [Authorize]
     public async Task<IActionResult> RemoveUserFromRepository(Guid repositoryId, Guid repositoryMemberId)
     {
         var ownerId = _userIdentityService.FindUserIdentity(HttpContext.User);
         await _sender.Send(new RemoveRepositoryMemberCommand(ownerId, repositoryMemberId,repositoryId));
+        return Ok();
+    }
+    
+    [HttpGet("{repositoryId:guid}/repository-members/")]
+    [Authorize]
+    public async Task<IActionResult> GetRepositoryMembers(Guid repositoryId)
+    {
+        var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        var members =  await _sender.Send(new FindAllRepositoryMembersQuery(userId, repositoryId));
+        return Ok(RepositoryMemberPresenter.MapRepositoryMembersToPresenters(members));
+    }
+    
+    [HttpPatch("change-user-role/{repositoryId:guid}/{repositoryMemberId:guid}/{role}")]
+    [Authorize]
+    public async Task<IActionResult> ChangeRepositoryMemberRole(Guid repositoryId, Guid repositoryMemberId,RepositoryMemberRole role)
+    {
+        var ownerId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        await _sender.Send(new ChangeMemberRoleCommand(ownerId, repositoryMemberId, repositoryId, role));
         return Ok();
     }
     
