@@ -7,6 +7,8 @@ using WEB_API.Shared.UserIdentityService;
 using WEB_API.Branches.Dtos;
 using Application.Branches.Commands.Create;
 using Application.Branches.Commands.Update;
+using Application.Branches.Commands.Delete;
+
 
 namespace WEB_API.Branches;
 
@@ -48,5 +50,13 @@ public class BranchController : ControllerBase
     {
         var updatedBranch = await _sender.Send(new MakeBranchDefaultCommand(id));
         return Ok(updatedBranch);
+    }
+
+    [HttpDelete("/{id}")]
+    [Authorize]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var deletedBranch = await _sender.Send(new DeleteBranchCommand(id));
+        return Ok(deletedBranch);
     }
 }
