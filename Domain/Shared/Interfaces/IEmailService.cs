@@ -1,8 +1,8 @@
-namespace Application.Shared.Email;
+namespace Domain.Shared.Interfaces;
 
 public interface IEmailService
 {
-    Task SendOrgInvitationLink(string email, string link);
+    Task SendOrgInvitationLink(string email, string link, string organizationName);
     
-    Task SendRepoInvitationLink(string email, string link);
+    Task SendRepoInvitationLink(string email, string link, string repositoryName);
 }

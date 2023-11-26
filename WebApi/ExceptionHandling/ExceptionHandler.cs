@@ -28,7 +28,7 @@ public static class ExceptionHandler
                 or BranchWithThisNameExistsException 
                 or BranchIsAlreadyDefaultException => HttpStatusCode.Conflict,
             PermissionDeniedException 
-                or MemberNotOwnerException
+                or MemberHasNoPrivilegeException
                 or RepositoryInaccessibleException
                 or NotInviteOwnerException
                 or UserNotAOrganizationMemberException => HttpStatusCode.Forbidden,

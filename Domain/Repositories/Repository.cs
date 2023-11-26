@@ -24,32 +24,67 @@ namespace Domain.Repositories
 
         private Repository() { }
 
-        private Repository(string name, string description, bool isPrivate, Organization? organization, List<User> starredBy)
+        private Repository(string name, string description, bool isPrivate, Organization? organization, List<User> starredBy,User creator)
         {
             Name = name;
             Description = description;
             IsPrivate = isPrivate;  
             Organization = organization;
             StarredBy = starredBy;
+            _members.Add(RepositoryMember.Create(creator, this, RepositoryMemberRole.OWNER));
         }
 
-        public static Repository Create(string name, string description, bool isPrivate, Organization? organization)
+        public static Repository Create(string name, string description, bool isPrivate, Organization? organization,User creator)
         {
-            return new Repository(name, description, isPrivate, organization, new());
+            return new Repository(name, description, isPrivate, organization, new(),creator);
         }
 
-        public static Repository Create(Guid id, string name, string description, bool isPrivate, Organization? organization)
+        public static Repository Create(Guid id, string name, string description, bool isPrivate, Organization? organization,User creator)
         {
-            var repository = new Repository(name, description, isPrivate, organization, new())
+            var repository = new Repository(name, description, isPrivate, organization, new(),creator)
              {
                  Id = id
              };
             return repository;
         }
 
-        public void AddMember(RepositoryMember member)
+        public RepositoryMember AddMember(User user)
         {
+            var member = _members.FirstOrDefault(m => m.Member.Id == user.Id);
+            if (member is not null)
+            {
+                member.ActivateMemberAgain();
+                return member;
+            }
+            member = RepositoryMember.Create(user, this, RepositoryMemberRole.CONTRIBUTOR); ;
             _members.Add(member);
+            return member;
+        }
+        
+        public void RemoveMember(RepositoryMember repositoryMember)
+        {
+            var member = _members.FirstOrDefault(m => m.Id == repositoryMember.Id);
+            if (member is null)
+                throw new RepositoryMemberNotFoundException();
+            member.Delete();
+        }
+
+        private void ThrowIfNoOrganizationRepositoryAccess(Guid userId)
+        {
+            var userIsOrganizationMember = Organization!.Members.Any(mem => mem.MemberId == userId);
+            if (!userIsOrganizationMember) throw new RepositoryInaccessibleException();
+        }
+
+        public void ThrowIfUserCantAccessRepositoryData(Guid userId)
+        {
+            if (!IsPrivate) return;
+            
+            var userIsRepositoryMember = Members.Any(mem => mem.Member.Id == userId && !mem.Deleted);
+            if (userIsRepositoryMember) return;
+            
+            var repositoryIsInOrganization = Organization != null;
+            if (!repositoryIsInOrganization) throw new RepositoryInaccessibleException();
+            ThrowIfNoOrganizationRepositoryAccess(userId);
         }
         
         public void AddToStarredBy(User user)

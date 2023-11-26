@@ -35,7 +35,7 @@ namespace Tests.Unit.Repositories
             var command = new UpdateRepositoryCommand(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"), "test-repository", "test", false);
 
             User foundUser = User.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), "email@gmail.com", "full name", "username", "password", UserRole.USER);
-            Repository repository = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"), "repository", "test", false, null);
+            Repository repository = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"), "repository", "test", false, null, foundUser);
             RepositoryMember member = RepositoryMember.Create(foundUser, repository, RepositoryMemberRole.OWNER);
             _repositoryMemberRepositoryMock.Setup(x => x.FindByUserIdAndRepositoryId(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(member);
             _repositoryRepositoryMock.Setup(x => x.Find(repository.Id)).Returns(repository);
@@ -58,12 +58,12 @@ namespace Tests.Unit.Repositories
             var command = new UpdateRepositoryCommand(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"), "test-repository", "test", false);
 
             User foundUser = User.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), "email@gmail.com", "full name", "username", "password", UserRole.USER);
-            Repository repository = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"), "repository", "test", false, null);
+            Repository repository = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"), "repository", "test", false, null, foundUser);
             RepositoryMember member = RepositoryMember.Create(foundUser, repository, RepositoryMemberRole.OWNER);
             _repositoryMemberRepositoryMock.Setup(x => x.FindByUserIdAndRepositoryId(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(member);
             _repositoryRepositoryMock.Setup(x => x.Find(repository.Id)).Returns(repository);
             _repositoryMemberRepositoryMock.Setup(x => x.FindRepositoryOwner(repository.Id)).ReturnsAsync(member);
-            Repository repository2 = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a22d92a3"), "repository", "test", false, null);
+            Repository repository2 = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a22d92a3"), "repository", "test", false, null, foundUser);
             _repositoryRepositoryMock.Setup(x => x.FindByNameAndOwnerId(It.IsAny<string>(), It.IsAny<Guid>())).ReturnsAsync(repository2);
 
             var handler = new UpdateRepositoryCommandHandler(_repositoryRepositoryMock.Object, _repositoryMemberRepositoryMock.Object);

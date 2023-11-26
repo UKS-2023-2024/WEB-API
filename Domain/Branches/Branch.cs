@@ -56,5 +56,6 @@ namespace Domain.Branches
         {
             Deleted = false;
         }
+
      }
 }

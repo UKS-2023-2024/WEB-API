@@ -32,9 +32,9 @@ namespace Infrastructure.Branches
 
         public async Task<IEnumerable<Branch>> FindAllByRepositoryIdAndIsDefault(Guid repositoryId, bool isDefault)
         {
-            return _context.Branches
+            return await _context.Branches
                 .Where(b => b.RepositoryId == repositoryId && b.IsDefault == isDefault && !b.Deleted)
-                .ToList();
+                .ToListAsync();
         }
 
         public async Task<PagedResult<Branch>> FindAllByRepositoryIdAndDeletedAndIsDefault(Guid repositoryId, bool deleted, bool isDefault, int pageSize, int pageNumber)
