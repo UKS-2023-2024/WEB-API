@@ -38,7 +38,7 @@ namespace Tests.Unit.Repositories
 
             User user = User.Create(new Guid("6e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), "email@gmail.com", "full name", "username", "password",
                 UserRole.USER);
-            Repository repository = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), "test-repository", "test", false, null);
+            Repository repository = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), "test-repository", "test", false, null, user);
             RepositoryMember member = RepositoryMember.Create(user, repository, RepositoryMemberRole.OWNER);
             _repositoryMemberRepositoryMock.Setup(x => x.FindByUserIdAndRepositoryId(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(member);
             _repositoryRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>())).Returns(repository);
@@ -60,7 +60,7 @@ namespace Tests.Unit.Repositories
             var command = new DeleteRepositoryCommand(new Guid("6e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"));
 
             User user = User.Create(new Guid("6e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), "email@gmail.com", "full name", "username", "password", UserRole.USER);
-            Repository repository = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), "test-repository", "test", false, null);
+            Repository repository = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), "test-repository", "test", false, null, user);
             RepositoryMember member = RepositoryMember.Create(user, repository, RepositoryMemberRole.CONTRIBUTOR);
             _repositoryMemberRepositoryMock.Setup(x => x.FindByUserIdAndRepositoryId(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(member);
             _repositoryRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>())).Returns(repository);

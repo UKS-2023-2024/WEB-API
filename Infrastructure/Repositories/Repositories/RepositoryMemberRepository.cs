@@ -22,6 +22,13 @@ public class RepositoryMemberRepository: BaseRepository<RepositoryMember>, IRepo
             .FirstOrDefaultAsync();
     }
 
+    public Task<RepositoryMember?> FindByRepositoryMemberIdAndRepositoryId(Guid repositoryMemberId, Guid repositoryId)
+    {
+        return _context.RepositoryMembers
+            .Where(r => r.Id.Equals(repositoryMemberId) && r.RepositoryId.Equals(repositoryId))
+            .FirstOrDefaultAsync();
+    }
+
     public Task<RepositoryMember?> FindRepositoryOwner(Guid repositoryId)
     {
         return _context.RepositoryMembers
@@ -30,6 +37,12 @@ public class RepositoryMemberRepository: BaseRepository<RepositoryMember>, IRepo
             .Where(r => r.Repository.Id == repositoryId && r.Role == RepositoryMemberRole.OWNER)
             .FirstOrDefaultAsync();
     }
-    
-    
+
+    public IEnumerable<RepositoryMember> FindRepositoryMembers(Guid repositoryId)
+    {
+        return _context.RepositoryMembers
+            .Include(r => r.Member)
+            .Where(r => r.RepositoryId == repositoryId && !r.Deleted)
+            .AsEnumerable();
+    }
 }

@@ -1,9 +1,9 @@
-﻿using Application.Shared.Email;
-using Domain.Auth;
+﻿using Domain.Auth;
 using Domain.Auth.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Events;
 using Domain.Repositories.Interfaces;
+using Domain.Shared.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 
@@ -31,11 +31,11 @@ public class RepositoryMemberInvitedEventHandler: INotificationHandler<Repositor
     
     public async Task Handle(RepositoryMemberInvitedEvent notification, CancellationToken cancellationToken)
     {
-        var invite = _repositoryInviteRepository.Find(notification.InviteId);
+        var invite = await _repositoryInviteRepository.FindById(notification.InviteId);
         RepositoryInvite.ThrowIfDoesntExist(invite);
         var user = await _userRepository.FindUserById(invite.UserId);
         User.ThrowIfDoesntExist(user);
-        var link = $"{_configuration["PublicApp"]}/organization/invites/{invite.Id}";
-        await _emailService.SendRepoInvitationLink(user.PrimaryEmail, link);
+        var link = $"{_configuration["PublicApp"]}/repository/invites/{invite.Id}";
+        await _emailService.SendRepoInvitationLink(user.PrimaryEmail, link,invite.Repository.Name);
     }
 }

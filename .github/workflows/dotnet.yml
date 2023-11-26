@@ -1,34 +1,43 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
-name: .NET
+name: .NET Testing and Docker Push
 
 on:
   push:
     branches: [ "develop" ]
   pull_request:
     branches: [ "develop" ]
-jobs:
-  build:
 
+jobs:
+  build_and_test:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 7.0.x
-    - name: Restore dependencies
-      run: dotnet restore "WebApi/WebApi.csproj"
-    - name: Build
-      run: dotnet build WebApi --no-restore
-    - name: Unit tests
-      run: dotnet test Tests --filter Unit
-    - name: Print secrets
-      run: echo "${{secrets.REPO_DATABASE_KEY}}"
-    - name: Integration Tests
-      run: dotnet test Tests --filter Integration
-      env:
-        ConnectionString: ${{secrets.REPO_DATABASE_KEY}}
-        Sendgrid__ApiKey: ${{secrets.SENDGRID_API_KEY}}
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7.0.x
+      - name: Restore dependencies
+        run: dotnet restore "WebApi/WebApi.csproj"
+      - name: Build
+        run: dotnet build WebApi --no-restore
+      - name: Unit tests
+        run: dotnet test Tests --filter Unit
+      - name: Integration Tests
+        run: dotnet test Tests --filter Integration
+        env:
+          ConnectionString: ${{secrets.REPO_DATABASE_KEY}}
+          Sendgrid__ApiKey: ${{secrets.SENDGRID_API_KEY}}
+          Email__Key: ${{secrets.GMAIL_KEY}}
+  docker_push:
+    if: always()
+    needs: [build_and_test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+      - name: Login to Docker
+        run: docker login --username ${{ secrets.SRDJAN_DOCKER_USERNAME }} --password ${{ secrets.SRDJAN_DOCKER_PASSWORD }}
+      - name: Build dockerfile
+        run: docker build . -t srdjan1210/uks-2023-2024:latest
+      - name: Push Dockerfile
+        run: docker push srdjan1210/uks-2023-2024:latest

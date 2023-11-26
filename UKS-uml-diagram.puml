@@ -1,0 +1,180 @@
+@startuml
+class User {
+  id: Guid
+  Full Name: string
+  Username: string
+  Password: string
+  PrimaryEmail: string
+  Role: UserRole
+  bio: string
+  Location: string
+  Company: string
+  Website: string
+}
+
+class Email {
+  Value: string
+}
+
+class SocialAccount {
+  Id: Guid
+  Value: string
+}
+
+class Organization {
+  Id: Guid
+  Name: string
+  ContactEmail: string
+  Description: string
+  Location: string
+  Url: string
+}
+
+class OrganizationInvite {
+  Id: Guid
+  ExpiresAt: DateTime
+}
+
+class Repository {
+  Id: Guid
+  Name: string
+  IsPrivate: bool
+  Description: string
+  Location: string
+}
+
+class RepositoryInvite {
+  Id: Guid
+  ExpiresAt: DateTime
+}
+
+
+class Task {
+  Id: Guid
+  Title: string
+  Description: string
+  state: TaskState 
+}
+
+class PullRequest {
+}
+
+class Issue {
+}
+
+class Event {
+  Id: Guid
+  Title: string
+  time: DateTime
+}
+
+class Comment {
+  content: string
+}
+
+class StateChange {
+  content: string
+}
+
+class Milestone {
+  Id: Guid
+  Title: string
+  DueDate: Date
+}
+
+class RepositoryMember {
+  Id: Guid
+  Role: RepositoryMemberRole
+}
+
+class OrganizationMember {
+  Id: Guid
+}
+
+class OrganizationPermission{
+  Value: string
+  Description: string
+}
+
+class OrganizationRole {
+  Name: string
+  description: string
+}
+
+class Branch {
+  Id: Guid
+  Name: string
+}
+
+class Commit {
+  hash: string
+}
+
+
+User "1" *-- "*" Email : has
+User "1" *-- "*" Organization: has
+User "*" -- "*" Organization: isIn
+User "1" *-- "*" Repository: has
+User "*" -- "*" Repository: starred
+
+Organization "1" *-- "*" Repository: has
+
+Repository "1" *-- "*" Milestone: has
+Repository "1" *-- "*" Branch: has
+
+Branch "1" *-- "*" PullRequest: from
+Branch "1" *-- "*" PullRequest: to
+Commit "1" *-- "*" Branch : head
+
+PullRequest "1" -- "*" Issue: resolves
+
+Milestone "1" -- "*" Issue: has
+Milestone "1" -- "*" PullRequest: has
+
+Commit "1" -- "*" Branch: canBeOn
+Commit "1" -- "*" Commit : hasChildren
+
+Issue --|> Task
+PullRequest --|> Task
+
+Task "1" *-- "*" Event : has
+
+Organization "1" *-- "*" OrganizationMember: has
+User "1" *-- "*" OrganizationMember: has
+
+OrganizationRole "1" -- "*" OrganizationMember: has
+
+OrganizationPermission "*" -- "*" OrganizationMember: has
+
+Repository "1" *-- "*" RepositoryMember: has
+User "1" *-- "*" RepositoryMember: has
+
+Repository "1" *-- "*" RepositoryInvite: has
+User "1" *-- "*" RepositoryInvite: has
+
+Organization "1" *-- "*" OrganizationInvite: has
+User "1" *-- "*" OrganizationInvite: has
+
+User "1" *-- "*" SocialAccount: has
+
+StateChange --|> Event
+Comment--|> Event
+
+enum UserRole {
+  ADMINISTRATOR
+  USER
+}
+
+enum TaskState {
+  OPEN
+  CLOSED
+  MERGED
+}
+
+
+enum RepositoryMemberRole {
+  OWNER
+  ADMIN
+  CONTRIBUTOR
+}
+@enduml

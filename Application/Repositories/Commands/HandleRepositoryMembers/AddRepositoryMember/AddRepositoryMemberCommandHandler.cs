@@ -35,10 +35,8 @@ public class AddRepositoryMemberCommandHandler : ICommandHandler<AddRepositoryMe
         
         var user = await _userRepository.FindUserById(invite.UserId);
         User.ThrowIfDoesntExist(user);
-        
-        var member = RepositoryMember.Create(user!, repository!, RepositoryMemberRole.CONTRIBUTOR);
-        
-        repository!.AddMember(member);
+
+        repository!.AddMember(user!);
         _repositoryRepository.Update(repository);
         _repositoryInviteRepository.Delete(invite);
     }
