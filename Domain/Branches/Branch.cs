@@ -51,5 +51,11 @@ namespace Domain.Branches
         {
             Deleted = true;
         }
+
+        public void Restore()
+        {
+            Deleted = false;
+        }
+
      }
 }

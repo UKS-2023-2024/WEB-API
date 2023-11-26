@@ -8,6 +8,7 @@ using WEB_API.Branches.Dtos;
 using Application.Branches.Commands.Create;
 using Application.Branches.Commands.Update;
 using Application.Branches.Commands.Delete;
+using Application.Branches.Commands.Restore;
 
 
 namespace WEB_API.Branches;
@@ -58,5 +59,13 @@ public class BranchController : ControllerBase
     {
         var deletedBranch = await _sender.Send(new DeleteBranchCommand(id));
         return Ok(deletedBranch);
+    }
+
+    [HttpPatch("/restore/{id}")]
+    [Authorize]
+    public async Task<IActionResult> Restore(Guid id)
+    {
+        var restoredBranch = await _sender.Send(new RestoreBranchCommand(id));
+        return Ok(restoredBranch);
     }
 }
