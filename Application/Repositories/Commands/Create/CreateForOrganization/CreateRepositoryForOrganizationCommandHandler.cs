@@ -1,6 +1,7 @@
 ﻿using Application.Shared;
 using Domain.Auth;
 using Domain.Auth.Interfaces;
+using Domain.Branches;
 using Domain.Organizations;
 using Domain.Organizations.Exceptions;
 using Domain.Organizations.Interfaces;
@@ -36,6 +37,7 @@ public class CreateRepositoryForOrganizationCommandHandler : ICommandHandler<Cre
         User.ThrowIfDoesntExist(creator);
 
         var repository = Repository.Create(request.Name, request.Description, request.IsPrivate, organization, creator!);
+        repository.AddBranch(Branch.Create("main", Guid.Empty, true, creator.Id));
 
         repository = await _repositoryRepository.Create(repository);
 

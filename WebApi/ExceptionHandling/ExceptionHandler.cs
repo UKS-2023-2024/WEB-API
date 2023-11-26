@@ -25,7 +25,8 @@ public static class ExceptionHandler
             UserWithThisEmailExistsException 
                 or RepositoryWithThisNameExistsException
                 or AlreadyOrganizationMemberException
-                or BranchWithThisNameExistsException => HttpStatusCode.Conflict,
+                or BranchWithThisNameExistsException 
+                or BranchIsAlreadyDefaultException => HttpStatusCode.Conflict,
             PermissionDeniedException 
                 or MemberHasNoPrivilegeException
                 or RepositoryInaccessibleException

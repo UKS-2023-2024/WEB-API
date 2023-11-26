@@ -22,15 +22,15 @@ public class MakeBranchDefaultCommandHandler : ICommandHandler<MakeBranchDefault
         if (branch.IsDefault)
             throw new BranchIsAlreadyDefaultException();
 
-        branch.UpdateDefault();
-        _branchRepository.Update(branch);
-
         Branch? oldDefaultBranch = await _branchRepository.FindByRepositoryIdAndIsDefault(branch.RepositoryId, true);
         if (oldDefaultBranch is not null)
         {
-            oldDefaultBranch.UpdateDefault();
+            oldDefaultBranch.ChangeDefaulcy(false);
             _branchRepository.Update(oldDefaultBranch);
         }
+
+        branch.ChangeDefaulcy(true);
+        _branchRepository.Update(branch);
 
         return branch;
     }

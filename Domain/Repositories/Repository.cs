@@ -19,7 +19,7 @@ namespace Domain.Repositories
         public IReadOnlyList<RepositoryInvite> PendingInvites => new List<RepositoryInvite>(_pendingInvites);
         public List<User> StarredBy { get; private set; }
         public List<Milestone> Milestones { get; private set; }
-        public List<Branch> Branches { get; private set; }
+        public List<Branch> Branches { get; private set; } = new();
 
 
         private Repository() { }
@@ -129,6 +129,11 @@ namespace Domain.Repositories
         {
             if(IsPrivate && repositoryMember == null)
                 throw new RepositoryInaccessibleException();
+        }
+
+        public void AddBranch(Branch branch)
+        {
+            Branches.Add(branch);
         }
     }
 }

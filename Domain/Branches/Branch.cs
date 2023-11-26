@@ -42,9 +42,9 @@ namespace Domain.Branches
             Name = name;
         }
 
-        public void UpdateDefault()
+        public void ChangeDefaulcy(bool isDefault)
         {
-            IsDefault = !IsDefault;
+            IsDefault = isDefault;
         }
 
         public void Delete()

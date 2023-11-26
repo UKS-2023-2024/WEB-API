@@ -1,9 +1,9 @@
 ﻿using Domain.Branches;
 using Domain.Branches.Interfaces;
+using Domain.Shared;
 using Infrastructure.Persistence;
 using Infrastructure.Shared.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System.Xml.Linq;
 
 namespace Infrastructure.Branches
 {
@@ -27,6 +27,44 @@ namespace Infrastructure.Branches
             return await _context.Branches
                     .Where(b => b.RepositoryId.Equals(repositoryId) && b.IsDefault == isDefault)
                     .FirstOrDefaultAsync();
+        }
+
+
+        public async Task<IEnumerable<Branch>> FindAllByRepositoryIdAndIsDefault(Guid repositoryId, bool isDefault)
+        {
+            return await _context.Branches
+                .Where(b => b.RepositoryId == repositoryId && b.IsDefault == isDefault && !b.Deleted)
+                .ToListAsync();
+        }
+
+        public async Task<PagedResult<Branch>> FindAllByRepositoryIdAndDeletedAndIsDefault(Guid repositoryId, bool deleted, bool isDefault, int pageSize, int pageNumber)
+        {
+            var query = _context.Branches
+                .Where(b => b.RepositoryId == repositoryId && b.Deleted == deleted && b.IsDefault == isDefault);
+
+            var totalItems = await query.CountAsync();
+
+            var data = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<Branch>(data, totalItems);
+        }
+
+        public async Task<PagedResult<Branch>> FindAllByRepositoryIdAndOwnerIdAndDeletedAndIsDefault(Guid repositoryId, Guid ownerId, bool deleted, bool isDefault, int pageSize, int pageNumber)
+        {
+            var query = _context.Branches
+                .Where(b => b.RepositoryId == repositoryId && b.OwnerId == ownerId && b.Deleted == deleted && b.IsDefault == isDefault);
+
+            var totalItems = await query.CountAsync();
+
+            var data = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<Branch>(data, totalItems);
         }
     }
 }

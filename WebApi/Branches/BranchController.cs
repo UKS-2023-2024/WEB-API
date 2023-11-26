@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WEB_API.Milestones.Dtos;
 using WEB_API.Shared.TokenHandler;
 using WEB_API.Shared.UserIdentityService;
 using WEB_API.Branches.Dtos;
@@ -9,6 +8,10 @@ using Application.Branches.Commands.Create;
 using Application.Branches.Commands.Update;
 using Application.Branches.Commands.Delete;
 using Application.Branches.Commands.Restore;
+using Application.Repositories.Queries.FindAllUserWithoutDefaultByRepositoryId;
+using Application.Repositories.Queries.FindAllWithoutDefaultByRepositoryId;
+using Application.Repositories.Queries.FindAllWithoutDefaultByRepositoryIdPagination;
+using Application.Repositories.Queries.FindDefaultBranchByRepositoryId;
 
 
 namespace WEB_API.Branches;
@@ -41,11 +44,11 @@ public class BranchController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Update([FromBody] UpdateBranchDto dto)
     {
-        var updatedBranch = await _sender.Send(new UpdateBranchNameCommand(dto.BranchId, dto.Name));
+        var updatedBranch = await _sender.Send(new UpdateBranchNameCommand(dto.Id, dto.Name));
         return Ok(updatedBranch);
     }
 
-    [HttpPatch("/make-default/{id}")]
+    [HttpPatch("make-default/{id}")]
     [Authorize]
     public async Task<IActionResult> MakeDefault(Guid id)
     {
@@ -53,7 +56,7 @@ public class BranchController : ControllerBase
         return Ok(updatedBranch);
     }
 
-    [HttpDelete("/{id}")]
+    [HttpDelete("{id}")]
     [Authorize]
     public async Task<IActionResult> Delete(Guid id)
     {
@@ -61,11 +64,46 @@ public class BranchController : ControllerBase
         return Ok(deletedBranch);
     }
 
-    [HttpPatch("/restore/{id}")]
+    [HttpPatch("restore/{id}")]
     [Authorize]
     public async Task<IActionResult> Restore(Guid id)
     {
         var restoredBranch = await _sender.Send(new RestoreBranchCommand(id));
         return Ok(restoredBranch);
+    }
+
+    [HttpGet("without-default/{repositoryId}")]
+    [Authorize]
+    public async Task<IActionResult> FindAllWithoutDefauly(Guid repositoryId)
+    {
+        var branches = await _sender.Send(new FindAllBranchesWithoutDefaultByRepositoryIdQuery(repositoryId));
+        return Ok(branches);
+    }
+
+    [HttpGet("without-default/{repositoryId}/{pageSize}/{pageNumber}")]
+    [Authorize]
+    public async Task<IActionResult> FindAllWithoutDefault(Guid repositoryId, int pageSize, int pageNumber)
+    {
+        var branches = await _sender.Send(new FindAllBranchesWithoutDefaultByRepositoryIdPaginationQuery(repositoryId, pageSize, pageNumber));
+        return Ok(branches);
+    }
+
+    [HttpGet("user/without-default/{repositoryId}/{pageSize}/{pageNumber}")]
+    [Authorize]
+    public async Task<IActionResult> FindAllUserBranchesWithoutDefault(Guid repositoryId, int pageSize, int pageNumber)
+    {
+        var ownerId = _userIdentityService.FindUserIdentity(HttpContext.User);
+
+        var branches = await _sender.Send(new FindAllUserBranchesWithoutDefaultByRepositoryIdQuery(repositoryId, ownerId, pageSize, pageNumber));
+        return Ok(branches);
+    }
+
+
+    [HttpGet("default/{repositoryId}")]
+    [Authorize]
+    public async Task<IActionResult> FindDefault(Guid repositoryId)
+    {
+        var branches = await _sender.Send(new FindDefaultBranchByRepositoryIdQuery(repositoryId));
+        return Ok(branches);
     }
 }
