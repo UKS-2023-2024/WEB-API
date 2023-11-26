@@ -2,9 +2,9 @@ name: .NET Testing and Docker Push
 
 on:
   push:
-    branches: [ "cicd/setup" ]
+    branches: [ "develop" ]
   pull_request:
-    branches: [ "cicd/setup" ]
+    branches: [ "develop" ]
 
 jobs:
   build_and_test:
