@@ -40,7 +40,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 var config = builder.Configuration;
-Console.WriteLine("Connection string: " + config["ConnectionString"]);
+Console.WriteLine("Connection string:  " + config["ConnectionString"]);
 
 builder.Services.AddDbContext<MainDbContext>(options => 
     options.UseNpgsql(config["ConnectionString"]));
