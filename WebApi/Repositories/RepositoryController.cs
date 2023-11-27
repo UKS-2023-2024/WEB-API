@@ -11,6 +11,7 @@ using Application.Repositories.Commands.StarringRepository.UnstarRepository;
 using Application.Repositories.Queries.FindAllByOrganizationId;
 using Application.Repositories.Queries.FindAllByOwnerId;
 using Application.Repositories.Queries.FindAllRepositoryMembers;
+using Application.Repositories.Queries.FindRepositoryMemberRole;
 using Domain.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -125,12 +126,22 @@ public class RepositoryController : ControllerBase
         return Ok();
     }
     
-    [HttpPost("add-user/{inviteId:guid}")]
+    
+    [HttpGet("{repositoryId:guid}/member-role")]
     [Authorize]
+    public async Task<IActionResult> GetUserRole(Guid repositoryId)
+    {
+        var user = await _userIdentityService.FindUserFromToken(HttpContext.User);
+        if (user is null)
+            return Unauthorized();
+        var role = await _sender.Send(new FindRepositoryMemberRoleQuery(user.Id,repositoryId));
+        return Ok(role);
+    }
+    
+    [HttpPost("add-user/{inviteId:guid}")]
     public async Task<IActionResult> AddUserToRepository(Guid inviteId)
     {
-        var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        await _sender.Send(new AddRepositoryMemberCommand(userId, inviteId));
+        await _sender.Send(new AddRepositoryMemberCommand(inviteId));
         return Ok();
     }
     
@@ -145,7 +156,7 @@ public class RepositoryController : ControllerBase
     
     [HttpGet("{repositoryId:guid}/members")]
     [Authorize]
-    public async Task<IActionResult> GetRepositoryMembers(Guid repositoryId)
+    public async Task<ActionResult<IEnumerable<RepositoryMemberPresenter>>> GetRepositoryMembers(Guid repositoryId)
     {
         var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
         var members =  await _sender.Send(new FindAllRepositoryMembersQuery(userId, repositoryId));

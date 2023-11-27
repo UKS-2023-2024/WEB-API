@@ -28,7 +28,6 @@ public class AddRepositoryMemberCommandHandler : ICommandHandler<AddRepositoryMe
         var invite = _repositoryInviteRepository.Find(request.InviteId);
         RepositoryInvite.ThrowIfDoesntExist(invite);
         invite!.ThrowIfExpired();
-        invite.ThrowIfNotAnOwner(request.UserId);
 
         var repository = _repositoryRepository.Find(invite.RepositoryId);
         Repository.ThrowIfDoesntExist(repository);

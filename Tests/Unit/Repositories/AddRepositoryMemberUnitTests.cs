@@ -58,8 +58,7 @@ public class AddRepositoryMemberUnitTests
         OverrideRepositoryInviteId(repositoryInvite,new Guid("aaaa1cc0-35d3-4bf2-9f2c-5e00a21d92a9"));
         _repositoryInviteRepository.Setup(x => x.Find(repositoryInvite.Id)).Returns(repositoryInvite);
         
-        var command = new AddRepositoryMemberCommand(_user1.Id,
-            repositoryInvite.Id);
+        var command = new AddRepositoryMemberCommand(repositoryInvite.Id);
 
         //Act
         var result = new AddRepositoryMemberCommandHandler(_userRepository.Object,_repositoryInviteRepository.Object,
@@ -78,8 +77,7 @@ public class AddRepositoryMemberUnitTests
         OverrideDate(repositoryInvite,DateTime.Now.AddDays(-2));
         _repositoryInviteRepository.Setup(x => x.Find(repositoryInvite.Id)).Returns(repositoryInvite);
         
-        var command = new AddRepositoryMemberCommand(_user1.Id,
-            repositoryInvite.Id);
+        var command = new AddRepositoryMemberCommand(repositoryInvite.Id);
 
         var handler = new AddRepositoryMemberCommandHandler(_userRepository.Object,_repositoryInviteRepository.Object,
             _repositoryRepository.Object);
@@ -99,8 +97,7 @@ public class AddRepositoryMemberUnitTests
         OverrideRepositoryInviteId(repositoryInvite,new Guid("aaaa1cc0-35d3-4bf2-9f2c-5e00a21d92a9"));
         _repositoryInviteRepository.Setup(x => x.Find(repositoryInvite.Id)).Returns(repositoryInvite);
         
-        var command = new AddRepositoryMemberCommand(_user1.Id,
-            repositoryInvite.Id);
+        var command = new AddRepositoryMemberCommand(repositoryInvite.Id);
 
         var handler = new AddRepositoryMemberCommandHandler(_userRepository.Object,_repositoryInviteRepository.Object,
             _repositoryRepository.Object);
@@ -120,8 +117,7 @@ public class AddRepositoryMemberUnitTests
         OverrideRepositoryInviteId(repositoryInvite,new Guid("aaaa1cc0-35d3-4bf2-9f2c-5e00a21d92a9"));
         _repositoryInviteRepository.Setup(x => x.Find(repositoryInvite.Id)).Returns(repositoryInvite);
         
-        var command = new AddRepositoryMemberCommand(new Guid("acda1cc0-35d3-4bf2-9f2c-5e00a21d92a9"),
-            repositoryInvite.Id);
+        var command = new AddRepositoryMemberCommand(repositoryInvite.Id);
 
         var handler = new AddRepositoryMemberCommandHandler(_userRepository.Object,_repositoryInviteRepository.Object,
             _repositoryRepository.Object);
@@ -133,26 +129,6 @@ public class AddRepositoryMemberUnitTests
         await Should.ThrowAsync<UserNotFoundException>(Handle);
     }
     
-    [Fact]
-    public async void Handle_ShouldReturnError_WhenUserNotOwnerOfInvitation()
-    {
-        //Arrange
-        var repositoryInvite = RepositoryInvite.Create(new Guid("acda1cc0-35d3-4bf2-9f2c-5e00a21d92a9"), _repository1.Id);
-        OverrideRepositoryInviteId(repositoryInvite,new Guid("aaaa1cc0-35d3-4bf2-9f2c-5e00a21d92a9"));
-        _repositoryInviteRepository.Setup(x => x.Find(repositoryInvite.Id)).Returns(repositoryInvite);
-        
-        var command = new AddRepositoryMemberCommand(_user1.Id,
-            repositoryInvite.Id);
-
-        var handler = new AddRepositoryMemberCommandHandler(_userRepository.Object,_repositoryInviteRepository.Object,
-            _repositoryRepository.Object);
-        
-        //Act
-        async Task Handle() => await handler.Handle(command, default);
-
-        //Assert
-        await Should.ThrowAsync<NotInviteOwnerException>(Handle);
-    }
     
     [Fact]
     public async void Handle_ShouldReturnError_WhenInvitationNotFound()
@@ -162,8 +138,7 @@ public class AddRepositoryMemberUnitTests
         OverrideRepositoryInviteId(repositoryInvite,new Guid("aaaa1cc0-35d3-4bf2-9f2c-5e00a21d92a9"));
         _repositoryInviteRepository.Setup(x => x.Find(repositoryInvite.Id)).Returns(repositoryInvite);
         
-        var command = new AddRepositoryMemberCommand(_user1.Id,
-            new Guid("bbbb1cc0-35d3-4bf2-9f2c-5e00a21d92a9"));
+        var command = new AddRepositoryMemberCommand(new Guid("bbbb1cc0-35d3-4bf2-9f2c-5e00a21d92a9"));
 
         var handler = new AddRepositoryMemberCommandHandler(_userRepository.Object,_repositoryInviteRepository.Object,
             _repositoryRepository.Object);

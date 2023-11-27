@@ -45,4 +45,12 @@ public class RepositoryMemberRepository: BaseRepository<RepositoryMember>, IRepo
             .Where(r => r.RepositoryId == repositoryId && !r.Deleted)
             .AsEnumerable();
     }
+
+    public int FindNumberRepositoryMembersThatAreOwnersExceptSingleMember(Guid repositoryId,Guid repositoryMemberId)
+    {
+        return _context.RepositoryMembers
+            .Include(r => r.Member)
+            .Where(r => r.Role == RepositoryMemberRole.OWNER && r.RepositoryId == repositoryId && r.Id != repositoryMemberId && !r.Deleted)
+            .AsEnumerable().Count();
+    }
 }

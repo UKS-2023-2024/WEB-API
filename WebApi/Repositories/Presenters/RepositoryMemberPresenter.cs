@@ -5,9 +5,9 @@ namespace WEB_API.Repositories.Presenters;
 
 public class RepositoryMemberPresenter
 {
-    private Guid Id { get; set; }
-    private string Username { get; set; }
-    private RepositoryMemberRole Role { get; set; }
+    public Guid Id { get; set; }
+    public string Username { get; set; }
+    public RepositoryMemberRole Role { get; set; }
     
     public RepositoryMemberPresenter(RepositoryMember repositoryMember)
     {
