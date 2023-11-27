@@ -49,7 +49,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
             services.Remove(descriptor);
         }
 
-        services.AddDbContext<MainDbContext>(opt => opt.UseNpgsql(_configuration["TestConnectionString"]));
+        services.AddDbContext<MainDbContext>(opt => opt.UseNpgsql(_configuration["ConnectionString"]));
         return services.BuildServiceProvider();
     }
 
