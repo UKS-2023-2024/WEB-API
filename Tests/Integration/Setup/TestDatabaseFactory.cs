@@ -49,7 +49,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
             services.Remove(descriptor);
         }
 
-        services.AddDbContext<MainDbContext>(opt => opt.UseNpgsql(_configuration["ConnectionString"]));
+        services.AddDbContext<MainDbContext>(opt => opt.UseNpgsql(_configuration["TestConnectionString"]));
         return services.BuildServiceProvider();
     }
 
@@ -88,17 +88,21 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         
         var repository4 = Repository.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"), "repo4", "test", true, null, user1);
         var member2 = repository3.AddMember(user2);
-        member2.Delete();
-        
-        var repository5 = Repository.Create(new Guid("8e9b1cc3-35d6-4bf2-9f2c-9e00a21d94a5"), "repo5", "test", true, organization1, user1);
+        member2.Delete(); 
 
+        var repository5 = Repository.Create(new Guid("8e9b1cc3-35d6-4bf2-9f2c-9e00a21d94a5"), "repo5", "test", true, organization1, user1);
         
         var milestone1 = Milestone.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"), "title", "description", new DateOnly(), new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"));
+
+        var branch1 = Branch.Create(new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b1"), "branch1", repository5.Id, true, user1.Id);
+        var branch2 = Branch.Create(new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b2"), "branch2", repository5.Id, false, user1.Id);
+        var branch3 = Branch.Create(new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b3"), "branch3", repository5.Id, false, user1.Id, true);
 
         context.Users.AddRange(user1, user2, user3, user4);
         context.Organizations.AddRange(organization1);
         context.Repositories.AddRange(repository1,repository2,repository3,repository4,repository5);
         context.Milestones.AddRange(milestone1);
+        context.Branches.AddRange(branch1, branch2, branch3);
         context.SaveChanges();
     }
 

@@ -37,12 +37,21 @@ namespace Domain.Branches
             return branch;
         }
 
+        public static Branch Create(Guid id, string name, Guid repositoryId, bool isDefault, Guid ownerId, bool deleted)
+        {
+            Branch branch = new Branch(name, repositoryId, isDefault, ownerId);
+            branch.Id = id;
+            branch.Deleted = deleted;
+            return branch;
+        }
+
+
         public void Update(string name)
         {
             Name = name;
         }
 
-        public void ChangeDefaulcy(bool isDefault)
+        public void ChangeDefault(bool isDefault)
         {
             IsDefault = isDefault;
         }
