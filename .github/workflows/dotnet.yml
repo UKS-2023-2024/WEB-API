@@ -29,7 +29,7 @@ jobs:
           Sendgrid__ApiKey: ${{secrets.SENDGRID_API_KEY}}
           Email__Key: ${{secrets.GMAIL_KEY}}
   docker_push:
-    if: always()
+    if: success()
     needs: [build_and_test]
     runs-on: ubuntu-latest
     steps:
