@@ -25,11 +25,11 @@ public class MakeBranchDefaultCommandHandler : ICommandHandler<MakeBranchDefault
         Branch? oldDefaultBranch = await _branchRepository.FindByRepositoryIdAndIsDefault(branch.RepositoryId, true);
         if (oldDefaultBranch is not null)
         {
-            oldDefaultBranch.ChangeDefaulcy(false);
+            oldDefaultBranch.ChangeDefault(false);
             _branchRepository.Update(oldDefaultBranch);
         }
 
-        branch.ChangeDefaulcy(true);
+        branch.ChangeDefault(true);
         _branchRepository.Update(branch);
 
         return branch;
