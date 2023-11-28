@@ -25,7 +25,7 @@ jobs:
       - name: Integration Tests
         run: dotnet test Tests --filter Integration
         env:
-          ConnectionString: ${{secrets.REPO_DATABASE_KEY}}
+          TestConnectionString: ${{secrets.REPO_DATABASE_KEY}}
           Sendgrid__ApiKey: ${{secrets.SENDGRID_API_KEY}}
           Email__Key: ${{secrets.GMAIL_KEY}}
   docker_push:
