@@ -26,6 +26,7 @@ public static class ExceptionHandler
                 or RepositoryWithThisNameExistsException
                 or AlreadyOrganizationMemberException
                 or BranchWithThisNameExistsException 
+                or AlreadyRepositoryMemberException
                 or BranchIsAlreadyDefaultException => HttpStatusCode.Conflict,
             PermissionDeniedException 
                 or MemberHasNoPrivilegeException
@@ -34,6 +35,7 @@ public static class ExceptionHandler
                 or UserNotAOrganizationMemberException => HttpStatusCode.Forbidden,
             InvitationExpiredException
                 or RepositoryAlreadyStarredException
+                or RepositoryMemberCantBeDeletedException
                 or RepositoryNotStarredException => HttpStatusCode.BadRequest
         };
         return (int)code;

@@ -21,7 +21,7 @@ public class RemoveRepositoryMemberIntegrationTest: BaseIntegrationTest
         var repository = _context.Repositories.FirstOrDefault(o => o.Name.Equals("repo3"));
         var repoMember =
             _context.RepositoryMembers.FirstOrDefault(rm =>
-                rm.Member.Id == new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"));
+                rm.Member.Id == new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9") && rm.RepositoryId == repository!.Id);
         var removeCommand = new RemoveRepositoryMemberCommand(ownerId, repoMember!.Id, repository!.Id);
         
         //Act
@@ -39,7 +39,7 @@ public class RemoveRepositoryMemberIntegrationTest: BaseIntegrationTest
         var repository = _context.Repositories.FirstOrDefault(o => o.Name.Equals("repo3"));
         var repoMember =
             _context.RepositoryMembers.FirstOrDefault(rm =>
-                rm.Member.Id == new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
+                rm.Member.Id == new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5") && rm.RepositoryId == repository!.Id);
         var removeCommand = new RemoveRepositoryMemberCommand(ownerId, repoMember!.Id, repository!.Id);
         
         //Act
@@ -57,7 +57,7 @@ public class RemoveRepositoryMemberIntegrationTest: BaseIntegrationTest
         var repository = _context.Repositories.FirstOrDefault(o => o.Name.Equals("repo3"));
         var repoMember =
             _context.RepositoryMembers.FirstOrDefault(rm =>
-                rm.Member.Id == new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
+                rm.Member.Id == new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5") && rm.RepositoryId == repository!.Id);
         var removeCommand = new RemoveRepositoryMemberCommand(ownerId, repoMember!.Id, repository!.Id);
         
         //Act
@@ -71,7 +71,7 @@ public class RemoveRepositoryMemberIntegrationTest: BaseIntegrationTest
     public async void RemoveRepositoryUser_Fail_WhenMemberNotFound()
     {
         //Arrange
-        var ownerId = new Guid("7e9b1444-35d3-4bf2-9f2c-5e00a21d92a7");
+        var ownerId = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5");
         var repository = _context.Repositories.FirstOrDefault(o => o.Name.Equals("repo3"));
         var removeCommand = new RemoveRepositoryMemberCommand(ownerId, new Guid("7e9b1444-35d3-4bf2-9f2c-5e00a21d92a7"), repository!.Id);
         
@@ -83,6 +83,24 @@ public class RemoveRepositoryMemberIntegrationTest: BaseIntegrationTest
     }
     
     [Fact]
+    public async void RemoveRepositoryUser_Fail_WhenNoEnoughMembersWithPrivileges()
+    {
+        //Arrange
+        var ownerId = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5");
+        var repository = _context.Repositories.FirstOrDefault(o => o.Name.Equals("repo3"));
+        var repoMember =
+            _context.RepositoryMembers.FirstOrDefault(rm =>
+                rm.Member.Id == ownerId && rm.RepositoryId == repository!.Id);
+        var removeCommand = new RemoveRepositoryMemberCommand(ownerId, repoMember!.Id, repository!.Id);
+        
+        //Act
+        async Task Handle() => await _sender.Send(removeCommand);
+
+        //Assert
+        await Should.ThrowAsync<RepositoryMemberCantBeDeletedException>(Handle);
+    }
+    
+    [Fact]
     public async void RemoveRepositoryUser_Fail_WhenMemberFoundButDeleted()
     {
         //Arrange
@@ -90,7 +108,7 @@ public class RemoveRepositoryMemberIntegrationTest: BaseIntegrationTest
         var repository = _context.Repositories.FirstOrDefault(o => o.Name.Equals("repo3"));
         var repoMember =
             _context.RepositoryMembers.FirstOrDefault(rm =>
-                rm.Member.Id == new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7"));
+                rm.Member.Id == new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7") && rm.RepositoryId == repository!.Id);
         var removeCommand = new RemoveRepositoryMemberCommand(ownerId, repoMember!.Id, repository!.Id);
         
         //Act

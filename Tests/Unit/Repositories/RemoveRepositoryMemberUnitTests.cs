@@ -38,6 +38,8 @@ public class RemoveRepositoryMemberUnitTests
         _repoMember4 = RepositoryMember.Create(_user3, _repository2, RepositoryMemberRole.CONTRIBUTOR);
         OverrideId(_repoMember4, new Guid("8e9b4444-ffaa-4bf2-9f2c-5e00a21d92a9"));
         _repoMember4.Delete();
+        var repoMember5 = RepositoryMember.Create(_user1, _repository2, RepositoryMemberRole.OWNER);
+        OverrideId(repoMember5, new Guid("8e9b1188-ffaa-4bf2-9f2c-5e00a21d92a9"));
         
         OverrideMemberList(_repository1, new List<RepositoryMember>{_repoMember1,_repoMember3});
 
@@ -50,6 +52,11 @@ public class RemoveRepositoryMemberUnitTests
         _repositoryMemberRepositoryMock.Setup(x => x.Find(_repoMember1.Id)).Returns(_repoMember1);
         _repositoryMemberRepositoryMock.Setup(x => x.Find(_repoMember3.Id)).Returns(_repoMember3);
         _repositoryMemberRepositoryMock.Setup(x => x.Find(_repoMember4.Id)).Returns(_repoMember4);
+        _repositoryMemberRepositoryMock.Setup(x => x.FindNumberRepositoryMembersThatAreOwnersExceptSingleMember(_repository1.Id,_repoMember1.Id)).Returns(0);
+        _repositoryMemberRepositoryMock.Setup(x => x.FindNumberRepositoryMembersThatAreOwnersExceptSingleMember(_repository2.Id,repoMember5.Id)).Returns(0);
+        
+        _repositoryMemberRepositoryMock.Setup(x => x.FindNumberRepositoryMembersThatAreOwnersExceptSingleMember(_repository1.Id,_repoMember3.Id)).Returns(1);
+        _repositoryMemberRepositoryMock.Setup(x => x.FindNumberRepositoryMembersThatAreOwnersExceptSingleMember(_repository2.Id,_repoMember4.Id)).Returns(1);
     }
     
     private T OverrideId<T>(T obj, Guid id)
@@ -81,6 +88,21 @@ public class RemoveRepositoryMemberUnitTests
 
         //Assert
         result.IsFaulted.ShouldBe(false);
+    }
+    
+    [Fact]
+    public async void Handle_ShouldReturnError_WhenNumberOfOwnersIs1()
+    {
+        //Arrange
+        var command = new RemoveRepositoryMemberCommand(_user1.Id,
+            _repoMember1.Id, _repository1.Id);
+        var handler = new RemoveRepositoryMemberCommandHandler(_repositoryRepository.Object,_repositoryMemberRepositoryMock.Object);
+
+        //Act
+        async Task Handle() => await handler.Handle(command, default);
+
+        //Assert
+        await Should.ThrowAsync<RepositoryMemberCantBeDeletedException>(Handle);
     }
     
     [Fact]
