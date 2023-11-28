@@ -13,6 +13,7 @@ public class Milestone
     public Guid RepositoryId { get; private set; }
 
     public Repository? Repository { get; private set; }
+    public bool Closed { get; private set; }
 
     private Milestone(string title, string description, DateOnly? dueDate, Guid repositoryId)
     {
@@ -20,6 +21,7 @@ public class Milestone
         Description = description;
         RepositoryId = repositoryId;
         DueDate = dueDate;
+        Closed = false;
     }
 
     public static Milestone Create(string title, string description, DateOnly? dueDate, Guid repositoryId)
