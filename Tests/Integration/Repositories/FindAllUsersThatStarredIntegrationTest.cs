@@ -20,11 +20,11 @@ public class FindAllUsersThatStarredIntegrationTest :BaseIntegrationTest
     public async void Handle_ShouldReturn2_WhenUserMemberAndOwnerHasPrivileges()
     {
         //Arrange
-        var command = new FindAllRepositoryMembersQuery(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"),
-            new Guid("8e9b1cc2-35d3-4bf2-9f2c-9e00a21d94a5"));
+        var command = new FindAllUsersThatStarredQuery(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"),
+            new Guid("8e9b1cc1-35d3-4bf2-9f2c-5e00a21d14a5"));
 
         //Act
-        async Task<IEnumerable<RepositoryMember>> Handle() => await _sender.Send(command);
+        async Task<IEnumerable<User>> Handle() => await _sender.Send(command);
         
 
         //Assert

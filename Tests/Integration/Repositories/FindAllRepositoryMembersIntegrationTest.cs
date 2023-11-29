@@ -26,7 +26,7 @@ public class FindAllRepositoryMembersIntegrationTest:BaseIntegrationTest
 
         //Assert
         var res = await Handle();
-        res.Count().ShouldBe(2);
+        res.Count().ShouldBe(3);
     }
         
     [Fact]

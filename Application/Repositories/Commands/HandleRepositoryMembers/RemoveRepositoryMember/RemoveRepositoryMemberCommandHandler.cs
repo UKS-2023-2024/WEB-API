@@ -25,7 +25,8 @@ public class RemoveRepositoryMemberCommandHandler: ICommandHandler<RemoveReposit
 
         var member = _repositoryMemberRepository.Find(request.RepositoryMemberId);
         RepositoryMember.ThrowIfDoesntExist(member);
-
+        member!.ThrowIfSameAs(owner);
+        
         var numberOfOwners =
             _repositoryMemberRepository.FindNumberRepositoryMembersThatAreOwnersExceptSingleMember(request.RepositoryId,
                 request.RepositoryMemberId);

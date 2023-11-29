@@ -25,7 +25,14 @@ public class ChangeMemberRoleCommandHandler: ICommandHandler<ChangeMemberRoleCom
         var member = await _repositoryMemberRepository
             .FindByRepositoryMemberIdAndRepositoryId(request.RepositoryMemberId,request.RepositoryId);
         
-        if (member is null || member.Deleted) throw new RepositoryMemberNotFoundException();
+        RepositoryMember.ThrowIfDoesntExist(member);
+        member!.ThrowIfSameAs(owner);
+        
+        var numberOfOwners =
+            _repositoryMemberRepository.FindNumberRepositoryMembersThatAreOwnersExceptSingleMember(request.RepositoryId,
+                request.RepositoryMemberId);
+        if (numberOfOwners <= 0)
+            throw new RepositoryMemberCantBeChangedException();
 
         member.SetRole(request.Role);
         _repositoryMemberRepository.Update(member);

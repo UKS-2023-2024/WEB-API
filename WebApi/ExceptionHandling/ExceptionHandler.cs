@@ -35,6 +35,7 @@ public static class ExceptionHandler
                 or UserNotAOrganizationMemberException => HttpStatusCode.Forbidden,
             InvitationExpiredException
                 or RepositoryAlreadyStarredException
+                or RepositoryMemberCantChangeHimselfException
                 or RepositoryMemberCantBeDeletedException
                 or RepositoryNotStarredException => HttpStatusCode.BadRequest
         };
