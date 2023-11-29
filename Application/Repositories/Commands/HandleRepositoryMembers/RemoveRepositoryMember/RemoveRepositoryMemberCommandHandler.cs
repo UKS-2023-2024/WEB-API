@@ -24,13 +24,16 @@ public class RemoveRepositoryMemberCommandHandler: ICommandHandler<RemoveReposit
         owner!.ThrowIfNoAdminPrivileges();
 
         var member = _repositoryMemberRepository.Find(request.RepositoryMemberId);
-        if (member is null || member.Deleted) throw new RepositoryMemberNotFoundException();
+        RepositoryMember.ThrowIfDoesntExist(member);
 
-        if (_repositoryMemberRepository.FindNumberRepositoryMembersThatAreOwnersExceptSingleMember(request.RepositoryId, request.RepositoryMemberId) <= 0)
+        var numberOfOwners =
+            _repositoryMemberRepository.FindNumberRepositoryMembersThatAreOwnersExceptSingleMember(request.RepositoryId,
+                request.RepositoryMemberId);
+        if (numberOfOwners <= 0)
             throw new RepositoryMemberCantBeDeletedException();
         var repository = _repositoryRepository.Find(request.RepositoryId);
 
-        repository!.RemoveMember(member);
+        repository!.RemoveMember(member!);
         _repositoryRepository.Update(repository);
     }
 }
