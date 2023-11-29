@@ -20,6 +20,7 @@
     <ItemGroup>
       <Folder Include="Milestones\Queries\" />
       <Folder Include="Repositories\Commands\StarringRepository" />
+      <Folder Include="Repositories\Queries\FindAllUsersThatStarredRepository" />
     </ItemGroup>
 
 
