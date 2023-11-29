@@ -4,6 +4,7 @@ using Tests.Integration.Setup;
 
 namespace Tests.Integration.Repositories;
 
+[Collection("Sequential")]
 public class DidUserStarRepositoryIntegrationTest : BaseIntegrationTest
 {
     public DidUserStarRepositoryIntegrationTest(TestDatabaseFactory factory) : base(factory)

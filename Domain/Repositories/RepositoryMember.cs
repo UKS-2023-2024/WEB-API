@@ -33,7 +33,12 @@ namespace Domain.Repositories
         }
         public void ThrowIfNoAdminPrivileges()
         {
-            if (Role is not (RepositoryMemberRole.OWNER or RepositoryMemberRole.ADMIN)) throw new MemberHasNoPrivilegeException();
+            if (Role != RepositoryMemberRole.OWNER && Role != RepositoryMemberRole.ADMIN) throw new MemberHasNoPrivilegeException();
+        }
+        
+        public void ThrowIfSameAs(RepositoryMember repositoryMember)
+        {
+            if (Id.Equals(repositoryMember.Id)) throw new RepositoryMemberCantChangeHimselfException();
         }
 
         public void ActivateMemberAgain()
