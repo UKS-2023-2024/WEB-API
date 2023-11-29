@@ -89,7 +89,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         member2.Delete(); 
 
         var repository5 = Repository.Create(new Guid("8e9b1cc3-35d6-4bf2-9f2c-9e00a21d94a5"), "repo5", "test", true, organization1, user1);
-        
+        repository5.AddToStarredBy(user1);
         var milestone1 = Milestone.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"), "title", "description", new DateOnly(), new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"));
 
         var branch1 = Branch.Create(new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b1"), "branch1", repository5.Id, true, user1.Id);

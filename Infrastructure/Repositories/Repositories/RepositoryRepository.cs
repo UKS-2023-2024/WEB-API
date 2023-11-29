@@ -62,5 +62,11 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
             .Where(r => r.Organization.Id == id)
             .ToList();
     }
-    
+
+    public Task<bool> DidUserStarRepository(Guid userid, Guid repositoryId)
+    {
+        return Task.FromResult(_context.Repositories
+            .Include(r => r.StarredBy)
+            .Count(r => r.Id.Equals(repositoryId) && r.StarredBy.Any(u => u.Id.Equals(userid))) == 1);
+    }
 }
