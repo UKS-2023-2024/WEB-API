@@ -41,4 +41,8 @@ public class Milestone
         milestone.Title = title;
         return milestone;
     }
+
+    public static Milestone Close(Milestone milestone)
+    {
+    }
 }

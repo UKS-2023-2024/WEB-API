@@ -1,4 +1,5 @@
-﻿using Application.Milestones.Commands.Create;
+﻿using System.Net;
+using Application.Milestones.Commands.Create;
 using Application.Milestones.Commands.Update;
 using Application.Milestones.Commands.Delete;
 using MediatR;
@@ -52,5 +53,14 @@ public class MilestoneController : ControllerBase
         Guid userId = _userIdentityService.FindUserIdentity(HttpContext.User);
         Guid deletedMilestone = await _sender.Send(new DeleteMilestoneCommand(userId, Guid.Parse(id)));
         return Ok(deletedMilestone);
+    }
+
+    [HttpPut("{id}/close")]
+    [Authorize]
+    public async Task<IActionResult> Close(string id)
+    {
+        Guid userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Guid closedMilestoneId = await _sender.Send(new CloseMilestoneCommand(userId, Guid.Parse(id)));
+        return Ok(closedMilestoneId);
     }
 }
