@@ -19,4 +19,11 @@ public class MilestoneRepository : BaseRepository<Milestone>, IMilestoneReposito
             .Where(m => m.RepositoryId.Equals(repositoryId) && !m.Closed)
             .ToList();
     }
+
+    public async Task<List<Milestone>> FindClosedRepositoryMilestones(Guid repositoryId)
+    {
+        return _context.Milestones
+            .Where(m => m.RepositoryId.Equals(repositoryId) && m.Closed)
+            .ToList();
+    }
 }
