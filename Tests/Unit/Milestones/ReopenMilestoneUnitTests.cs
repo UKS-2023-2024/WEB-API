@@ -1,4 +1,4 @@
-﻿using Application.Milestones.Commands.Close;
+﻿using Application.Milestones.Commands.Reopen;
 using Domain.Auth;
 using Domain.Auth.Enums;
 using Domain.Milestones;
@@ -12,13 +12,13 @@ using Shouldly;
 
 namespace Tests.Unit.Milestones;
 
-public class CloseMilestoneUnitTests
+public class ReopenMilestoneUnitTests
 {
     private readonly Mock<IMilestoneRepository> _milestoneRepositoryMock;
     private readonly Mock<IRepositoryMemberRepository> _repositoryMemberRepositoryMock;
     private readonly Mock<IRepositoryRepository> _repositoryRepositoryMock;
 
-    public CloseMilestoneUnitTests()
+    public ReopenMilestoneUnitTests()
     {
         _milestoneRepositoryMock = new();
         _repositoryMemberRepositoryMock = new();
@@ -26,10 +26,10 @@ public class CloseMilestoneUnitTests
     }
 
     [Fact]
-    public async void CloseMilestone_ShouldBeSuccessful_WhenCommandIsValid()
+    public async void ReopenMilestone_ShouldBeSuccessful_WhenCommandIsValid()
     {
         //Arrange
-        var command = new CloseMilestoneCommand(Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"),
+        var command = new ReopenMilestoneCommand(Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"),
             Guid.Parse("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"));
         User user = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), "anav@gmail.com", "test test", "test", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.ADMINISTRATOR);
         Milestone milestone = Milestone.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"), "title", "description", new DateOnly(), new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"));
@@ -45,22 +45,22 @@ public class CloseMilestoneUnitTests
         _milestoneRepositoryMock.Setup(x => x.Delete(It.IsAny<Milestone>()));
 
         
-        var handler = new CloseMilestoneCommandHandler(_repositoryMemberRepositoryMock.Object,
+        var handler = new ReopenMilestoneCommandHandler(_repositoryMemberRepositoryMock.Object,
             _milestoneRepositoryMock.Object, _repositoryRepositoryMock.Object);
 
         //Act
-        Milestone closedMilestone = await handler.Handle(command, default);
+        Milestone reopenedMilestone = await handler.Handle(command, default);
 
         //Assert
-        closedMilestone.ShouldBeOfType<Milestone>();
-        closedMilestone.Closed.ShouldBeTrue();
+        reopenedMilestone.ShouldBeOfType<Milestone>();
+        reopenedMilestone.Closed.ShouldBeFalse();
     }
     
     [Fact]
-    public async void CloseMilestone_ShouldFail_WhenMilestoneIdIsWrong()
+    public async void ReopenMilestone_ShouldFail_WhenMilestoneIdIsWrong()
     {
         //Arrange
-        var command = new CloseMilestoneCommand(Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"),
+        var command = new ReopenMilestoneCommand(Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"),
             Guid.Parse("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"));
         User user = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), "anav@gmail.com", "test test", "test", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.ADMINISTRATOR);
         Milestone milestone = null;
@@ -76,7 +76,7 @@ public class CloseMilestoneUnitTests
         _milestoneRepositoryMock.Setup(x => x.Delete(It.IsAny<Milestone>()));
 
         
-        var handler = new CloseMilestoneCommandHandler(_repositoryMemberRepositoryMock.Object,
+        var handler = new ReopenMilestoneCommandHandler(_repositoryMemberRepositoryMock.Object,
             _milestoneRepositoryMock.Object, _repositoryRepositoryMock.Object);
 
         //Act
@@ -91,10 +91,10 @@ public class CloseMilestoneUnitTests
     }
     
     [Fact]
-    public async void CloseMilestone_ShouldFail_WhenUserNotRepositoryMember()
+    public async void ReopenMilestone_ShouldFail_WhenUserNotRepositoryMember()
     {
         //Arrange
-        var command = new CloseMilestoneCommand(Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"),
+        var command = new ReopenMilestoneCommand(Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"),
             Guid.Parse("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"));
         User user = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), "anav@gmail.com", "test test", "test", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.ADMINISTRATOR);
         Milestone milestone = Milestone.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"), "title", "description", new DateOnly(), new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"));
@@ -110,7 +110,7 @@ public class CloseMilestoneUnitTests
         _milestoneRepositoryMock.Setup(x => x.Delete(It.IsAny<Milestone>()));
 
         
-        var handler = new CloseMilestoneCommandHandler(_repositoryMemberRepositoryMock.Object,
+        var handler = new ReopenMilestoneCommandHandler(_repositoryMemberRepositoryMock.Object,
             _milestoneRepositoryMock.Object, _repositoryRepositoryMock.Object);
 
         //Act

@@ -1,10 +1,14 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=445e692f_002D60f3_002D46b9_002D9842_002D5b00a0ad77c7/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="CloseMilestoneUnitTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Unit.Milestones.CloseMilestoneUnitTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Integration.Milestones.CloseMilestoneIntegrationTests&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Unit.Milestones.CloseMilestoneUnitTests&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Integration.Milestones.CloseMilestoneIntegrationTests&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Integration.Milestones.ReopenMilestoneIntegrationTests&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+    &lt;ProjectFile&gt;1C585274-3F29-447E-991D-5BE6A12EE105/d:Unit/d:Milestones/f:ReopenMilestoneUnitTests.cs&lt;/ProjectFile&gt;&#xD;
+  &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	
 	

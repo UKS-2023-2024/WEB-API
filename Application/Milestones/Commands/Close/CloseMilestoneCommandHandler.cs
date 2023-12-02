@@ -8,7 +8,7 @@ using Domain.Repositories.Interfaces;
 
 namespace Application.Milestones.Commands.Close;
 
-public class CloseMilestoneCommandHandler : ICommandHandler<CloseMilestoneCommand, Guid>
+public class CloseMilestoneCommandHandler : ICommandHandler<CloseMilestoneCommand, Milestone>
 {
     private readonly IMilestoneRepository _milestoneRepository;
     private readonly IRepositoryRepository _repositoryRepository;
@@ -23,7 +23,7 @@ public class CloseMilestoneCommandHandler : ICommandHandler<CloseMilestoneComman
     }
 
 
-    public async Task<Guid> Handle(CloseMilestoneCommand request, CancellationToken cancellationToken)
+    public async Task<Milestone> Handle(CloseMilestoneCommand request, CancellationToken cancellationToken)
     {
         Milestone? milestone = _milestoneRepository.Find(request.MilestoneId);
         if (milestone is null) throw new MilestoneNotFoundException();
@@ -33,6 +33,6 @@ public class CloseMilestoneCommandHandler : ICommandHandler<CloseMilestoneComman
 
         if (member is null) throw new RepositoryMemberNotFoundException();
         _milestoneRepository.Update(Milestone.Close(milestone));
-        return milestone.Id;
+        return milestone;
     }
 }

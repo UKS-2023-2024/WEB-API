@@ -66,8 +66,8 @@ public class MilestoneController : ControllerBase
     public async Task<IActionResult> Close(string id)
     {
         Guid userId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        Guid closedMilestoneId = await _sender.Send(new CloseMilestoneCommand(userId, Guid.Parse(id)));
-        return Ok(closedMilestoneId);
+        Milestone closedMilestone = await _sender.Send(new CloseMilestoneCommand(userId, Guid.Parse(id)));
+        return Ok(new MilestonePresenter(closedMilestone));
     }
     
     [HttpPut("{id}/reopen")]
@@ -75,8 +75,8 @@ public class MilestoneController : ControllerBase
     public async Task<IActionResult> Reopen(string id)
     {
         Guid userId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        Guid reopenedMilestoneId = await _sender.Send(new ReopenMilestoneCommand(userId, Guid.Parse(id)));
-        return Ok(reopenedMilestoneId);
+        Milestone reopenedMilestone = await _sender.Send(new ReopenMilestoneCommand(userId, Guid.Parse(id)));
+        return Ok(new MilestonePresenter(reopenedMilestone));
     }
 
     [HttpGet("{id}")]

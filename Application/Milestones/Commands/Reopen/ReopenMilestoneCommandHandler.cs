@@ -8,7 +8,7 @@ using Domain.Repositories.Interfaces;
 
 namespace Application.Milestones.Commands.Reopen;
 
-public class ReopenMilestoneCommandHandler : ICommandHandler<ReopenMilestoneCommand, Guid>
+public class ReopenMilestoneCommandHandler : ICommandHandler<ReopenMilestoneCommand, Milestone>
 {
     
     private readonly IMilestoneRepository _milestoneRepository;
@@ -22,7 +22,7 @@ public class ReopenMilestoneCommandHandler : ICommandHandler<ReopenMilestoneComm
         _milestoneRepository = milestoneRepository;
         _repositoryRepository = repositoryRepository;
     }
-    public async Task<Guid> Handle(ReopenMilestoneCommand request, CancellationToken cancellationToken)
+    public async Task<Milestone> Handle(ReopenMilestoneCommand request, CancellationToken cancellationToken)
     {
         Milestone? milestone = _milestoneRepository.Find(request.MilestoneId);
         if (milestone is null) throw new MilestoneNotFoundException();
@@ -32,6 +32,6 @@ public class ReopenMilestoneCommandHandler : ICommandHandler<ReopenMilestoneComm
 
         if (member is null) throw new RepositoryMemberNotFoundException();
         _milestoneRepository.Update(Milestone.Reopen(milestone));
-        return milestone.Id;
+        return milestone;
     }
 }
