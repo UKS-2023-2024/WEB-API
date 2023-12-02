@@ -2,10 +2,13 @@
 using Application.Milestones.Commands.Create;
 using Application.Milestones.Commands.Update;
 using Application.Milestones.Commands.Delete;
+using Application.Milestones.Queries.FindRepositoryMilestones;
+using Domain.Milestones;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WEB_API.Milestones.Dtos;
+using WEB_API.Milestones.Presenters;
 using WEB_API.Shared.TokenHandler;
 using WEB_API.Shared.UserIdentityService;
 
@@ -62,5 +65,14 @@ public class MilestoneController : ControllerBase
         Guid userId = _userIdentityService.FindUserIdentity(HttpContext.User);
         Guid closedMilestoneId = await _sender.Send(new CloseMilestoneCommand(userId, Guid.Parse(id)));
         return Ok(closedMilestoneId);
+    }
+
+    [HttpGet("{id}")]
+    [Authorize]
+    public async Task<IActionResult> FindRepositoryMilestones(string id)
+    {
+        Guid userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        List<Milestone> milestones = await _sender.Send(new FindRepositoryMilestonesCommand(userId, Guid.Parse(id)));
+        return Ok(MilestonePresenter.MapFromMilestonesToMilestonePresenters(milestones));
     }
 }

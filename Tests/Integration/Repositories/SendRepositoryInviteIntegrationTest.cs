@@ -111,7 +111,7 @@ public class SendRepositoryInviteIntegrationTest: BaseIntegrationTest
     public async void Handle_ShouldReturnError_WhenOwnerNotExists()
     {
         //Arrange
-        var ownerId = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d9211");
+        var ownerId = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d9213");
         var userId = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5");
         
         var repository = _context.Repositories.FirstOrDefault(o => o.Name.Equals("repo3"));

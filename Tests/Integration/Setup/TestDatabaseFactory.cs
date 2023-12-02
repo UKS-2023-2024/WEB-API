@@ -8,10 +8,8 @@ using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace Tests.Integration.Setup;
 
@@ -49,7 +47,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
             services.Remove(descriptor);
         }
 
-        services.AddDbContext<MainDbContext>(opt => opt.UseNpgsql(_configuration["ConnectionString"]));
+        services.AddDbContext<MainDbContext>(opt => opt.UseNpgsql(_configuration["TestConnectionString"]));
         return services.BuildServiceProvider();
     }
 
@@ -65,6 +63,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         User user2 = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7"), "saras@gmail.com", "sara test", "sara", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.ADMINISTRATOR);
         User user3 = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"), "test@gmail.com", "sara test", "dusan", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.ADMINISTRATOR);
         User user4 = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d9211"), "dusan@gmail.com", "dusan test", "dusan", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.USER);
+        User user5 = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d9213"), "dusan@gmail.com", "dusan test", "dusan", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.USER);
 
         var organization1 = Organization.Create("organization1", "contact@example.com", new List<User>());
         var organizationMember1 = OrganizationMember.Create(user1, organization1, ownerPermission);
@@ -82,16 +81,18 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         repository2.AddToStarredBy(user4);
 
         var repository3 = Repository.Create(new Guid("8e9b1cc2-35d3-4bf2-9f2c-9e00a21d94a5"), "repo3", "test", false, null, user1);
-        var member = repository3.AddMember(user2);
+        var member1 = repository3.AddMember(user2);
         repository3.AddMember(user3);
-        member.Delete();
+        var member3 = repository3.AddMember(user4);
+        member1.Delete();
+        member3.SetRole(RepositoryMemberRole.ADMIN);
         
         var repository4 = Repository.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"), "repo4", "test", true, null, user1);
         var member2 = repository3.AddMember(user2);
         member2.Delete(); 
 
         var repository5 = Repository.Create(new Guid("8e9b1cc3-35d6-4bf2-9f2c-9e00a21d94a5"), "repo5", "test", true, organization1, user1);
-        
+        repository5.AddToStarredBy(user1);
         var milestone1 = Milestone.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"), "title", "description", new DateOnly(), new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"));
 
         var branch1 = Branch.Create(new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b1"), "branch1", repository5.Id, true, user1.Id);

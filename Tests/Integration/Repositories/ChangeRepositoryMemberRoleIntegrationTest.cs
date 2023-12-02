@@ -54,6 +54,44 @@ public class ChangeRepositoryMemberRoleIntegrationTest : BaseIntegrationTest
     }
     
     [Fact]
+    public async void ChangeRepositoryMemberRole_ShouldFail_WhenOwnerTriesToChangeHimself()
+    {
+        //Arrange
+        var ownerId = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5");
+        var repository = _context.Repositories.FirstOrDefault(o => o.Name.Equals("repo3"));
+        var repoMember =
+            _context.RepositoryMembers.FirstOrDefault(rm =>
+                rm.Member.Id == new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5")  && rm.RepositoryId.Equals(repository!.Id));
+        var command = new ChangeMemberRoleCommand(ownerId,
+            repoMember!.Id, repository!.Id,RepositoryMemberRole.CONTRIBUTOR);
+        
+        //Act
+        async Task Handle() => await _sender.Send(command);
+
+        //Assert
+        await Should.ThrowAsync<RepositoryMemberCantChangeHimselfException>(Handle);
+    }
+    
+    [Fact]
+    public async void ChangeRepositoryMemberRole_ShouldFail_WhenOnly1Owner()
+    {
+        //Arrange
+        var ownerId = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d9211");
+        var repository = _context.Repositories.FirstOrDefault(o => o.Name.Equals("repo3"));
+        var repoMember =
+            _context.RepositoryMembers.FirstOrDefault(rm =>
+                rm.Member.Id == new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5") && rm.RepositoryId.Equals(repository!.Id));
+        var command = new ChangeMemberRoleCommand(ownerId,
+            repoMember!.Id, repository!.Id,RepositoryMemberRole.CONTRIBUTOR);
+        
+        //Act
+        async Task Handle() => await _sender.Send(command);
+
+        //Assert
+        await Should.ThrowAsync<RepositoryMemberCantBeChangedException>(Handle);
+    }
+    
+    [Fact]
     public async void ChangeRepositoryMemberRole_ShouldFail_WhenOwnerNotFound()
     {
         //Arrange
@@ -61,7 +99,7 @@ public class ChangeRepositoryMemberRoleIntegrationTest : BaseIntegrationTest
         var repository = _context.Repositories.FirstOrDefault(o => o.Name.Equals("repo3"));
         var repoMember =
             _context.RepositoryMembers.FirstOrDefault(rm =>
-                rm.Member.Id == new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
+                rm.Member.Id == new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5") && rm.RepositoryId.Equals(repository!.Id));
         var command = new ChangeMemberRoleCommand(ownerId,
             repoMember!.Id, repository!.Id,RepositoryMemberRole.ADMIN);
         
@@ -96,7 +134,7 @@ public class ChangeRepositoryMemberRoleIntegrationTest : BaseIntegrationTest
         var repository = _context.Repositories.FirstOrDefault(o => o.Name.Equals("repo3"));
         var repoMember =
             _context.RepositoryMembers.FirstOrDefault(rm =>
-                rm.Member.Id == new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7"));
+                rm.Member.Id == new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7")  && rm.RepositoryId.Equals(repository!.Id));
         var command = new ChangeMemberRoleCommand(ownerId,
             repoMember!.Id, repository!.Id,RepositoryMemberRole.ADMIN);
         

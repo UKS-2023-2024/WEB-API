@@ -8,14 +8,17 @@ using Application.Repositories.Commands.HandleRepositoryMembers.RemoveRepository
 using Application.Repositories.Commands.HandleRepositoryMembers.SendRepositoryInvite;
 using Application.Repositories.Commands.StarringRepository.StarRepository;
 using Application.Repositories.Commands.StarringRepository.UnstarRepository;
+using Application.Repositories.Queries.DidUserStarRepository;
 using Application.Repositories.Queries.FindAllByOrganizationId;
 using Application.Repositories.Queries.FindAllByOwnerId;
 using Application.Repositories.Queries.FindAllRepositoryMembers;
+using Application.Repositories.Queries.FindAllUsersThatStarredRepository;
 using Application.Repositories.Queries.FindRepositoryMemberRole;
 using Domain.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WEB_API.Auth.Presenter;
 using WEB_API.Repositories.Dtos;
 using WEB_API.Repositories.Presenters;
 using WEB_API.Shared.TokenHandler;
@@ -95,7 +98,25 @@ public class RepositoryController : ControllerBase
         return Ok(repositories);
     }
     
-    [HttpPatch("star/{repositoryId}")]
+    [HttpGet("did-user-star/{repositoryId:guid}")]
+    [Authorize]
+    public async Task<IActionResult> DidUserStarRepository(Guid repositoryId)
+    {
+        var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        var didUserStar = await _sender.Send(new DidUserStarRepositoryQuery(userId,repositoryId));
+        return Ok(didUserStar);
+    }
+    
+    [HttpGet("users-that-starred/{repositoryId:guid}")]
+    [Authorize]
+    public async Task<IActionResult> GetAllThatStarred(Guid repositoryId)
+    {
+        var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        var usersThatStarred = await _sender.Send(new FindAllUsersThatStarredQuery(userId,repositoryId));
+        return Ok(UserThatStarredPresenter.MapUserToStarredPresenters(usersThatStarred));
+    }
+    
+    [HttpPatch("star/{repositoryId:guid}")]
     [Authorize]
     public async Task<IActionResult> StarRepository(Guid repositoryId)
     {
