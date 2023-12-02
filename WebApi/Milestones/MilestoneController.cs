@@ -3,6 +3,7 @@ using Application.Milestones.Commands.Close;
 using Application.Milestones.Commands.Create;
 using Application.Milestones.Commands.Update;
 using Application.Milestones.Commands.Delete;
+using Application.Milestones.Commands.Reopen;
 using Application.Milestones.Queries.FindRepositoryClosedMilestones;
 using Application.Milestones.Queries.FindRepositoryMilestones;
 using Domain.Milestones;
@@ -68,6 +69,15 @@ public class MilestoneController : ControllerBase
         Guid closedMilestoneId = await _sender.Send(new CloseMilestoneCommand(userId, Guid.Parse(id)));
         return Ok(closedMilestoneId);
     }
+    
+    [HttpPut("{id}/reopen")]
+    [Authorize]
+    public async Task<IActionResult> Reopen(string id)
+    {
+        Guid userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Guid reopenedMilestoneId = await _sender.Send(new ReopenMilestoneCommand(userId, Guid.Parse(id)));
+        return Ok(reopenedMilestoneId);
+    }
 
     [HttpGet("{id}")]
     [Authorize]
@@ -86,4 +96,5 @@ public class MilestoneController : ControllerBase
         List<Milestone> milestones = await _sender.Send(new FindRepositoryClosedMilestonesQuery(userId, Guid.Parse(id)));
         return Ok(MilestonePresenter.MapFromMilestonesToMilestonePresenters(milestones));
     }
+    
 }
