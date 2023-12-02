@@ -32,7 +32,7 @@ public class CloseMilestoneCommandHandler : ICommandHandler<CloseMilestoneComman
             await _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.UserId, foundRepository.Id);
 
         if (member is null) throw new RepositoryMemberNotFoundException();
-        
-        
+        _milestoneRepository.Update(Milestone.Close(milestone));
+        return milestone.Id;
     }
 }

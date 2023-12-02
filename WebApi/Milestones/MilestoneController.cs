@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Application.Milestones.Commands.Close;
 using Application.Milestones.Commands.Create;
 using Application.Milestones.Commands.Update;
 using Application.Milestones.Commands.Delete;

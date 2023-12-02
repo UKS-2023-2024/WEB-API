@@ -46,5 +46,7 @@ public class Milestone
 
     public static Milestone Close(Milestone milestone)
     {
+        milestone.Closed = true;
+        return milestone;
     }
 }
