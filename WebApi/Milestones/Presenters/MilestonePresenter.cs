@@ -9,6 +9,7 @@ public class MilestonePresenter
     public DateOnly? DueDate { get;  set; }
     public string Description { get;  set; }
     public Guid RepositoryId { get;  set; }
+    public bool Closed { get; set; }
 
     public MilestonePresenter(Milestone milestone)
     {
@@ -17,6 +18,7 @@ public class MilestonePresenter
         DueDate = milestone.DueDate;
         Description = milestone.Description;
         RepositoryId = milestone.RepositoryId;
+        Closed = milestone.Closed;
     }
 
     public static List<MilestonePresenter> MapFromMilestonesToMilestonePresenters(List<Milestone> milestones)

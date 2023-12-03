@@ -1,6 +1,9 @@
-﻿using Application.Milestones.Commands.Create;
+﻿using System.Net;
+using Application.Milestones.Commands.Close;
+using Application.Milestones.Commands.Create;
 using Application.Milestones.Commands.Update;
 using Application.Milestones.Commands.Delete;
+using Application.Milestones.Queries.FindRepositoryClosedMilestones;
 using Application.Milestones.Queries.FindRepositoryMilestones;
 using Domain.Milestones;
 using MediatR;
@@ -57,12 +60,30 @@ public class MilestoneController : ControllerBase
         return Ok(deletedMilestone);
     }
 
+    [HttpPut("{id}/close")]
+    [Authorize]
+    public async Task<IActionResult> Close(string id)
+    {
+        Guid userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Guid closedMilestoneId = await _sender.Send(new CloseMilestoneCommand(userId, Guid.Parse(id)));
+        return Ok(closedMilestoneId);
+    }
+
     [HttpGet("{id}")]
     [Authorize]
     public async Task<IActionResult> FindRepositoryMilestones(string id)
     {
         Guid userId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        List<Milestone> milestones = await _sender.Send(new FindRepositoryMilestonesCommand(userId, Guid.Parse(id)));
+        List<Milestone> milestones = await _sender.Send(new FindRepositoryMilestonesQuery(userId, Guid.Parse(id)));
+        return Ok(MilestonePresenter.MapFromMilestonesToMilestonePresenters(milestones));
+    }
+    
+    [HttpGet("{id}/closed")]
+    [Authorize]
+    public async Task<IActionResult> FindRepositoryClosedMilestones(string id)
+    {
+        Guid userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        List<Milestone> milestones = await _sender.Send(new FindRepositoryClosedMilestonesQuery(userId, Guid.Parse(id)));
         return Ok(MilestonePresenter.MapFromMilestonesToMilestonePresenters(milestones));
     }
 }
