@@ -1,4 +1,5 @@
 ﻿using Application.Milestones.Commands.Close;
+using Domain.Milestones;
 using Domain.Milestones.Exceptions;
 using Domain.Repositories.Exceptions;
 using Shouldly;
@@ -20,16 +21,16 @@ public class CloseMilestoneIntegrationTests: BaseIntegrationTest
         var command = new CloseMilestoneCommand(Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"),
             Guid.Parse("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"));
         //Act
-        var deletedMilestoneId = await _sender.Send(command);
+        var closedMilestone = await _sender.Send(command);
 
         //Assert
 
-        deletedMilestoneId.ShouldBeOfType<Guid>();
-        deletedMilestoneId.ShouldBeEquivalentTo(Guid.Parse("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"));
+        closedMilestone.ShouldBeOfType<Milestone>();
+        closedMilestone.Closed.ShouldBeTrue();
     }
     
     [Fact]
-    async Task DeleteMilestone_ShouldFail_WhenMilestoneNotFound()
+    async Task CloseMilestone_ShouldFail_WhenMilestoneNotFound()
     {
         //Arrange
         var command = new CloseMilestoneCommand(Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"),
@@ -46,7 +47,7 @@ public class CloseMilestoneIntegrationTests: BaseIntegrationTest
     }
     
     [Fact]
-    async Task DeleteMilestone_ShouldFail_WhenUserNotRepositoryMember()
+    async Task CloseMilestone_ShouldFail_WhenUserNotRepositoryMember()
     {
         //Arrange
         var command = new CloseMilestoneCommand(Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7"),

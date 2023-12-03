@@ -6,24 +6,23 @@ using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
 
-namespace Application.Milestones.Commands.Close;
+namespace Application.Milestones.Commands.Reopen;
 
-public class CloseMilestoneCommandHandler : ICommandHandler<CloseMilestoneCommand, Milestone>
+public class ReopenMilestoneCommandHandler : ICommandHandler<ReopenMilestoneCommand, Milestone>
 {
+    
     private readonly IMilestoneRepository _milestoneRepository;
     private readonly IRepositoryRepository _repositoryRepository;
     private readonly IRepositoryMemberRepository _repositoryMemberRepository;
 
-    public CloseMilestoneCommandHandler(IRepositoryMemberRepository repositoryMemberRepository, IMilestoneRepository milestoneRepository,
+    public ReopenMilestoneCommandHandler(IRepositoryMemberRepository repositoryMemberRepository, IMilestoneRepository milestoneRepository,
         IRepositoryRepository repositoryRepository)
     {
         _repositoryMemberRepository = repositoryMemberRepository;
         _milestoneRepository = milestoneRepository;
         _repositoryRepository = repositoryRepository;
     }
-
-
-    public async Task<Milestone> Handle(CloseMilestoneCommand request, CancellationToken cancellationToken)
+    public async Task<Milestone> Handle(ReopenMilestoneCommand request, CancellationToken cancellationToken)
     {
         Milestone? milestone = _milestoneRepository.Find(request.MilestoneId);
         if (milestone is null) throw new MilestoneNotFoundException();
@@ -32,7 +31,7 @@ public class CloseMilestoneCommandHandler : ICommandHandler<CloseMilestoneComman
             await _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.UserId, foundRepository.Id);
 
         if (member is null) throw new RepositoryMemberNotFoundException();
-        _milestoneRepository.Update(Milestone.Close(milestone));
+        _milestoneRepository.Update(Milestone.Reopen(milestone));
         return milestone;
     }
 }

@@ -49,4 +49,10 @@ public class Milestone
         milestone.Closed = true;
         return milestone;
     }
+
+    public static Milestone Reopen(Milestone milestone)
+    {
+        milestone.Closed = false;
+        return milestone;
+    }
 }
