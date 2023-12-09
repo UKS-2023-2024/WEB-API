@@ -4,13 +4,16 @@ using Domain.Milestones.Interfaces;
 using Domain.Organizations.Interfaces;
 using Domain.Repositories.Interfaces;
 using Domain.Shared.Interfaces;
+using Domain.Tasks.Interfaces;
 using Infrastructure.Auth.Repositories;
 using Infrastructure.Auth.Services;
 using Infrastructure.Branches;
+using Infrastructure.Events;
 using Infrastructure.Milestones;
 using Infrastructure.Organizations.Repositories;
 using Infrastructure.Repositories.Repositories;
 using Infrastructure.Shared.Email;
+using Infrastructure.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure;
@@ -32,6 +35,9 @@ public static class DependencyInjection
         services.AddScoped<IRepositoryInviteRepository, RepositoryInviteRepository>();
         services.AddScoped<IMilestoneRepository, MilestoneRepository>();
         services.AddScoped<IBranchRepository, BranchRepository>();
+        services.AddScoped<ITaskRepository, TaskRepository>();
+        services.AddScoped<IIssueRepository, IssueRepository>();
+        services.AddScoped<IEventRepository, EventRepository>();
         return services;
     }    
 }

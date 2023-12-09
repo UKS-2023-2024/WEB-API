@@ -20,6 +20,7 @@ namespace Domain.Repositories
         public List<User> StarredBy { get; private set; }
         public List<Milestone> Milestones { get; private set; }
         public List<Branch> Branches { get; private set; } = new();
+        public List<Domain.Tasks.Task> Tasks { get; private set; } = new();
 
 
         private Repository() { }
