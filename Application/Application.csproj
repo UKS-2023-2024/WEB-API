@@ -18,6 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Issues\Queries\" />
       <Folder Include="Repositories\Commands\StarringRepository" />
     </ItemGroup>
 

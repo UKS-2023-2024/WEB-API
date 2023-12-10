@@ -11,9 +11,9 @@ public class Milestone
     public DateOnly? DueDate { get; private set; }
     public string Description { get; private set; }
     public Guid RepositoryId { get; private set; }
-
     public Repository? Repository { get; private set; }
     public bool Closed { get; private set; }
+    public List<Domain.Tasks.Task> Tasks { get; private set; }
 
     private Milestone(string title, string description, DateOnly? dueDate, Guid repositoryId)
     {
@@ -22,6 +22,7 @@ public class Milestone
         RepositoryId = repositoryId;
         DueDate = dueDate;
         Closed = false;
+        Tasks = new();
     }
 
     public static Milestone Create(string title, string description, DateOnly? dueDate, Guid repositoryId)

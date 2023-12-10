@@ -11,6 +11,8 @@ namespace Domain.Repositories
         public Guid RepositoryId { get; private set; }
         public RepositoryMemberRole Role { get; private set; }
         public bool Deleted { get; private set; }
+        public List<Domain.Tasks.Task> Tasks { get; private set; }
+
         public RepositoryMember()
         {
         }
