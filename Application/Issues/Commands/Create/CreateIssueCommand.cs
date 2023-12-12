@@ -8,4 +8,4 @@ using Domain.Tasks;
 namespace Application.Issues.Commands.Create;
 
 public record CreateIssueCommand(Guid UserId, string Title, string Description,
-    Guid RepositoryId, List<RepositoryMember> Assignees, List<Label> Labels, Guid? MilestoneId): ICommand<Guid>;
+    Guid RepositoryId, List<string> AssigneesIds, List<string> LabelsIds, Guid? MilestoneId): ICommand<Guid>;

@@ -12,6 +12,7 @@
       &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Integration.Issues.CreateIssueIntegrationTests.CreateMilestone_ShouldFail_WhenUserNotRepositoryMember&lt;/TestId&gt;&#xD;
     &lt;/TestAncestor&gt;&#xD;
     &lt;ProjectFile&gt;1C585274-3F29-447E-991D-5BE6A12EE105/d:Unit/d:Milestones/f:ReopenMilestoneUnitTests.cs&lt;/ProjectFile&gt;&#xD;
+    &lt;ProjectFile&gt;1C585274-3F29-447E-991D-5BE6A12EE105/d:Unit/d:Issues/f:CreateIssueUnitTests.cs&lt;/ProjectFile&gt;&#xD;
   &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	

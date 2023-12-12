@@ -6,7 +6,16 @@ namespace Domain.Tasks;
 
 public class Issue: Task
 {
-    
+    private Issue(): base()
+    {
+    }
+
+    public Issue(string title, string description, TaskState state, int number, Guid userId, Guid repositoryId,
+        List<RepositoryMember> assignees, List<Label> labels, Guid? milestoneId) : 
+        base(title, description, state, number, TaskType.ISSUE, userId, repositoryId, assignees, labels, milestoneId)
+    {
+        Events.Add(new Event("Opened issue", EventType.OPENED, userId));
+    }
     public Issue(string title, string description, TaskState state, int number, Guid userId, Guid repositoryId) : 
         base(title, description, state, number, TaskType.ISSUE, userId, repositoryId)
     {
@@ -14,9 +23,47 @@ public class Issue: Task
     }
     
     public static Issue Create(string title, string description, TaskState state, int number, Repository repository,
-        User creator)
+        User creator, List<RepositoryMember> assignees, List<Label> labels, Guid? milestoneId)
     {
-        return new Issue(title, description, state, number, creator.Id, repository.Id);
+        return new Issue(title, description, state, number, creator.Id, repository.Id, assignees, labels, milestoneId);
     }
+
+    public static Issue Update(Issue issue, string title, string description, TaskState state,
+        List<RepositoryMember> assignees, Guid milestoneId, List<Label> labels)
+    {
+        
+        issue.Title = title;
+        issue.Description = description;
+        issue.State = state;
+        issue.Assignees = assignees;
+        issue.MilestoneId = milestoneId;
+        issue.Labels = labels;
+        return issue;
+    }
+
+    public void UpdateAssignees(List<RepositoryMember> assignees, Guid creatorId)
+    {
+        CreateAddAssigneeEvents(assignees, creatorId);
+        CreateRemoveAssigneEvents(assignees, creatorId);
+        Assignees = assignees;
+    }
+    private void CreateAddAssigneeEvents(List<RepositoryMember> assignees, Guid creatorId)
+    {
+        foreach (RepositoryMember assignee in Assignees)
+        {
+            if(!assignees.Contains(assignee))
+                Events.Add(new Event("Unassigned", EventType.ISSUE_UNASSIGNED, creatorId, Id));
+        }
+    }
+
+    private void CreateRemoveAssigneEvents(List<RepositoryMember> assignees, Guid creatorId)
+    {
+        foreach (RepositoryMember assignee in assignees)
+        {
+            if(!Assignees.Contains(assignee))
+                Events.Add(new Event("Assigned", EventType.ISSUE_ASSIGNED, creatorId, Id));
+        }
+    }
+    
 
 }

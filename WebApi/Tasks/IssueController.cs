@@ -1,4 +1,8 @@
 ﻿using Application.Issues.Commands.Create;
+using Application.Issues.Commands.Enums;
+using Application.Issues.Commands.Update;
+using Application.Issues.Queries.FindIssueQuery;
+using Application.Issues.Queries.FindRepositoryIssues;
 using Domain.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using WEB_API.Shared.TokenHandler;
 using WEB_API.Shared.UserIdentityService;
 using WEB_API.Tasks.Dtos;
+using WEB_API.Tasks.Presenters;
 
 namespace WEB_API.Tasks;
 
@@ -31,10 +36,42 @@ public class IssueController: ControllerBase
         Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
         Guid? milestoneId = issueDto.MilestoneId is not null ? Guid.Parse(issueDto.MilestoneId) : null;
         var createdIssueId = await _sender.Send(new CreateIssueCommand(creatorId, issueDto.Title, 
-            issueDto.Description, Guid.Parse(issueDto.RepositoryId), issueDto.Assignees, issueDto.Labels,
+            issueDto.Description, Guid.Parse(issueDto.RepositoryId), issueDto.AssigneesIds, issueDto.LabelsIds,
             milestoneId));
         return Ok(createdIssueId);
     }
 
+    [HttpPost("/assignee/update")]
+    [Authorize]
+    public async Task<IActionResult> Update([FromBody] IssueDto issueDto)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Guid milestoneId;
+        Guid.TryParse(issueDto.MilestoneId, out milestoneId);
+        Console.WriteLine(milestoneId);
+        
+        Guid updatedIssueGuid = await _sender.Send(new UpdateIssueCommand(Guid.Parse(issueDto.Id), creatorId,
+            issueDto.Title, issueDto.Description, issueDto.State, issueDto.Number,
+            Guid.Parse(issueDto.RepositoryId), issueDto.AssigneesIds, issueDto.LabelsIds,
+            UpdateIssueFlag.ASSIGNEES, milestoneId));
+        return Ok(updatedIssueGuid);
+    }
 
+    [HttpGet("{id}")]
+    [Authorize]
+    public async Task<IActionResult> FindById(string id)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Issue issue = await _sender.Send(new FindIssueQuery(creatorId, Guid.Parse(id)));
+        return Ok(new IssuePresenter(issue));
+    }
+
+    [HttpGet("{repositoryId}/issues")]
+    [Authorize]
+    public async Task<IActionResult> FindRepositoryIssues(string repositoryId)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        List<Issue> issues = await _sender.Send(new FindRepositoryIssuesQuery(creatorId, Guid.Parse(repositoryId)));
+        return Ok(IssuePresenter.MapIssueToIssuePresenter(issues));
+    }
 }
