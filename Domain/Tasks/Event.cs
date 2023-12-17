@@ -1,7 +1,9 @@
-﻿using Domain.Auth;
+﻿using System.Text.Json.Serialization;
+using Domain.Auth;
 using Domain.Tasks.Enums;
 
 namespace Domain.Tasks;
+
 public class Event
 {
     public Guid Id { get; private set; }

@@ -63,6 +63,10 @@ public class IssueController: ControllerBase
     {
         Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
         Issue issue = await _sender.Send(new FindIssueQuery(creatorId, Guid.Parse(id)));
+        foreach (var e in issue.Events)
+        {
+            Console.WriteLine(e.GetType());
+        }
         return Ok(new IssuePresenter(issue));
     }
 

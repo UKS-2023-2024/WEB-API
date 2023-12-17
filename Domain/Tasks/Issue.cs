@@ -44,25 +44,26 @@ public class Issue: Task
     public void UpdateAssignees(List<RepositoryMember> assignees, Guid creatorId)
     {
         CreateAddAssigneeEvents(assignees, creatorId);
-        CreateRemoveAssigneEvents(assignees, creatorId);
+        CreateRemoveAssigneeEvents(assignees, creatorId);
         Assignees = assignees;
     }
     private void CreateAddAssigneeEvents(List<RepositoryMember> assignees, Guid creatorId)
     {
-        foreach (RepositoryMember assignee in Assignees)
-        {
-            if(!assignees.Contains(assignee))
-                Events.Add(new Event("Unassigned", EventType.ISSUE_UNASSIGNED, creatorId, Id));
-        }
-    }
-
-    private void CreateRemoveAssigneEvents(List<RepositoryMember> assignees, Guid creatorId)
-    {
         foreach (RepositoryMember assignee in assignees)
         {
             if(!Assignees.Contains(assignee))
-                Events.Add(new Event("Assigned", EventType.ISSUE_ASSIGNED, creatorId, Id));
+                Events.Add(new AssignEvent("Assigned", creatorId, Id, assignee.Id));
         }
+    }
+
+    private void CreateRemoveAssigneeEvents(List<RepositoryMember> assignees, Guid creatorId)
+    {
+        foreach (RepositoryMember assignee in Assignees)
+        {
+            if(!assignees.Contains(assignee))
+                Events.Add(new UnassignEvent("Unassigned", creatorId, Id, assignee.Id));
+        }
+    
     }
     
 
