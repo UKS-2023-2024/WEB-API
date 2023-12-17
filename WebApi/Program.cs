@@ -15,9 +15,16 @@ using WEB_API.ExceptionHandling;
 using WEB_API.Shared.TokenHandler;
 using WEB_API.Shared.UserIdentityService;
 using TokenHandler = WEB_API.Shared.TokenHandler.TokenHandler;
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+        {
+            options.SerializerSettings.TypeNameHandling = TypeNameHandling.None;
+            options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+        }
+    );
 // Add services to the container.
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -33,7 +40,9 @@ builder.Services.AddCors(options =>
         });
 });
 
-builder.Services.AddControllers().AddJsonOptions(options =>
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     options.JsonSerializerOptions.WriteIndented = true;

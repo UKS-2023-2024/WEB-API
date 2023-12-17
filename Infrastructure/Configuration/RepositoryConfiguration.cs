@@ -26,5 +26,9 @@ public class RepositoryConfiguration: IEntityTypeConfiguration<Repository>
         builder.HasOne(r => r.Organization)
             .WithMany(o => o.Repositories)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(r => r.Labels)
+            .WithOne(l => l.Repository)
+            .HasForeignKey(l => l.RepositoryId);
     }
 }

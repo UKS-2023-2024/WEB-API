@@ -46,6 +46,17 @@ public class RepositoryMemberRepository: BaseRepository<RepositoryMember>, IRepo
             .AsEnumerable();
     }
 
+    public Task<List<RepositoryMember>> FindAllByIds(Guid repositoryId, List<Guid> memberIds)
+    {
+        return _context.RepositoryMembers
+            .Where(
+                mem => memberIds
+                    .Any(memId => 
+                        memId.Equals(mem.Id)) && 
+                       mem.RepositoryId.Equals(repositoryId)
+                       ).ToListAsync();
+    }
+
     public int FindNumberRepositoryMembersThatAreOwnersExceptSingleMember(Guid repositoryId,Guid repositoryMemberId)
     {
         return _context.RepositoryMembers

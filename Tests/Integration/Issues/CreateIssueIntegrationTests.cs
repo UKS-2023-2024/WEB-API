@@ -21,7 +21,7 @@ public class CreateIssueIntegrationTests: BaseIntegrationTest
         //Arrange
         var command = new CreateIssueCommand(Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7"), "first issue",
             "description",
-            Guid.Parse("8e9b1cc2-35d3-4bf2-9f2c-9e00a21d94a5"), new List<RepositoryMember>(), new List<Label>(), null);
+            Guid.Parse("8e9b1cc2-35d3-4bf2-9f2c-9e00a21d94a5"), new List<string>(), new List<string>(), null);
         
         //Act
         var issueId = await _sender.Send(command);
@@ -38,7 +38,7 @@ public class CreateIssueIntegrationTests: BaseIntegrationTest
         //Arrange
         var command = new CreateIssueCommand(Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a1"), "first issue",
             "description",
-            Guid.Parse("8e9b1cc2-35d3-4bf2-9f2c-9e00a21d94a5"), new List<RepositoryMember>(), new List<Label>(), null);
+            Guid.Parse("8e9b1cc2-35d3-4bf2-9f2c-9e00a21d94a5"), new List<string>(), new List<string>(), null);
         //Act
         Func<Task> handle = async () =>
         {

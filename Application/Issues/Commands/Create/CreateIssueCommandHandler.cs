@@ -17,15 +17,17 @@ public class CreateIssueCommandHandler : ICommandHandler<CreateIssueCommand, Gui
     private readonly IIssueRepository _issueRepository;
     private readonly IRepositoryRepository _repositoryRepository;
     private readonly IUserRepository _userRepository;
+    private readonly ILabelRepository _labelRepository;
     public CreateIssueCommandHandler(IRepositoryMemberRepository repositoryMemberRepository, ITaskRepository taskRepository,
         IRepositoryRepository repositoryRepository, IIssueRepository issueRepository,
-        IUserRepository userRepository)
+        IUserRepository userRepository, ILabelRepository labelRepository)
     {
         _repositoryMemberRepository = repositoryMemberRepository;
         _taskRepository = taskRepository;
         _repositoryRepository = repositoryRepository;
         _issueRepository = issueRepository;
         _userRepository = userRepository;
+        _labelRepository = labelRepository;
     }
 
     public async Task<Guid> Handle(CreateIssueCommand request, CancellationToken cancellationToken)
@@ -37,10 +39,15 @@ public class CreateIssueCommandHandler : ICommandHandler<CreateIssueCommand, Gui
         int taskNumber = await _taskRepository.GetTaskNumber() + 1;
         Repository repository = _repositoryRepository.Find(request.RepositoryId);
         User creator = _userRepository.Find(request.UserId);
+        var assigneeGuids = request.AssigneesIds.Select(s => Guid.Parse(s));
+        var assignees = await _repositoryMemberRepository.FindAllByIds(repository.Id, assigneeGuids.ToList());
+        var labelGuids = request.LabelsIds.Select(l => Guid.Parse(l));
+        var labels = await _labelRepository.FindAllByIds(repository.Id, labelGuids.ToList());
         Issue issue = Issue.Create(request.Title, request.Description, TaskState.OPEN,
             taskNumber,
-            repository, creator);
+            repository, creator, assignees, labels, request.MilestoneId);
         Issue createdIssue = await _issueRepository.Create(issue);
+        
         return createdIssue.Id;
     }
 }

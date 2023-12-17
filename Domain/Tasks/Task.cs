@@ -23,6 +23,10 @@ public abstract class Task
     public Guid UserId { get; protected set; }
     public User? Creator { get; protected set; }
 
+    protected Task()
+    {
+    }
+
     protected Task(string title, string description, TaskState state, int number, TaskType type, Guid userId, Guid repositoryId)
     {
         Title = title;
@@ -34,7 +38,8 @@ public abstract class Task
         RepositoryId = repositoryId;
     }
     
-    protected Task(string title, string description, TaskState state, int number, TaskType type, Guid userId, Guid repositoryId, Guid milestoneId)
+    protected Task(string title, string description, TaskState state, int number, TaskType type,
+        Guid userId, Guid repositoryId, List<RepositoryMember> assignees, List<Label> labels,  Guid? milestoneId)
     {
         Title = title;
         Description = description;
@@ -44,6 +49,8 @@ public abstract class Task
         UserId = userId;
         RepositoryId = repositoryId;
         MilestoneId = milestoneId;
+        Assignees = assignees;
+        Labels = labels;
     }
     
     

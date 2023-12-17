@@ -1,7 +1,9 @@
-﻿using Domain.Auth;
+﻿using System.Text.Json.Serialization;
+using Domain.Auth;
 using Domain.Tasks.Enums;
 
 namespace Domain.Tasks;
+
 public class Event
 {
     public Guid Id { get; private set; }
@@ -19,14 +21,14 @@ public class Event
     public Event(string title,EventType type, Guid creatorId)
     {
         Title = title;
-        CreatedAt = DateTime.UtcNow;
+        CreatedAt = DateTime.Now.ToUniversalTime();
         CreatorId = creatorId;
         EventType = type;
     }
-    public Event(string title,EventType type, Guid creatorId, Guid taskId)
+    public Event(string title, EventType type, Guid creatorId, Guid taskId)
     {
         Title = title;
-        CreatedAt = new DateTime().ToUniversalTime();
+        CreatedAt = DateTime.Now.ToUniversalTime();
         CreatorId = creatorId;
         TaskId = taskId;
         EventType = type;
