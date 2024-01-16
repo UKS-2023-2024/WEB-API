@@ -48,8 +48,6 @@ public class IssueController: ControllerBase
         Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
         Guid milestoneId;
         Guid.TryParse(issueDto.MilestoneId, out milestoneId);
-        Console.WriteLine(milestoneId);
-        
         Guid updatedIssueGuid = await _sender.Send(new UpdateIssueCommand(Guid.Parse(issueDto.Id), creatorId,
             issueDto.Title, issueDto.Description, issueDto.State, issueDto.Number,
             Guid.Parse(issueDto.RepositoryId), issueDto.AssigneesIds, issueDto.LabelsIds,

@@ -19,6 +19,7 @@ public class IssueRepository: BaseRepository<Issue>, IIssueRepository
         return await _context.Issues.Where(i => i.Id.Equals(id))
             .Include(i => i.Milestone)
             .Include(i => i.Events)
+            .Include(i => i.Assignees)
             .FirstAsync();
     }
 

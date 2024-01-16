@@ -10,7 +10,7 @@ public interface IRepositoryMemberRepository: IBaseRepository<RepositoryMember>
     Task<RepositoryMember> FindRepositoryOwner(Guid repositoryId);
     
     IEnumerable<RepositoryMember> FindRepositoryMembers(Guid repositoryId);
-    Task<List<RepositoryMember>> FindAllByIds(Guid repositoryId, List<Guid> memberIds);
+    Task<List<RepositoryMember>> FindAllByIds(Guid repositoryId, IEnumerable<Guid> memberIds);
 
     int FindNumberRepositoryMembersThatAreOwnersExceptSingleMember(Guid repositoryId, Guid repositoryMemberId);
 }

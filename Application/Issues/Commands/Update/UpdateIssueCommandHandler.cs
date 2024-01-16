@@ -43,15 +43,14 @@ public class UpdateIssueCommandHandler: ICommandHandler<UpdateIssueCommand, Guid
         var user = _userRepository.Find(request.UserId);
         User.ThrowIfDoesntExist(user);
         
-        var issue = _issueRepository.Find(request.Id);
+        var issue = await _issueRepository.FindById(request.Id);
         
         if (request.Flag == UpdateIssueFlag.ASSIGNEES)
         {
-            var assigneeGuids = request.AssigneesIds.Select(s => Guid.Parse(s));
-            var assignees = await _repositoryMemberRepository.FindAllByIds(repository.Id, assigneeGuids.ToList());
+            var assigneeGuids = request.AssigneesIds.Select(Guid.Parse).ToList();
+            var assignees = await _repositoryMemberRepository.FindAllByIds(repository.Id, assigneeGuids);
             issue.UpdateAssignees(assignees, user.Id);
         }
-        
         //var labelGuids = request.LabelsIds.Select(l => Guid.Parse(l));
         //var labels = await _labelRepository.FindAllByIds(repository.Id, labelGuids.ToList());
         //Issue updatedIssue = Issue.Update(foundIssue, request.Title, request.Description, request.State,assignees , request.MilestoneId, labels);
