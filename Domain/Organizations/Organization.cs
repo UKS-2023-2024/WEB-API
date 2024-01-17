@@ -59,7 +59,7 @@ public class Organization
     
     public void RemoveMember(OrganizationMember organizationMember)
     {
-        var member = _members.FirstOrDefault(m => m.Id == organizationMember.Id);
+        var member = _members.FirstOrDefault(m => m.MemberId == organizationMember.MemberId);
         if (member is null)
             throw new OrganizationMemberNotFoundException();
         member.Delete();

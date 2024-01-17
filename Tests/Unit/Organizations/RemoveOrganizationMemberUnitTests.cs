@@ -63,15 +63,15 @@ public class RemoveOrganizationMemberUnitTests
         OverrideId<RepositoryMember>(repositoryMember, new Guid("8e9b1cc0-abab-3434-9f2c-5e00a21d92a8"));
 
         _organizationRoleRepositoryMock.Setup(x => x.FindByName("OWNER")).ReturnsAsync(OrganizationRole.Owner());
-        _organizationMemberRepositoryMock.Setup(x => x.FindById(_organizationMember1.Id))
+        _organizationMemberRepositoryMock.Setup(x => x.FindByUserIdAndOrganizationId(_organizationMember1.MemberId,_organization1.Id))
             .ReturnsAsync(_organizationMember1);
-        _organizationMemberRepositoryMock.Setup(x => x.FindById(_organizationMember2.Id))
+        _organizationMemberRepositoryMock.Setup(x => x.FindByUserIdAndOrganizationId(_organizationMember2.MemberId,_organization1.Id))
             .ReturnsAsync(_organizationMember2);
-        _organizationMemberRepositoryMock.Setup(x => x.FindById(_organizationMember3.Id))
+        _organizationMemberRepositoryMock.Setup(x => x.FindByUserIdAndOrganizationId(_organizationMember3.MemberId,_organization2.Id))
             .ReturnsAsync(_organizationMember3);
-        _organizationMemberRepositoryMock.Setup(x => x.FindById(_organizationMember4.Id))
+        _organizationMemberRepositoryMock.Setup(x => x.FindByUserIdAndOrganizationId(_organizationMember4.MemberId,_organization2.Id))
             .ReturnsAsync(_organizationMember4);
-        _organizationMemberRepositoryMock.Setup(x => x.FindById(_organizationMember5.Id))
+        _organizationMemberRepositoryMock.Setup(x => x.FindByUserIdAndOrganizationId(_organizationMember5.MemberId,_organization2.Id))
             .ReturnsAsync(_organizationMember5);
         _organizationRepositoryMock.Setup(x => x.FindById(_organization1.Id)).ReturnsAsync(_organization1);
         _organizationRepositoryMock.Setup(x => x.FindById(_organization2.Id)).ReturnsAsync(_organization2);
@@ -112,7 +112,7 @@ public class RemoveOrganizationMemberUnitTests
     {
         //Arrange
         var command = new RemoveOrganizationMemberCommand(_user1.Id,
-            _organizationMember1.Id, _organization1.Id);
+            _organizationMember1.MemberId, _organization1.Id);
         var handler = new RemoveOrganizationMemberCommandHandler(_organizationMemberRepositoryMock.Object,
             _permissionServiceMock.Object,_organizationRepositoryMock.Object,_repositoryRepositoryMock.Object,
             _repositoryMemberRepositoryMock.Object,_organizationRoleRepositoryMock.Object);
@@ -129,7 +129,7 @@ public class RemoveOrganizationMemberUnitTests
     {
         //Arrange
         var command = new RemoveOrganizationMemberCommand(_user1.Id,
-            _organizationMember2.Id, new Guid("8e9b1cc0-abab-1111-bbbb-5e00a21d92a8"));
+            _organizationMember2.MemberId, new Guid("8e9b1cc0-abab-1111-bbbb-5e00a21d92a8"));
         var handler = new RemoveOrganizationMemberCommandHandler(_organizationMemberRepositoryMock.Object,
             _permissionServiceMock.Object,_organizationRepositoryMock.Object,_repositoryRepositoryMock.Object,
             _repositoryMemberRepositoryMock.Object,_organizationRoleRepositoryMock.Object);
@@ -138,7 +138,7 @@ public class RemoveOrganizationMemberUnitTests
         async Task Handle() => await handler.Handle(command, default);
 
         //Assert
-        await Should.ThrowAsync<OrganizationNotFoundException>(Handle);
+        await Should.ThrowAsync<OrganizationMemberNotFoundException>(Handle);
     }
     
     [Fact]
@@ -146,7 +146,7 @@ public class RemoveOrganizationMemberUnitTests
     {
         //Arrange
         var command = new RemoveOrganizationMemberCommand(_user1.Id,
-            _organizationMember4.Id, _organization1.Id);
+            _organizationMember5.MemberId, _organization1.Id);
         var handler = new RemoveOrganizationMemberCommandHandler(_organizationMemberRepositoryMock.Object,
             _permissionServiceMock.Object,_organizationRepositoryMock.Object,_repositoryRepositoryMock.Object,
             _repositoryMemberRepositoryMock.Object,_organizationRoleRepositoryMock.Object);
@@ -163,7 +163,7 @@ public class RemoveOrganizationMemberUnitTests
     {
         //Arrange
         var command = new RemoveOrganizationMemberCommand(_user1.Id,
-            _organizationMember2.Id, _organization1.Id);
+            _organizationMember2.MemberId, _organization1.Id);
 
         //Act
         var result = new RemoveOrganizationMemberCommandHandler(_organizationMemberRepositoryMock.Object,
@@ -179,7 +179,7 @@ public class RemoveOrganizationMemberUnitTests
     {
         //Arrange
         var command = new RemoveOrganizationMemberCommand(_user1.Id,
-            _organizationMember4.Id, _organization2.Id);
+            _organizationMember4.MemberId, _organization2.Id);
 
         //Act
         var result = new RemoveOrganizationMemberCommandHandler(_organizationMemberRepositoryMock.Object,

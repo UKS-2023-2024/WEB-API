@@ -43,7 +43,7 @@ public class RemoveOrganizationMemberCommandHandler: ICommandHandler<RemoveOrgan
 
         var ownerRole = await _organizationRoleRepository.FindByName("OWNER");
         
-        var member = await _organizationMemberRepository.FindById(request.OrganizationMemberId);
+        var member = await _organizationMemberRepository.FindByUserIdAndOrganizationId(request.OrganizationMemberId,request.OrganizationId);
         if (member is null || member.Deleted) 
             throw new OrganizationMemberNotFoundException();
 
@@ -51,8 +51,7 @@ public class RemoveOrganizationMemberCommandHandler: ICommandHandler<RemoveOrgan
             throw new CantRemoveOrganizationOwnerException();
 
         var organization =  await _organizationRepository.FindById(request.OrganizationId);
-        Organization.ThrowIfDoesntExist(organization);
-        
+
         organization!.RemoveMember(member);
         _organizationRepository.Update(organization);
 

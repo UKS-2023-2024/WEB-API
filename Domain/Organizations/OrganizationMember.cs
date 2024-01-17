@@ -6,7 +6,6 @@ namespace Domain.Organizations;
 
 public class OrganizationMember
 {
-    public Guid Id { get; private set; }
     public User Member { get; private set; } = null;
     public Guid MemberId { get; private set; }
     public Organization Organization { get; private set; } = null;

@@ -48,10 +48,7 @@ public class RemoveOrganizationMemberIntegrationTests: BaseIntegrationTest
         //Arrange
         var ownerId = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5");
         var organization = _context.Organizations.FirstOrDefault(o => o.Name.Equals("organization1"));
-        var organizationMember = _context.OrganizationMembers.FirstOrDefault(m =>
-            m.MemberId.Equals(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7"))
-                              && m.OrganizationId.Equals(organization!.Id));
-        var removeCommand = new RemoveOrganizationMemberCommand(ownerId, organizationMember!.Id, organization!.Id);
+        var removeCommand = new RemoveOrganizationMemberCommand(ownerId, new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7"), organization!.Id);
         //Act
         async Task Handle() => await _sender.Send(removeCommand);
 

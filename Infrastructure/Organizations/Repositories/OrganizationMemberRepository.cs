@@ -17,16 +17,10 @@ public class OrganizationMemberRepository: BaseRepository<OrganizationMember>, I
         _context = context;
     }
 
-    public async Task<OrganizationMember?> FindById(Guid id)
-    {
-        return await _context.OrganizationMembers
-            .Include(member => member.Role)
-            .Where(member => member.Id.Equals(id)).FirstOrDefaultAsync();
-    }
-
     public Task<OrganizationMember?> FindByUserIdAndOrganizationId(Guid userId, Guid organizationId)
     {
         return _context.OrganizationMembers
+            .Include(m=>m.Role)
             .Where(o => o.MemberId.Equals(userId) && o.OrganizationId.Equals(organizationId))
             .FirstOrDefaultAsync();
     }
