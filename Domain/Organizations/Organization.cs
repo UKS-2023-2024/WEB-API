@@ -49,6 +49,7 @@ public class Organization
         if (member is not null)
         {
             member.ActivateMemberAgain();
+            member.SetRole(role);
             return member;
         }
         member = OrganizationMember.Create(user, this, role);

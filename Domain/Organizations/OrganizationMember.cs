@@ -1,4 +1,5 @@
 ﻿using Domain.Auth;
+using Domain.Auth.Enums;
 using Domain.Organizations.Exceptions;
 
 namespace Domain.Organizations;
@@ -66,4 +67,9 @@ public class OrganizationMember
         if (member is null) throw new OrganizationMemberNotFoundException();
     }
     
+    public void SetRole(OrganizationRole role)
+    {
+        Role = role;
+    }
+
 }
