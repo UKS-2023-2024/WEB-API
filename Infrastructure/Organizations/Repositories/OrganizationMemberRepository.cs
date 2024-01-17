@@ -48,4 +48,12 @@ public class OrganizationMemberRepository: BaseRepository<OrganizationMember>, I
                 mem.OrganizationId.Equals(organizationId)
                 && mem.MemberId.Equals(memberId));
     }
+
+    public Task<IEnumerable<OrganizationMember>> FindOrganizationMembers(Guid organizationId)
+    {
+        return Task.FromResult(_context.OrganizationMembers
+            .Include(member => member.Member)
+            .Include(member => member.Role)
+            .Where(member => member.OrganizationId.Equals(organizationId)).AsEnumerable());
+    }
 }

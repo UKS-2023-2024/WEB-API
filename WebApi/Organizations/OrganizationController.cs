@@ -3,12 +3,15 @@ using Application.Organizations.Commands.Create;
 using Application.Organizations.Commands.Delete;
 using Application.Organizations.Commands.RemoveOrganizationMember;
 using Application.Organizations.Commands.SendInvite;
+using Application.Organizations.Queries.FindOrganizationMembers;
 using Application.Organizations.Queries.FindUserOrganizations;
+using Domain.Organizations;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WEB_API.Organization.Dtos;
 using WEB_API.Organization.Presenters;
+using WEB_API.Organizations.Presenters;
 using WEB_API.Shared.TokenHandler;
 using WEB_API.Shared.UserIdentityService;
 
@@ -65,6 +68,16 @@ public class OrganizationController : ControllerBase
 
         List<Domain.Organizations.Organization> organizations = await _sender.Send(new FindUserOrganizationsQuery(userId));
         return Ok(OrganizationPresenter.MapOrganizationsToOrganizationPresenters(organizations));
+    }
+    
+    [HttpGet("{organizationId:Guid}/members")]
+    [Authorize]
+    public async Task<IActionResult> FindAllOrganizationMembers(Guid organizationId)
+    {
+        var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+
+        var organizations = await _sender.Send(new FindOrganizationMembersQuery(userId,organizationId));
+        return Ok(OrganizationMemberPresenter.MapOrganizationMembersToOrganizationMemberPresenters(organizations));
     }
 
     [HttpPost("{orgId}/members/{memberId}/invite")]

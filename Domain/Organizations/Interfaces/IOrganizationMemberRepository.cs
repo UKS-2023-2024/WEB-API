@@ -8,4 +8,6 @@ public interface IOrganizationMemberRepository: IBaseRepository<OrganizationMemb
     Task<List<Organization>> FindUserOrganizations(Guid userId);
     Task<OrganizationMember> FindByOrganizationIdAndRole(Guid organizationId, OrganizationMemberRole role);
     Task<OrganizationMember?> FindPopulated(Guid organizationId, Guid memberId);
+    
+    Task<IEnumerable<OrganizationMember>> FindOrganizationMembers(Guid organizationId);
 }
