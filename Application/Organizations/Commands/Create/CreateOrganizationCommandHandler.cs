@@ -43,9 +43,9 @@ public class CreateOrganizationCommandHandler: ICommandHandler<CreateOrganizatio
             throw new OrganizationWithThisNameExistsException();
 
         var organization = Organization.Create(request.Name, request.ContactEmail, pendingMembers);
-        var newMember = OrganizationMember.Create(creator, organization, role);
-        organization.AddMember(newMember);
 
+        
+        organization.AddMember(creator,role!);
         await _organizationRepository.Create(organization);
         return organization.Id;
     }

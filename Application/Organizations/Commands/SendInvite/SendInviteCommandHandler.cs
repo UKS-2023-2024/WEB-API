@@ -1,10 +1,8 @@
 using Application.Shared;
-using Domain.Auth.Interfaces;
 using Domain.Organizations;
 using Domain.Organizations.Events;
 using Domain.Organizations.Exceptions;
 using Domain.Organizations.Interfaces;
-using Domain.Organizations.Services;
 using Domain.Organizations.Types;
 using MediatR;
 
@@ -38,16 +36,15 @@ public class SendInviteCommandHandler: ICommandHandler<SendInviteCommand>
         });
         
         var member = await _organizationMemberRepository.FindByUserIdAndOrganizationId(request.MemberId, request.OrganizationId);
-        if (member is not null) 
+        if (member is not null && !member.Deleted) 
             throw new AlreadyOrganizationMemberException();
 
         var existingInvitation = _organizationInviteRepository.FindByOrgAndMember(request.OrganizationId, request.MemberId);
         if (existingInvitation is not null)
              _organizationInviteRepository.Delete(existingInvitation);
-        
         var invite = OrganizationInvite.Create(request.MemberId, request.OrganizationId);
         
         await _organizationInviteRepository.Create(invite);
-        await _mediator.Publish(new OrganizationMemberInvitedEvent(invite.Id), default);
+        await _mediator.Publish(new OrganizationMemberInvitedEvent(invite.Id), cancellationToken);
     }
 }

@@ -30,11 +30,6 @@ public class Organization
             .ToList();
     }
 
-    public void AddMember(OrganizationMember member)
-    {
-        _members.Add(member);
-    }
-    
     public static Organization Create(string name, string contactEmail, List<User> pendingMembers)
     {
         Organization newOrganization = new Organization(name, contactEmail, pendingMembers);
@@ -46,6 +41,27 @@ public class Organization
         Organization newOrganization = new Organization(name, contactEmail, pendingMembers);
         newOrganization.Id = id;
         return newOrganization;
+    }
+    
+    public OrganizationMember AddMember(User user,OrganizationRole role)
+    {
+        var member = _members.FirstOrDefault(m => m.Member.Id == user.Id);
+        if (member is not null)
+        {
+            member.ActivateMemberAgain();
+            return member;
+        }
+        member = OrganizationMember.Create(user, this, role);
+        _members.Add(member);
+        return member;
+    }
+    
+    public void RemoveMember(OrganizationMember organizationMember)
+    {
+        var member = _members.FirstOrDefault(m => m.Id == organizationMember.Id);
+        if (member is null)
+            throw new OrganizationMemberNotFoundException();
+        member.Delete();
     }
 
     public static void ThrowIfDoesntExist(Organization? organization)
