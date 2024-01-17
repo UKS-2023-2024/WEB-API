@@ -1,6 +1,7 @@
 ﻿using Application.Organizations.Commands.AcceptInvite;
 using Application.Organizations.Commands.Create;
 using Application.Organizations.Commands.Delete;
+using Application.Organizations.Commands.RemoveOrganizationMember;
 using Application.Organizations.Commands.SendInvite;
 using Application.Organizations.Queries.FindUserOrganizations;
 using MediatR;
@@ -71,6 +72,14 @@ public class OrganizationController : ControllerBase
     {
         var authorized = _userIdentityService.FindUserIdentity(HttpContext.User);
         await _sender.Send(new SendInviteCommand(authorized, new Guid(orgId), new Guid(memberId)));
+        return Ok();
+    }
+    
+    [HttpDelete("{organizationId:guid}/members/{memberId:guid}")]
+    public async Task<IActionResult> RemoveOrganizationMember(Guid organizationId, Guid memberId)
+    {
+        var ownerId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        await _sender.Send(new RemoveOrganizationMemberCommand(ownerId, memberId, organizationId));
         return Ok();
     }
 
