@@ -1,5 +1,6 @@
 ﻿using Application.Repositories.Queries.FindAllByOrganizationId;
 using Application.Repositories.Queries.FindAllByOwnerId;
+using Application.Repositories.Queries.FindAllRepositoriesUserBelongsTo;
 using Shouldly;
 using Tests.Integration.Setup;
 
@@ -34,6 +35,19 @@ public class FindAllRepositoriesByOrganizationIdIntegrationTest : BaseIntegratio
         //Arrange
         var organization = _context.Organizations.FirstOrDefault(o => o.Name.Equals("organization1"));
         var query = new FindAllRepositoriesByOrganizationIdQuery(organization!.Id);
+
+        //Act
+        var repositories = await _sender.Send(query);
+
+        //Assert
+        repositories.ShouldNotBeEmpty();
+    }
+
+    [Fact]
+    async Task FindAllRepositoriesUserBelongsTo_ShouldReturnNonEmptyList()
+    {
+        //Arrange
+        var query = new FindAllRepositoriesUserBelongsToQuery(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
 
         //Act
         var repositories = await _sender.Send(query);
