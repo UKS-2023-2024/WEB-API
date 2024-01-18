@@ -11,6 +11,7 @@ using Application.Repositories.Commands.StarringRepository.UnstarRepository;
 using Application.Repositories.Queries.DidUserStarRepository;
 using Application.Repositories.Queries.FindAllByOrganizationId;
 using Application.Repositories.Queries.FindAllByOwnerId;
+using Application.Repositories.Queries.FindAllRepositoriesUserBelongsTo;
 using Application.Repositories.Queries.FindAllRepositoryMembers;
 using Application.Repositories.Queries.FindAllUsersThatStarredRepository;
 using Application.Repositories.Queries.FindRepositoryMemberRole;
@@ -89,7 +90,7 @@ public class RepositoryController : ControllerBase
         return Ok(repository);
     }
 
-    [HttpGet]
+    [HttpGet("owner")]
     [Authorize]
     public async Task<IActionResult> FindLoggedUserRepositories()
     {
@@ -202,4 +203,12 @@ public class RepositoryController : ControllerBase
         return Ok(repositories);
     }
 
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> FindRepositoriesUserBelongsTo()
+    {
+        var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        var repositories = await _sender.Send(new FindAllRepositoriesUserBelongsToQuery(userId));
+        return Ok(repositories);
+    }
 }

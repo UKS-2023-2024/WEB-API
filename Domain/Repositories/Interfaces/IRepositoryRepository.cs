@@ -10,4 +10,5 @@ public interface IRepositoryRepository: IBaseRepository<Repository>
     Task<IEnumerable<Repository>> FindAllByOrganizationId(Guid id);
     
     Task<bool> DidUserStarRepository(Guid userid,Guid repositoryId);
+    Task<IEnumerable<Repository>> FindAllUserBelongsTo(Guid id);
 }

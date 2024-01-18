@@ -69,4 +69,14 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
             .Include(r => r.StarredBy)
             .Count(r => r.Id.Equals(repositoryId) && r.StarredBy.Any(u => u.Id.Equals(userid))) == 1);
     }
+
+    public async Task<IEnumerable<Repository>> FindAllUserBelongsTo(Guid id)
+    {
+        return _context.Repositories
+            .Include(r => r.Members)
+            .ThenInclude(m => m.Member)
+            .Include(r => r.Organization)
+            .Where(r => r.Members.Any(m => m.Member.Id == id && !m.Deleted))
+            .ToList();
+    }
 }
