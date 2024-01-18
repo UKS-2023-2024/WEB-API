@@ -20,7 +20,7 @@ public class OrganizationMemberRepository: BaseRepository<OrganizationMember>, I
     public Task<OrganizationMember?> FindByUserIdAndOrganizationId(Guid userId, Guid organizationId)
     {
         return _context.OrganizationMembers
-            .Include(m=>m.Role)
+            .Include(member => member.Role )
             .Where(o => o.MemberId.Equals(userId) && o.OrganizationId.Equals(organizationId))
             .FirstOrDefaultAsync();
     }
