@@ -30,15 +30,11 @@ public class FindAllRepositoryMembersUnitTests
 
         var organization = Organization.Create(new Guid("8e9b1cc2-ffaa-4bf2-9f2c-5e00a21d92a9"),"orgName", "dusanjanosevic007@gmail.com",
             new List<User>());
-
-        var orgMember1 = OrganizationMember.Create(_user2.Id, organization.Id, OrganizationRole.Create("some", "some"));
-        var orgMember2 = OrganizationMember.Create(_user1.Id, organization.Id, OrganizationRole.Create("some", "some"));
-        var orgMember3 = OrganizationMember.Create(_user3.Id, organization.Id, OrganizationRole.Create("some", "some"));
-        var orgMember4 = OrganizationMember.Create(_user5.Id, organization.Id, OrganizationRole.Create("some", "some"));
-        organization.AddMember(orgMember1);
-        organization.AddMember(orgMember2);
-        organization.AddMember(orgMember3);
-        organization.AddMember(orgMember4);
+        
+        var orgMember1 =organization.AddMember(_user2, OrganizationRole.Create("some", "some"));
+        var orgMember2 =organization.AddMember(_user1, OrganizationRole.Create("some", "some"));
+        var orgMember3 =organization.AddMember(_user3, OrganizationRole.Create("some", "some"));
+        var orgMember4 =organization.AddMember(_user5, OrganizationRole.Create("some", "some"));
 
         _repository1 = Repository.Create(new Guid("8e9b1cc1-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository1", "test", true, null, _user1);
         OverrideId(_repository1.Members.FirstOrDefault(), new Guid("8e9b1223-ffaa-4bf2-9f2c-5e00a21d92a9"));

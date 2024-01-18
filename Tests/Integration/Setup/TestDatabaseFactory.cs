@@ -66,13 +66,12 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         User user5 = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d9213"), "dusan@gmail.com", "dusan test", "dusan", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.USER);
 
         var organization1 = Organization.Create("organization1", "contact@example.com", new List<User>());
-        var organizationMember1 = OrganizationMember.Create(user1, organization1, ownerPermission);
-        var organizationMember2 = OrganizationMember.Create(user2, organization1, memberPermission);
-        var organizationMember3 = OrganizationMember.Create(user4, organization1, memberPermission);
+        var organization2 = Organization.Create("organization2", "contact2@example.com", new List<User>());
 
-        organization1.AddMember(organizationMember1);
-        organization1.AddMember(organizationMember2);
-        organization1.AddMember(organizationMember3);
+        organization1.AddMember(user1, ownerPermission);
+        organization1.AddMember(user2, memberPermission);
+        organization1.AddMember(user4, memberPermission);
+        organization2.AddMember(user1, ownerPermission);
 
         var repository1 = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d94a5"), "repo", "test", false, null, user1);
 
@@ -100,7 +99,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         var branch3 = Branch.Create(new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b3"), "branch3", repository5.Id, false, user1.Id, true);
 
         context.Users.AddRange(user1, user2, user3, user4);
-        context.Organizations.AddRange(organization1);
+        context.Organizations.AddRange(organization1,organization2);
         context.Repositories.AddRange(repository1,repository2,repository3,repository4,repository5);
         context.Milestones.AddRange(milestone1);
         context.Branches.AddRange(branch1, branch2, branch3);

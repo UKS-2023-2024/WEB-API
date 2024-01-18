@@ -42,9 +42,10 @@ public class SendInviteForRepositoryUnitTests
         var organization = Organization.Create(new Guid("8e9b1cc2-ffaa-4bf2-9f2c-5e00a21d92a9"),"orgName", "dusanjanosevic007@gmail.com",
             new List<User>());
 
-        var orgMember1 = OrganizationMember.Create(_user2.Id, organization.Id, OrganizationRole.Create("some", "some"));
-        var orgMember2 = OrganizationMember.Create(_user1.Id, organization.Id, OrganizationRole.Create("some", "some"));
-        var orgMember3 = OrganizationMember.Create(_user4.Id, organization.Id, OrganizationRole.Create("some", "some"));
+        var orgMember1 = organization.AddMember(_user2, OrganizationRole.Create("some", "some"));
+        var orgMember2 = organization.AddMember(_user1, OrganizationRole.Create("some", "some"));
+        var orgMember3 = organization.AddMember(_user4, OrganizationRole.Create("some", "some"));
+        
         _organizationMemberRepository
             .Setup(x => x.FindByUserIdAndOrganizationId(orgMember1.MemberId, orgMember1.OrganizationId))
             .ReturnsAsync(orgMember1);
@@ -54,10 +55,6 @@ public class SendInviteForRepositoryUnitTests
         _organizationMemberRepository
             .Setup(x => x.FindByUserIdAndOrganizationId(orgMember3.MemberId, orgMember3.OrganizationId))
             .ReturnsAsync(orgMember3);
-        
-        organization.AddMember(orgMember1);
-        organization.AddMember(orgMember2);
-        organization.AddMember(orgMember3);
 
         _repository1 = Repository.Create(new Guid("8e9b1cc1-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository1", "test", false, null,_user1);
         _repository2 = Repository.Create(new Guid("8e9b1cc2-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository2", "test", false, null,_user1);
@@ -86,6 +83,14 @@ public class SendInviteForRepositoryUnitTests
         _repositoryMemberRepositoryMock.Setup(x => x.FindByUserIdAndRepositoryId(_user4.Id,_repository3.Id)).ReturnsAsync(repoMember5);
         _mediator.Setup(o =>
             o.Publish(It.IsAny<INotification>(), It.IsAny<CancellationToken>()));
+    }
+    
+    private T OverrideId<T>(T obj, Guid id)
+    {
+        var propertyInfo = typeof(T).GetProperty("Id");
+        if (propertyInfo == null) return obj;
+        propertyInfo.SetValue(obj, id);
+        return obj;
     }
 
     [Fact]
