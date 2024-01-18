@@ -19,7 +19,7 @@ public abstract class Task
     public Guid? MilestoneId { get; protected set; }
     public Milestone? Milestone { get; protected set; }
     public TaskType Type { get; protected set; }
-    public List<Event> Events { get; protected set; } = new();
+    public List<Event> Events { get; set; } = new();
     public Guid UserId { get; protected set; }
     public User? Creator { get; protected set; }
 

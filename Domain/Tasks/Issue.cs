@@ -15,6 +15,7 @@ public class Issue: Task
         base(title, description, state, number, TaskType.ISSUE, userId, repositoryId, assignees, labels, milestoneId)
     {
         Events.Add(new Event("Opened issue", EventType.OPENED, userId));
+        UpdateAssignees(assignees, userId);
     }
     public Issue(string title, string description, TaskState state, int number, Guid userId, Guid repositoryId) : 
         base(title, description, state, number, TaskType.ISSUE, userId, repositoryId)

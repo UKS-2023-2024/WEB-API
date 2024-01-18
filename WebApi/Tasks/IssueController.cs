@@ -38,12 +38,12 @@ public class IssueController: ControllerBase
         var createdIssueId = await _sender.Send(new CreateIssueCommand(creatorId, issueDto.Title, 
             issueDto.Description, Guid.Parse(issueDto.RepositoryId), issueDto.AssigneesIds, issueDto.LabelsIds,
             milestoneId));
-        return Ok(createdIssueId);
+        return Ok(new {Id = createdIssueId});
     }
 
-    [HttpPost("/assignee/update")]
+    [HttpPost("assignee/update")]
     [Authorize]
-    public async Task<IActionResult> Update([FromBody] IssueDto issueDto)
+    public async Task<IActionResult> Update([FromBody] UpdateIssueDto issueDto)
     {
         Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
         Guid milestoneId;
@@ -52,7 +52,7 @@ public class IssueController: ControllerBase
             issueDto.Title, issueDto.Description, issueDto.State, issueDto.Number,
             Guid.Parse(issueDto.RepositoryId), issueDto.AssigneesIds, issueDto.LabelsIds,
             UpdateIssueFlag.ASSIGNEES, milestoneId));
-        return Ok(updatedIssueGuid);
+        return Ok(new {Id = updatedIssueGuid});
     }
 
     [HttpGet("{id}")]

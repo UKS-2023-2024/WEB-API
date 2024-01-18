@@ -16,17 +16,34 @@ public class IssueRepository: BaseRepository<Issue>, IIssueRepository
 
     public async Task<Issue> FindById(Guid id)
     {
-        return await _context.Issues.Where(i => i.Id.Equals(id))
+        return _context.Issues.Where(i => i.Id.Equals(id))
             .Include(i => i.Milestone)
             .Include(i => i.Events)
+            .ThenInclude(x => x.Creator)
             .Include(i => i.Assignees)
-            .FirstAsync();
+            .ToList()
+            .Select(x =>
+                {
+                    x.Events = x.Events.OrderBy(e => e.CreatedAt).ToList();
+                    return x;
+                }
+            )
+            .First();
     }
 
     public async Task<List<Issue>> FindRepositoryIssues(Guid repositoryId)
     {
-        return await _context.Issues
+        return _context.Issues
             .Where(i => i.RepositoryId.Equals(repositoryId))
-            .ToListAsync();
+            .Include(x => x.Events)
+            .ThenInclude(x => x.Creator)
+            .ToList()
+            .Select(x =>
+                {
+                    x.Events = x.Events.OrderBy(e => e.CreatedAt).ToList();
+                    return x;
+                }
+            )
+            .ToList();
     }
 }

@@ -48,7 +48,7 @@ public class UpdateIssueCommandHandler: ICommandHandler<UpdateIssueCommand, Guid
         if (request.Flag == UpdateIssueFlag.ASSIGNEES)
         {
             var assigneeGuids = request.AssigneesIds.Select(Guid.Parse).ToList();
-            var assignees = await _repositoryMemberRepository.FindAllByIds(repository.Id, assigneeGuids);
+            var assignees = await _repositoryMemberRepository.FindAllByIdsAndRepositoryId(repository.Id, assigneeGuids);
             issue.UpdateAssignees(assignees, user.Id);
         }
         //var labelGuids = request.LabelsIds.Select(l => Guid.Parse(l));

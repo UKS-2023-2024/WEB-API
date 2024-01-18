@@ -8,18 +8,19 @@ namespace WEB_API.Tasks.Dtos;
 
 public class IssueDto
 {
-    public string Id { get; set; }
+    public string? Id { get; set; }
 
     [Required]
     public string Title { get;  set; }
-    public string Description { get;  set; }
+    public string? Description { get;  set; }
     [Required]
     public string RepositoryId { get;  set; }
-    public List<string> AssigneesIds { get;  set; }
-    public List<string> LabelsIds { get;  set; }
+
+    public List<string>? AssigneesIds { get; set; } = new();
+    public List<string>? LabelsIds { get; set; } = new();
     public string? MilestoneId { get;  set; }
 
-    public TaskState State { get; set; }
+    public TaskState? State { get; set; }
 
-    public int Number { get; set; }
+    public int? Number { get; set; }
 }

@@ -2,6 +2,7 @@
 using Domain.Milestones;
 using Domain.Repositories;
 using Domain.Tasks;
+using Domain.Tasks.Enums;
 
 namespace WEB_API.Tasks.Presenters;
 
@@ -15,7 +16,8 @@ public class IssuePresenter
     public List<Label> Labels { get; set; }
     public Milestone Milestone { get; set; }
     public int Number { get; set; }
-    
+    public TaskState State { get; set; }
+
     public List<Event> Events { get; set; }
 
     public IssuePresenter(Issue issue)
@@ -29,6 +31,7 @@ public class IssuePresenter
         Milestone = issue.Milestone;
         Number = issue.Number;
         Events = issue.Events;
+        State = issue.State;
     }
 
     public static List<IssuePresenter> MapIssueToIssuePresenter(List<Issue> issues)
