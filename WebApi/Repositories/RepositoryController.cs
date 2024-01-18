@@ -11,6 +11,7 @@ using Application.Repositories.Commands.StarringRepository.UnstarRepository;
 using Application.Repositories.Queries.DidUserStarRepository;
 using Application.Repositories.Queries.FindAllByOrganizationId;
 using Application.Repositories.Queries.FindAllByOwnerId;
+using Application.Repositories.Queries.FindAllRepositoriesUserBelongsTo;
 using Application.Repositories.Queries.FindAllRepositoryMembers;
 using Application.Repositories.Queries.FindAllUsersThatStarredRepository;
 using Application.Repositories.Queries.FindRepositoryMemberRole;
@@ -89,13 +90,13 @@ public class RepositoryController : ControllerBase
         return Ok(repository);
     }
 
-    [HttpGet]
+    [HttpGet("owner")]
     [Authorize]
     public async Task<IActionResult> FindLoggedUserRepositories()
     {
         var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
         var repositories = await _sender.Send(new FindAllRepositoriesByOwnerIdQuery(userId));
-        return Ok(repositories);
+        return Ok(RepositoryPresenter.MapRepositoriesToPresenters(repositories));
     }
     
     [HttpGet("did-user-star/{repositoryId:guid}")]
@@ -199,7 +200,15 @@ public class RepositoryController : ControllerBase
     public async Task<IActionResult> FindAllByOrganizationIdAsync(Guid organizationId)
     {
         var repositories = await _sender.Send(new FindAllRepositoriesByOrganizationIdQuery(organizationId));
-        return Ok(repositories);
+        return Ok(RepositoryPresenter.MapRepositoriesToPresenters(repositories));
     }
 
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> FindRepositoriesUserBelongsTo()
+    {
+        var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        var repositories = await _sender.Send(new FindAllRepositoriesUserBelongsToQuery(userId));
+        return Ok(RepositoryPresenter.MapRepositoriesToPresenters(repositories));
+    }
 }
