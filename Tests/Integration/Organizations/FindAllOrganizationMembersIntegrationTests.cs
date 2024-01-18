@@ -26,7 +26,7 @@ public class FindAllOrganizationMembersIntegrationTests:BaseIntegrationTest
         
 
         //Assert
-        await Should.ThrowAsync<CantAccessOrganizationMembers>(Handle);
+        await Should.ThrowAsync<OrganizationMemberNotFoundException>(Handle);
     }
     
     [Fact]

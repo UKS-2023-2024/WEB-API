@@ -32,7 +32,6 @@ public static class ExceptionHandler
                 or MemberHasNoPrivilegeException
                 or RepositoryInaccessibleException
                 or NotInviteOwnerException
-                or CantAccessOrganizationMembers
                 or UserNotAOrganizationMemberException => HttpStatusCode.Forbidden,
             InvitationExpiredException
                 or RepositoryAlreadyStarredException

@@ -18,8 +18,7 @@ public class FindOrganizationMembersQueryHandler: IRequestHandler<FindOrganizati
     {
         var organizationMember =
             await _organizationMemberRepository.FindByUserIdAndOrganizationId(request.UserId, request.OrganizationId);
-        if (organizationMember == null)
-            throw new CantAccessOrganizationMembers();
+        OrganizationMember.ThrowIfDoesntExist(organizationMember);
         return await _organizationMemberRepository.FindOrganizationMembers(request.OrganizationId);
     }
 }

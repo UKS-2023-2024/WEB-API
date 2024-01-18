@@ -69,6 +69,6 @@ public class FindAllOrganizationMembersUnitTests
         async Task Handle() => await handler.Handle(command, default);
 
         //Assert
-        await Should.ThrowAsync<CantAccessOrganizationMembers>(Handle);
+        await Should.ThrowAsync<OrganizationMemberNotFoundException>(Handle);
     }
 }
