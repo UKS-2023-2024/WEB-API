@@ -43,6 +43,7 @@ public class OrganizationRepository: BaseRepository<Organization>, IOrganization
     public Task<Organization?> FindById(Guid organizationId)
     {
         return _context.Organizations
+            .Include(organization => organization.Members )
             .FirstOrDefaultAsync(org => org.Id.Equals(organizationId));
     }
 }

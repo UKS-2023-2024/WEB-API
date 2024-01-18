@@ -63,14 +63,14 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
             .ToList();
     }
 
-    public Task<IEnumerable<Repository>> FindOrganizationRepositoriesThatContainsUser(Guid userId, Guid organizationId)
+    public async Task<IEnumerable<Repository>> FindOrganizationRepositoriesThatContainsUser(Guid userId, Guid organizationId)
     {
-        return Task.FromResult(_context.Repositories
+        return _context.Repositories
             .Include(r => r.Members)
             .Where(repo => repo.Organization != null 
                            && repo.Organization.Id.Equals(organizationId) 
                            && repo.Members.Any(member => member.Member.Id.Equals(userId)))
-            .AsEnumerable());
+            .ToList();
     }
 
     public Task<bool> DidUserStarRepository(Guid userid, Guid repositoryId)

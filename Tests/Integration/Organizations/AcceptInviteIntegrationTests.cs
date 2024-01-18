@@ -31,7 +31,7 @@ public class AcceptInviteIntegrationTests: BaseIntegrationTest
         var invite = OrganizationInvite.Create(memberId, organization.Id);
         await _context.OrganizationInvites.AddAsync(invite);
         await _context.SaveChangesAsync();
-        var command = new AcceptInviteCommand(memberId, invite.Id);
+        var command = new AcceptInviteCommand(invite.Id);
         
         //Act
         Func<Task> handle = async () =>
@@ -56,7 +56,7 @@ public class AcceptInviteIntegrationTests: BaseIntegrationTest
         var authorized = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5");
         var organization = _context.Organizations.FirstOrDefault(o => o.Name.Equals("organization1"));
 
-        var command = new AcceptInviteCommand(memberId, new Guid());
+        var command = new AcceptInviteCommand(new Guid());
         
         //Act
         Func<Task> handle = async () =>
@@ -79,7 +79,7 @@ public class AcceptInviteIntegrationTests: BaseIntegrationTest
         invite = OverrideDate(invite, DateTime.Now.AddDays(-1).ToUniversalTime());
         await _context.OrganizationInvites.AddAsync(invite);
         await _context.SaveChangesAsync();
-        var command = new AcceptInviteCommand(memberId, invite.Id);
+        var command = new AcceptInviteCommand(invite.Id);
         
         //Act
         Func<Task> handle = async () =>
@@ -91,25 +91,4 @@ public class AcceptInviteIntegrationTests: BaseIntegrationTest
         await Should.ThrowAsync<InvitationExpiredException>(handle);
     }
     
-    [Fact]
-    async Task AcceptInvitation_ShouldFail_WhenOwnerIsNotSame()
-    {
-        //Arrange
-        var memberId = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9");
-        var authorized = new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5");
-        var organization = _context.Organizations.FirstOrDefault(o => o.Name.Equals("organization1"));
-        var invite = OrganizationInvite.Create(memberId, organization.Id);
-        await _context.OrganizationInvites.AddAsync(invite);
-        await _context.SaveChangesAsync();
-        var command = new AcceptInviteCommand(authorized, invite.Id);
-        
-        //Act
-        Func<Task> handle = async () =>
-        {
-            await _sender.Send(command);
-        };
-        
-        //Assert
-        await Should.ThrowAsync<NotInviteOwnerException>(handle);
-    }
 }
