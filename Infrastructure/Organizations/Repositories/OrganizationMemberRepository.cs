@@ -21,7 +21,8 @@ public class OrganizationMemberRepository: BaseRepository<OrganizationMember>, I
     {
         return _context.OrganizationMembers
             .Include(member => member.Role )
-            .Where(o => o.MemberId.Equals(userId) && o.OrganizationId.Equals(organizationId))
+            .Where(o => o.MemberId.Equals(userId) && o.OrganizationId.Equals(organizationId)
+            && !o.Deleted)
             .FirstOrDefaultAsync();
     }
 
@@ -54,6 +55,6 @@ public class OrganizationMemberRepository: BaseRepository<OrganizationMember>, I
         return Task.FromResult(_context.OrganizationMembers
             .Include(member => member.Member)
             .Include(member => member.Role)
-            .Where(member => member.OrganizationId.Equals(organizationId)).AsEnumerable());
+            .Where(member => member.OrganizationId.Equals(organizationId) && !member.Deleted).AsEnumerable());
     }
 }

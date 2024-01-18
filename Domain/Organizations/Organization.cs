@@ -45,7 +45,7 @@ public class Organization
     
     public OrganizationMember AddMember(User user,OrganizationRole role)
     {
-        var member = _members.FirstOrDefault(m => m.Member.Id == user.Id);
+        var member = _members.FirstOrDefault(m => m.MemberId == user.Id);
         if (member is not null)
         {
             member.ActivateMemberAgain();
