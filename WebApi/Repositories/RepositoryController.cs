@@ -96,7 +96,7 @@ public class RepositoryController : ControllerBase
     {
         var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
         var repositories = await _sender.Send(new FindAllRepositoriesByOwnerIdQuery(userId));
-        return Ok(repositories);
+        return Ok(RepositoryPresenter.MapRepositoriesToPresenters(repositories));
     }
     
     [HttpGet("did-user-star/{repositoryId:guid}")]
@@ -200,7 +200,7 @@ public class RepositoryController : ControllerBase
     public async Task<IActionResult> FindAllByOrganizationIdAsync(Guid organizationId)
     {
         var repositories = await _sender.Send(new FindAllRepositoriesByOrganizationIdQuery(organizationId));
-        return Ok(repositories);
+        return Ok(RepositoryPresenter.MapRepositoriesToPresenters(repositories));
     }
 
     [HttpGet]
@@ -209,6 +209,6 @@ public class RepositoryController : ControllerBase
     {
         var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
         var repositories = await _sender.Send(new FindAllRepositoriesUserBelongsToQuery(userId));
-        return Ok(repositories);
+        return Ok(RepositoryPresenter.MapRepositoriesToPresenters(repositories));
     }
 }
