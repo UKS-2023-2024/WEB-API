@@ -26,11 +26,9 @@ public class FindAllOrganizationMembersUnitTests
         
         _organization = Organization.Create(new Guid("8e9b1cc2-ffaa-4bf2-9f2c-5e00a21d92a9"),"orgName", "dusanjanosevic007@gmail.com",
             new List<User>());
-
-        var orgMember1 = OrganizationMember.Create(_user2.Id, _organization.Id, OrganizationRole.Create("some", "some"));
-        var orgMember2 = OrganizationMember.Create(_user1.Id, _organization.Id, OrganizationRole.Create("some", "some"));
-        _organization.AddMember(orgMember1);
-        _organization.AddMember(orgMember2);
+        
+        var orgMember1 = _organization.AddMember(_user2, OrganizationRole.Create("some", "some"));
+        var orgMember2 = _organization.AddMember(_user1, OrganizationRole.Create("some", "some"));
 
         _organizationMemberRepositoryMock.Setup(x => x.FindByUserIdAndOrganizationId(_user1.Id, _organization.Id))
             .ReturnsAsync(orgMember1);
