@@ -31,7 +31,6 @@ public class AcceptInviteCommandHandler: ICommandHandler<AcceptInviteCommand>
         var invite = await _organizationInviteRepository.FindById(request.InviteId);
         OrganizationInvite.ThrowIfDoesntExist(invite);
         invite!.ThrowIfExpired();
-        invite.ThrowIfNotAnOwner(request.Authorized);
 
         var organization = await _organizationRepository.FindById(invite.OrganizationId);
         Organization.ThrowIfDoesntExist(organization);

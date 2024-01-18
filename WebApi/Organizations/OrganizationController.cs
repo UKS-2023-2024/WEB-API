@@ -3,6 +3,7 @@ using Application.Organizations.Commands.Create;
 using Application.Organizations.Commands.Delete;
 using Application.Organizations.Commands.RemoveOrganizationMember;
 using Application.Organizations.Commands.SendInvite;
+using Application.Organizations.Queries.FindOrganizationMemberRole;
 using Application.Organizations.Queries.FindOrganizationMembers;
 using Application.Organizations.Queries.FindUserOrganizations;
 using Domain.Organizations;
@@ -96,11 +97,22 @@ public class OrganizationController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("/invite/${inviteId}")]
+    [HttpPost("invite/{inviteId}")]
     public async Task<IActionResult> AcceptOrgInvitation(string inviteId)
     {
-        var authorized = _userIdentityService.FindUserIdentity(HttpContext.User);
-        await _sender.Send(new AcceptInviteCommand(authorized ,new Guid(inviteId)));
+        await _sender.Send(new AcceptInviteCommand(new Guid(inviteId)));
         return Ok();
+    }
+    
+        
+    [HttpGet("{organizationId:guid}/member-role")]
+    [Authorize]
+    public async Task<IActionResult> GetUserRole(Guid organizationId)
+    {
+        var user = await _userIdentityService.FindUserFromToken(HttpContext.User);
+        if (user is null)
+            return Unauthorized();
+        var role = await _sender.Send(new FindOrganizationMemberRoleQuery(user.Id,organizationId));
+        return Ok(role);
     }
 }
