@@ -3,6 +3,7 @@ using Domain.Branches;
 using Domain.Milestones;
 using Domain.Organizations;
 using Domain.Repositories.Exceptions;
+using Domain.Tasks;
 
 namespace Domain.Repositories
 {
@@ -20,8 +21,8 @@ namespace Domain.Repositories
         public List<User> StarredBy { get; private set; }
         public List<Milestone> Milestones { get; private set; }
         public List<Branch> Branches { get; private set; } = new();
-        public List<Domain.Tasks.Task> Tasks { get; private set; } = new();
-
+        public List<Tasks.Task> Tasks { get; private set; } = new();
+        public List<Label> Labels { get; private set; } = new();
 
         private Repository() { }
 

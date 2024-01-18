@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231211202707_UpdatedModel")]
+    partial class UpdatedModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,13 +232,10 @@ namespace Infrastructure.Migrations
 
                     b.Property<Guid>("MemberId")
                         .HasColumnType("uuid");
-                    
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("boolean");
 
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
-                    
+
                     b.Property<string>("RoleName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -464,10 +464,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("TaskId");
 
                     b.ToTable("Events");
-
-                    b.HasDiscriminator<int>("EventType").HasValue(0);
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Domain.Tasks.Label", b =>
@@ -591,36 +587,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("StarredId");
 
                     b.ToTable("RepositoryUser");
-                });
-
-            modelBuilder.Entity("Domain.Tasks.AssignEvent", b =>
-                {
-                    b.HasBaseType("Domain.Tasks.Event");
-
-                    b.Property<Guid>("AssigneeId")
-                        .HasColumnType("uuid");
-
-                    b.HasIndex("AssigneeId");
-
-                    b.HasDiscriminator().HasValue(2);
-                });
-
-            modelBuilder.Entity("Domain.Tasks.UnassignEvent", b =>
-                {
-                    b.HasBaseType("Domain.Tasks.Event");
-
-                    b.Property<Guid>("AssigneeId")
-                        .HasColumnType("uuid");
-
-                    b.HasIndex("AssigneeId");
-
-                    b.ToTable("Events", t =>
-                        {
-                            t.Property("AssigneeId")
-                                .HasColumnName("UnassignEvent_AssigneeId");
-                        });
-
-                    b.HasDiscriminator().HasValue(3);
                 });
 
             modelBuilder.Entity("Domain.Tasks.Issue", b =>
@@ -891,28 +857,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Tasks.AssignEvent", b =>
-                {
-                    b.HasOne("Domain.Repositories.RepositoryMember", "Assignee")
-                        .WithMany("AssignEvents")
-                        .HasForeignKey("AssigneeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Assignee");
-                });
-
-            modelBuilder.Entity("Domain.Tasks.UnassignEvent", b =>
-                {
-                    b.HasOne("Domain.Repositories.RepositoryMember", "Assignee")
-                        .WithMany("UnassignEvents")
-                        .HasForeignKey("AssigneeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Assignee");
-                });
-
             modelBuilder.Entity("Domain.Auth.User", b =>
                 {
                     b.Navigation("Members");
@@ -965,13 +909,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("PendingInvites");
 
                     b.Navigation("Tasks");
-                });
-
-            modelBuilder.Entity("Domain.Repositories.RepositoryMember", b =>
-                {
-                    b.Navigation("AssignEvents");
-
-                    b.Navigation("UnassignEvents");
                 });
 
             modelBuilder.Entity("Domain.Tasks.Task", b =>

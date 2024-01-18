@@ -4,4 +4,6 @@ public enum EventType
 {
     OPENED,
     CLOSED,
+    ISSUE_ASSIGNED,
+    ISSUE_UNASSIGNED,
 }

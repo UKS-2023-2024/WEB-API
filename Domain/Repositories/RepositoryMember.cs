@@ -1,5 +1,6 @@
 ﻿using Domain.Auth;
 using Domain.Repositories.Exceptions;
+using Domain.Tasks;
 
 namespace Domain.Repositories
 {
@@ -12,6 +13,8 @@ namespace Domain.Repositories
         public RepositoryMemberRole Role { get; private set; }
         public bool Deleted { get; private set; }
         public List<Domain.Tasks.Task> Tasks { get; private set; }
+        public List<AssignEvent> AssignEvents { get; private set; }
+        public List<UnassignEvent> UnassignEvents { get; private set; }
 
         public RepositoryMember()
         {

@@ -4,6 +4,8 @@ using Domain.Branches;
 using Domain.Milestones;
 using Domain.Organizations;
 using Domain.Repositories;
+using Domain.Tasks;
+using Domain.Tasks.Enums;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -74,7 +76,9 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         organization2.AddMember(user1, ownerPermission);
 
         var repository1 = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d94a5"), "repo", "test", false, null, user1);
-
+        repository1.AddMember(user2);
+        repository1.AddMember(user1);
+        
         var repository2 = Repository.Create(new Guid("8e9b1cc1-35d3-4bf2-9f2c-5e00a21d14a5"), "repo2", "test", false, organization1, user1);
         repository2.AddToStarredBy(user3);
         repository2.AddToStarredBy(user4);
@@ -98,11 +102,17 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         var branch2 = Branch.Create(new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b2"), "branch2", repository5.Id, false, user1.Id);
         var branch3 = Branch.Create(new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b3"), "branch3", repository5.Id, false, user1.Id, true);
 
+        var label1 = new Label("label1", "123", "", Guid.Parse("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d94a5"));
+        
+        var issue1 = Issue.Create("first issue", "description", TaskState.OPEN, 1, repository1,
+            user1, new List<RepositoryMember>(), new List<Label>() {label1}, null);
+        
         context.Users.AddRange(user1, user2, user3, user4);
         context.Organizations.AddRange(organization1,organization2);
         context.Repositories.AddRange(repository1,repository2,repository3,repository4,repository5);
         context.Milestones.AddRange(milestone1);
         context.Branches.AddRange(branch1, branch2, branch3);
+        context.Issues.AddRange(issue1);
         context.SaveChanges();
     }
 
