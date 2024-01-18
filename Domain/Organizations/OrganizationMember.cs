@@ -1,14 +1,16 @@
 ﻿using Domain.Auth;
+using Domain.Auth.Enums;
 using Domain.Organizations.Exceptions;
 
 namespace Domain.Organizations;
 
 public class OrganizationMember
 {
-    public Guid Id { get; private set; }
     public User Member { get; private set; } = null;
     public Guid MemberId { get; private set; }
     public Organization Organization { get; private set; } = null;
+    
+    public bool Deleted { get; private set; }
     public Guid OrganizationId { get; private set; }
     public OrganizationRole Role { get; private set; }
 
@@ -24,6 +26,7 @@ public class OrganizationMember
         Organization = organization;
         OrganizationId = organizationId;
         Role = role;
+        Deleted = false;
     }
 
     private OrganizationMember(Guid userId, Guid organizationId, OrganizationRole role)
@@ -47,10 +50,25 @@ public class OrganizationMember
     {
         return new OrganizationMember(userId, organizationId, role);
     }
+    
+    public void ActivateMemberAgain()
+    {
+        Deleted = false;
+    }
+
+    public void Delete()
+    {
+        Deleted = true;
+    }
 
     public static void ThrowIfDoesntExist(OrganizationMember? member)
     {
         if (member is null) throw new OrganizationMemberNotFoundException();
     }
     
+    public void SetRole(OrganizationRole role)
+    {
+        Role = role;
+    }
+
 }

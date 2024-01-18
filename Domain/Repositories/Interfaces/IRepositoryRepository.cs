@@ -9,5 +9,7 @@ public interface IRepositoryRepository: IBaseRepository<Repository>
     Task<IEnumerable<Repository>> FindAllByOwnerId(Guid id);
     Task<IEnumerable<Repository>> FindAllByOrganizationId(Guid id);
     
+    Task<IEnumerable<Repository>> FindOrganizationRepositoriesThatContainsUser(Guid userId,Guid organizationId);
+    
     Task<bool> DidUserStarRepository(Guid userid,Guid repositoryId);
 }

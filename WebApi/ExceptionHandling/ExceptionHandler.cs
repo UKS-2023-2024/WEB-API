@@ -37,6 +37,7 @@ public static class ExceptionHandler
                 or RepositoryAlreadyStarredException
                 or RepositoryMemberCantChangeHimselfException
                 or RepositoryMemberCantBeDeletedException
+                or CantRemoveOrganizationOwnerException
                 or RepositoryNotStarredException => HttpStatusCode.BadRequest
         };
         return (int)code;
