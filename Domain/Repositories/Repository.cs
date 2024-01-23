@@ -23,6 +23,7 @@ namespace Domain.Repositories
         public List<Branch> Branches { get; private set; } = new();
         public List<Tasks.Task> Tasks { get; private set; } = new();
         public List<Label> Labels { get; private set; } = new();
+        public List<User> WatchedBy { get; private set; } = new();
 
         private Repository() { }
 
@@ -136,6 +137,17 @@ namespace Domain.Repositories
         public void AddBranch(Branch branch)
         {
             Branches.Add(branch);
+        }
+
+        public void AddToWatchedBy(User user)
+        {
+            WatchedBy.Add(user);
+        }
+
+        public void ThrowIfAlreadyWatchedBy(Guid userId)
+        {
+            if (WatchedBy.Any(user => user.Id == userId))
+                throw new RepositoryAlreadyWatchedException();
         }
     }
 }

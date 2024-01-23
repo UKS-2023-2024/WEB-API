@@ -89,4 +89,11 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
             .Where(r => r.Members.Any(m => m.Member.Id == id && !m.Deleted))
             .ToList();
     }
+
+    public Task<bool> IsUserWatchingRepository(Guid userid, Guid repositoryId)
+    {
+        return Task.FromResult(_context.Repositories
+            .Include(r => r.WatchedBy)
+            .Count(r => r.Id.Equals(repositoryId) && r.WatchedBy.Any(u => u.Id.Equals(userid))) == 1);
+    }
 }

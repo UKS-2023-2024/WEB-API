@@ -8,6 +8,7 @@ using Application.Repositories.Commands.HandleRepositoryMembers.RemoveRepository
 using Application.Repositories.Commands.HandleRepositoryMembers.SendRepositoryInvite;
 using Application.Repositories.Commands.StarringRepository.StarRepository;
 using Application.Repositories.Commands.StarringRepository.UnstarRepository;
+using Application.Repositories.Commands.WatchingRepository.WatchRepository;
 using Application.Repositories.Queries.DidUserStarRepository;
 using Application.Repositories.Queries.FindAllByOrganizationId;
 using Application.Repositories.Queries.FindAllByOwnerId;
@@ -15,6 +16,7 @@ using Application.Repositories.Queries.FindAllRepositoriesUserBelongsTo;
 using Application.Repositories.Queries.FindAllRepositoryMembers;
 using Application.Repositories.Queries.FindAllUsersThatStarredRepository;
 using Application.Repositories.Queries.FindRepositoryMemberRole;
+using Application.Repositories.Queries.IsUserWatchingRepository;
 using Domain.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -210,5 +212,27 @@ public class RepositoryController : ControllerBase
         var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
         var repositories = await _sender.Send(new FindAllRepositoriesUserBelongsToQuery(userId));
         return Ok(RepositoryPresenter.MapRepositoriesToPresenters(repositories));
+    }
+
+
+    [HttpPatch("watch/{repositoryId:guid}")]
+    [Authorize]
+    public async Task<IActionResult> WatchRepository(Guid repositoryId)
+    {
+        var user = await _userIdentityService.FindUserFromToken(HttpContext.User);
+        if (user is null)
+            return Unauthorized();
+        await _sender.Send(new WatchRepositoryCommand(user, repositoryId));
+        return Ok();
+    }
+
+
+    [HttpGet("is-user-watching/{repositoryId:guid}")]
+    [Authorize]
+    public async Task<IActionResult> IsUserWatchingRepository(Guid repositoryId)
+    {
+        var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        var didUserStar = await _sender.Send(new IsUserWatchingRepositoryQuery(userId, repositoryId));
+        return Ok(didUserStar);
     }
 }
