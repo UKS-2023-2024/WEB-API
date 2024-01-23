@@ -40,7 +40,7 @@ public class WatchRepositoryUnitTests
    
     
     [Fact]
-    public void Watch_ShouldReturnSuccess_WhenRepositoryPublicAndUserDidntStar()
+    public void Watch_ShouldReturnSuccess_WhenRepositoryPublicAndUserIsNotWatching()
     {
         //Arrange
         var command = new WatchRepositoryCommand(_user,
@@ -55,7 +55,7 @@ public class WatchRepositoryUnitTests
 
 
     [Fact]
-    public async void Watch_ShouldReturnError_WhenRepositoryPublicAndUserDidStar()
+    public async void Watch_ShouldReturnError_WhenRepositoryPublicAndUserAlreadyWatching()
     {
         //Arrange
         var command = new WatchRepositoryCommand(_user,
@@ -67,7 +67,7 @@ public class WatchRepositoryUnitTests
         async Task Handle() => await handler.Handle(command, default);
 
         //Assert
-        await Should.ThrowAsync<RepositoryAlreadyStarredException>(Handle);
+        await Should.ThrowAsync<RepositoryAlreadyWatchedException>(Handle);
     }
     
     [Fact]
