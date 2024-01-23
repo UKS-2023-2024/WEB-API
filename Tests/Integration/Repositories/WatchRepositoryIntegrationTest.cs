@@ -32,19 +32,6 @@ public class WatchRepositoryIntegrationTest : BaseIntegrationTest
         await Should.NotThrowAsync(Handle);
     }
     
-    [Fact]
-    public async void Watch_ShouldReturnError_WhenRepositoryPublicAndUserIsNotAlreadyWatching()
-    {
-        //Arrange
-        var user = _context.Users.FirstOrDefault(u => u.Id == new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"));
-        var command = new WatchRepositoryCommand(user!, new Guid("8e9b1cc1-35d3-4bf2-9f2c-5e00a21d14a5"));
-        
-        //Act
-        async Task Handle() => await _sender.Send(command);
-        
-        //Assert
-        await Should.ThrowAsync<RepositoryAlreadyWatchedException>(Handle);
-    }
     
     [Fact]
     public async void Watch_ShouldReturnError_WhenRepositoryPrivateAndUserNotMember()

@@ -25,7 +25,7 @@ public class WatchRepositoryUnitTests
         var repository3 = Repository.Create(new Guid("8e9b1cc3-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository", "test", true, null, _user);
         var repository4 = Repository.Create(new Guid("8e9b1cc4-ffaa-4bf2-9f2c-5e00a21d92a9"), "repository", "test", false, null, _user);
         repository3.AddMember(_user);
-        repository4.AddToStarredBy(_user);
+        repository4.AddToWatchedBy(_user);
         _repositoryRepositoryMock = new Mock<IRepositoryRepository>();
         _repositoryMemberRepositoryMock = new Mock<IRepositoryMemberRepository>();
         _repositoryRepositoryMock.Setup(x => x.Find(repository1.Id)).Returns(repository1);
@@ -40,7 +40,7 @@ public class WatchRepositoryUnitTests
    
     
     [Fact]
-    public void Watch_ShouldReturnSuccess_WhenRepositoryPublicAndUserDidntStar()
+    public void Watch_ShouldReturnSuccess_WhenRepositoryPublicAndUserIsNotWatching()
     {
         //Arrange
         var command = new WatchRepositoryCommand(_user,
@@ -55,7 +55,7 @@ public class WatchRepositoryUnitTests
 
 
     [Fact]
-    public async void Watch_ShouldReturnError_WhenRepositoryPublicAndUserDidStar()
+    public async void Watch_ShouldReturnError_WhenRepositoryPublicAndUserAlreadyWatching()
     {
         //Arrange
         var command = new WatchRepositoryCommand(_user,
@@ -67,7 +67,7 @@ public class WatchRepositoryUnitTests
         async Task Handle() => await handler.Handle(command, default);
 
         //Assert
-        await Should.ThrowAsync<RepositoryAlreadyStarredException>(Handle);
+        await Should.ThrowAsync<RepositoryAlreadyWatchedException>(Handle);
     }
     
     [Fact]
