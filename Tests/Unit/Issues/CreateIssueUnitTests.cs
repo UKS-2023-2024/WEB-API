@@ -5,6 +5,7 @@ using Domain.Auth.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
+using Domain.Shared.Interfaces;
 using Domain.Tasks;
 using Domain.Tasks.Enums;
 using Domain.Tasks.Interfaces;
@@ -22,6 +23,7 @@ public class CreateIssueUnitTests
     private readonly Mock<IUserRepository> _userRepositoryMock;
     private readonly Mock<IRepositoryMemberRepository> _repositoryMemberRepositoryMock;
     private readonly Mock<ILabelRepository> _labelRepositoryMock;
+    private readonly Mock<IEmailService> _emailServiceMock;
 
     public CreateIssueUnitTests()
     {
@@ -58,7 +60,7 @@ public class CreateIssueUnitTests
         _issueRepositoryMock.Setup(x => x.Create(It.IsAny<Issue>()))
             .ReturnsAsync(issue);
         var handler = new CreateIssueCommandHandler(_repositoryMemberRepositoryMock.Object, _taskRepositoryMock.Object, _repositoryRepositoryMock.Object,
-            _issueRepositoryMock.Object, _userRepositoryMock.Object, _labelRepositoryMock.Object);
+            _issueRepositoryMock.Object, _userRepositoryMock.Object, _labelRepositoryMock.Object, _emailServiceMock.Object);
 
         //Act
         Guid issueId = await handler.Handle(command, default);
@@ -93,7 +95,7 @@ public class CreateIssueUnitTests
             .ReturnsAsync(issue);
         var handler = new CreateIssueCommandHandler(_repositoryMemberRepositoryMock.Object, _taskRepositoryMock.Object,
             _repositoryRepositoryMock.Object,
-            _issueRepositoryMock.Object, _userRepositoryMock.Object, _labelRepositoryMock.Object);
+            _issueRepositoryMock.Object, _userRepositoryMock.Object, _labelRepositoryMock.Object, _emailServiceMock.Object);
 
         //Act
         Func<Task> handle = async () =>
