@@ -4,6 +4,7 @@ using Domain.Auth.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
+using Domain.Shared.Interfaces;
 using Domain.Tasks;
 using Domain.Tasks.Enums;
 using Domain.Tasks.Interfaces;
@@ -18,9 +19,11 @@ public class CreateIssueCommandHandler : ICommandHandler<CreateIssueCommand, Gui
     private readonly IRepositoryRepository _repositoryRepository;
     private readonly IUserRepository _userRepository;
     private readonly ILabelRepository _labelRepository;
+    private readonly IEmailService _emailService;
+
     public CreateIssueCommandHandler(IRepositoryMemberRepository repositoryMemberRepository, ITaskRepository taskRepository,
         IRepositoryRepository repositoryRepository, IIssueRepository issueRepository,
-        IUserRepository userRepository, ILabelRepository labelRepository)
+        IUserRepository userRepository, ILabelRepository labelRepository, IEmailService emailService)
     {
         _repositoryMemberRepository = repositoryMemberRepository;
         _taskRepository = taskRepository;
@@ -28,6 +31,7 @@ public class CreateIssueCommandHandler : ICommandHandler<CreateIssueCommand, Gui
         _issueRepository = issueRepository;
         _userRepository = userRepository;
         _labelRepository = labelRepository;
+        _emailService = emailService;
     }
 
     public async Task<Guid> Handle(CreateIssueCommand request, CancellationToken cancellationToken)
@@ -48,6 +52,12 @@ public class CreateIssueCommandHandler : ICommandHandler<CreateIssueCommand, Gui
             repository, creator, assignees, labels, request.MilestoneId);
         Issue createdIssue = await _issueRepository.Create(issue);
         
+
+        foreach(User watcher in repository.WatchedBy)
+        {
+            await _emailService.SendNotificationIssueIsOpen(watcher, issue, repository.Name);
+        }
+
         return createdIssue.Id;
     }
 }
