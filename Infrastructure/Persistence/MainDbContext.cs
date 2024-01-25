@@ -2,6 +2,7 @@
 using Domain.Auth;
 using Domain.Branches;
 using Domain.Milestones;
+using Domain.Notifications;
 using Domain.Organizations;
 using Domain.Repositories;
 using Domain.Tasks;
@@ -35,6 +36,7 @@ public class MainDbContext: DbContext
     public DbSet<Label> Labels { get; set; } = null!;
     public DbSet<Event> Events { get; set; } = null!;
     public DbSet<Issue> Issues { get; set; } = null!;
+    public DbSet<Notification> Notifications { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
