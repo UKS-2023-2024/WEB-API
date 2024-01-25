@@ -25,6 +25,7 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
             .Include(x => x.Members)
             .ThenInclude(mem=>mem.Member)
             .Include(x=>x.StarredBy)
+            .Include(x=>x.WatchedBy)
             .FirstOrDefault(x => x.Id == id);
     }
     public async Task<Repository?> FindByNameAndOwnerId(string name, Guid ownerId)

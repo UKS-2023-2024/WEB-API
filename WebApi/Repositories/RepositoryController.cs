@@ -8,6 +8,7 @@ using Application.Repositories.Commands.HandleRepositoryMembers.RemoveRepository
 using Application.Repositories.Commands.HandleRepositoryMembers.SendRepositoryInvite;
 using Application.Repositories.Commands.StarringRepository.StarRepository;
 using Application.Repositories.Commands.StarringRepository.UnstarRepository;
+using Application.Repositories.Commands.WatchingRepository.UnwatchRepository;
 using Application.Repositories.Commands.WatchingRepository.WatchRepository;
 using Application.Repositories.Queries.DidUserStarRepository;
 using Application.Repositories.Queries.FindAllByOrganizationId;
@@ -234,5 +235,16 @@ public class RepositoryController : ControllerBase
         var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
         var didUserStar = await _sender.Send(new IsUserWatchingRepositoryQuery(userId, repositoryId));
         return Ok(didUserStar);
+    }
+
+    [HttpPatch("unwatch/{repositoryId}")]
+    [Authorize]
+    public async Task<IActionResult> UnwatchRepository(Guid repositoryId)
+    {
+        var user = await _userIdentityService.FindUserFromToken(HttpContext.User);
+        if (user is null)
+            return Unauthorized();
+        await _sender.Send(new UnwatchRepositoryCommand(user, repositoryId));
+        return Ok();
     }
 }

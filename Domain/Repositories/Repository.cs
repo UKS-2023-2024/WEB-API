@@ -149,5 +149,16 @@ namespace Domain.Repositories
             if (WatchedBy.Any(user => user.Id == userId))
                 throw new RepositoryAlreadyWatchedException();
         }
+
+        public void RemoveFromWatchedBy(User user)
+        {
+            WatchedBy.Remove(user);
+        }
+
+        public void ThrowIfNotWatchedBy(Guid userId)
+        {
+            if (WatchedBy.All(u => u.Id != userId))
+                throw new RepositoryNotWatchedException();
+        }
     }
 }
