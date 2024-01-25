@@ -22,15 +22,11 @@ public class AssignUserToUserIntegrationTests: BaseIntegrationTest
     async Task AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid()
     {
         //Arrange
-
-
-
-        var repositoryId = Guid.Parse("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d94a5");
-        var authorized = Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5");
+         var repositoryId = Guid.Parse("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d94a5");
+         var authorized = Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5");
          var assignees = new List<string>();
-         assignees.Add("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7");
+         assignees.Add("11111cc0-35d3-4bf2-9f2c-5e00a21d9111");
          var existingIssue = _context.Issues.First();
-         var assigneeGuids = assignees.Select(Guid.Parse);
          
          var command = new UpdateIssueCommand(existingIssue.Id, authorized, It.IsAny<string>(), It.IsAny<string>(),
              It.IsAny<TaskState>(), It.IsAny<int>(), repositoryId,

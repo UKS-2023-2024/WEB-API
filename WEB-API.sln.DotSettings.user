@@ -4,6 +4,21 @@
     &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Integration.Issues.AssignUserToUserIntegrationTests.AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=26968290_002Dc144_002D46ce_002Db66f_002D3eaebc33e379/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AssignIssueToIsser_ShouldFail_WhenUserIsNull #4" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Unit.Issues.AssignIssueToUserUnitTests.AssignIssueToIsser_ShouldFail_WhenUserIsNull&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2d0bf1ac_002D3158_002D4a26_002D8cc7_002D1d20d6cf0cb3/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid #5" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Integration.Issues.AssignUserToUserIntegrationTests.AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=32ff9b40_002Dfc72_002D4dbf_002Db153_002D09e31937a0e8/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AssignIssueToIsser_ShouldFail_WhenUserIsNull #5" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Unit.Issues.AssignIssueToUserUnitTests.AssignIssueToIsser_ShouldFail_WhenUserIsNull&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
 	
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=445e692f_002D60f3_002D46b9_002D9842_002D5b00a0ad77c7/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CloseMilestoneUnitTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Or&gt;&#xD;
@@ -24,17 +39,60 @@
     &lt;ProjectFile&gt;1C585274-3F29-447E-991D-5BE6A12EE105/d:Integration/d:Milestones/f:UpdateMilestoneIntegrationTests.cs&lt;/ProjectFile&gt;&#xD;
   &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=4853ea28_002D02c1_002D4894_002Db7f4_002D4849cf38fdde/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AssignIssueToIsser_ShouldFail_WhenUserIsNull" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;ProjectFile&gt;1C585274-3F29-447E-991D-5BE6A12EE105/d:Unit/d:Issues/f:AssignIssueToUserUnitTests.cs&lt;/ProjectFile&gt;&#xD;
+    &lt;ProjectFile&gt;1C585274-3F29-447E-991D-5BE6A12EE105/d:Integration/d:Issues/f:AssignUserToUserIntegrationTests.cs&lt;/ProjectFile&gt;&#xD;
+  &lt;/Or&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=5bde115c_002D4ecf_002D4408_002Db29d_002D7b5dd827f106/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;ProjectFolder&gt;1C585274-3F29-447E-991D-5BE6A12EE105/d:Integration&lt;/ProjectFolder&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ae932144_002Dfd1b_002D4469_002D9433_002Db55f6e115025/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=76bcc967_002Dccd2_002D4b85_002Dac97_002D53a955de3197/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AssignIssueToIsser_ShouldFail_WhenUserIsNull #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Unit.Issues.AssignIssueToUserUnitTests.AssignIssueToIsser_ShouldFail_WhenUserIsNull&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=82905839_002De023_002D4da0_002Da64d_002D13d75b869778/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid #8" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;ProjectFolder&gt;1C585274-3F29-447E-991D-5BE6A12EE105/d:Integration/d:Issues&lt;/ProjectFolder&gt;&#xD;
+    &lt;ProjectFolder&gt;1C585274-3F29-447E-991D-5BE6A12EE105/d:Unit/d:Issues&lt;/ProjectFolder&gt;&#xD;
+  &lt;/Or&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=96d69030_002Dd592_002D40a8_002Da28e_002D04f654c29dbc/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AssignIssueToIsser_ShouldBeSuccessful_WhenCommandIsValid" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Unit.Issues.AssignIssueToUserUnitTests.AssignIssueToIsser_ShouldBeSuccessful_WhenCommandIsValid&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a8ba63b5_002D857c_002D4bdc_002Da17b_002D66710cf7a022/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid #7" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Integration.Issues.AssignUserToUserIntegrationTests.AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b4c1ab8f_002D603a_002D4ecf_002Da072_002D1696890c370d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid #4" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ae932144_002Dfd1b_002D4469_002D9433_002Db55f6e115025/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Integration.Issues.AssignUserToUserIntegrationTests.AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+    &lt;ProjectFolder&gt;1C585274-3F29-447E-991D-5BE6A12EE105/d:Unit/d:Issues&lt;/ProjectFolder&gt;&#xD;
+  &lt;/Or&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b4c1ab8f_002D603a_002D4ecf_002Da072_002D1696890c370d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid #4" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Integration.Issues.AssignUserToUserIntegrationTests.AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+    &lt;ProjectFolder&gt;1C585274-3F29-447E-991D-5BE6A12EE105/d:Unit&lt;/ProjectFolder&gt;&#xD;
+  &lt;/Or&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=cbea10c3_002D0d07_002D4a02_002Da7ad_002Df10680d9a564/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid #6" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Integration.Issues.AssignUserToUserIntegrationTests.AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=dea615c3_002Deb0c_002D4581_002D8f2b_002D92383b3fc504/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AssignIssueToIsser_ShouldFail_WhenUserIsNull #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Unit.Issues.AssignIssueToUserUnitTests.AssignIssueToIsser_ShouldFail_WhenUserIsNull&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	
