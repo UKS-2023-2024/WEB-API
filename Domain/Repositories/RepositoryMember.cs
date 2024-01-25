@@ -6,7 +6,7 @@ namespace Domain.Repositories
 {
     public class RepositoryMember
     {
-        public Guid Id { get; private set; }
+        public Guid Id { get; set; }
         public User Member { get; private set; }
         public Repository Repository { get; private set; }
         public Guid RepositoryId { get; private set; }
