@@ -20,16 +20,16 @@ namespace Domain.Notifications
 
         private Notification() { }
 
-        private Notification(string message, Guid userId, DateTime dateTime)
+        private Notification(string message, User user, DateTime dateTime)
         {
             Message = message;
-            UserId = userId;
+            User = user;
             DateTime = dateTime;
         }
 
-        public static Notification Create(string message, Guid userId, DateTime dateTime)
+        public static Notification Create(string message, User user, DateTime dateTime)
         {
-            return new Notification(message, userId, dateTime);
+            return new Notification(message, user, dateTime);
         }
     }
 }
