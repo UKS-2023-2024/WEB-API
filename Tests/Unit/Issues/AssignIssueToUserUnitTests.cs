@@ -54,9 +54,9 @@ public class AssignIssueToUserUnitTests
             .Returns(repository);
         _userRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>()))
             .Returns(user);
-        _issueRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>()))
-            .Returns(issue);
-        _repositoryMemberRepositoryMock.Setup(x => x.FindAllByIds(It.IsAny<Guid>(), It.IsAny<List<Guid>>()))
+        _issueRepositoryMock.Setup(x => x.FindById(It.IsAny<Guid>()))
+            .ReturnsAsync(issue);
+        _repositoryMemberRepositoryMock.Setup(x => x.FindAllByIdsAndRepositoryId(It.IsAny<Guid>(), It.IsAny<List<Guid>>()))
             .ReturnsAsync(new List<RepositoryMember>());
         var handler = new UpdateIssueCommandHandler(_repositoryMemberRepositoryMock.Object, _taskRepositoryMock.Object,
             _repositoryRepositoryMock.Object, _issueRepositoryMock.Object,
@@ -113,7 +113,8 @@ public class AssignIssueToUserUnitTests
         var command = new UpdateIssueCommand(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(),
             It.IsAny<TaskState>(), It.IsAny<int>(), It.IsAny<Guid>(),
             new List<string>(), It.IsAny<List<string>>(), UpdateIssueFlag.ASSIGNEES, It.IsAny<Guid>());
-        User user = null;
+        User user = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), "anav@gmail.com", "test test", "test", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.ADMINISTRATOR);
+        User foundUser = null;
         Repository repository = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d94a5"), "repo", "test", false, null, user);;
         Issue issue = Issue.Create("first issue", "description", TaskState.OPEN, 1, repository,
             user, new List<RepositoryMember>(), new List<Label>(), null);
@@ -124,10 +125,10 @@ public class AssignIssueToUserUnitTests
         _repositoryRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>()))
             .Returns(repository);
         _userRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>()))
-            .Returns(user);
+            .Returns(foundUser);
         _issueRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>()))
             .Returns(issue);
-        _repositoryMemberRepositoryMock.Setup(x => x.FindAllByIds(It.IsAny<Guid>(), It.IsAny<List<Guid>>()))
+        _repositoryMemberRepositoryMock.Setup(x => x.FindAllByIdsAndRepositoryId(It.IsAny<Guid>(), It.IsAny<List<Guid>>()))
             .ReturnsAsync(new List<RepositoryMember>());
         var handler = new UpdateIssueCommandHandler(_repositoryMemberRepositoryMock.Object, _taskRepositoryMock.Object,
             _repositoryRepositoryMock.Object, _issueRepositoryMock.Object,

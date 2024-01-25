@@ -76,7 +76,8 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         organization2.AddMember(user1, ownerPermission);
 
         var repository1 = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d94a5"), "repo", "test", false, null, user1);
-        repository1.AddMember(user2);
+        RepositoryMember member = repository1.AddMember(user2);
+        member.Id = new Guid("11111cc0-35d3-4bf2-9f2c-5e00a21d9111");
         repository1.AddMember(user1);
         
         var repository2 = Repository.Create(new Guid("8e9b1cc1-35d3-4bf2-9f2c-5e00a21d14a5"), "repo2", "test", false, organization1, user1);
