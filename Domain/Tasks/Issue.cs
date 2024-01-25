@@ -37,6 +37,7 @@ public class Issue: Task
     }
     private void CreateAddAssigneeEvents(List<RepositoryMember> assignees, Guid creatorId)
     {
+        if (assignees is null) return;
         foreach (RepositoryMember assignee in assignees)
         {
             if(!Assignees.Contains(assignee))
@@ -46,6 +47,7 @@ public class Issue: Task
 
     private void CreateRemoveAssigneeEvents(List<RepositoryMember> assignees, Guid creatorId)
     {
+        if (assignees is null) return;
         foreach (RepositoryMember assignee in Assignees)
         {
             if(!assignees.Contains(assignee))
