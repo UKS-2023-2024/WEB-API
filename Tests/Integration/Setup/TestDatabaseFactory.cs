@@ -83,6 +83,8 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         var repository2 = Repository.Create(new Guid("8e9b1cc1-35d3-4bf2-9f2c-5e00a21d14a5"), "repo2", "test", false, organization1, user1);
         repository2.AddToStarredBy(user3);
         repository2.AddToStarredBy(user4);
+        repository2.AddToWatchedBy(user3);
+        repository2.AddToWatchedBy(user4);
 
         var repository3 = Repository.Create(new Guid("8e9b1cc2-35d3-4bf2-9f2c-9e00a21d94a5"), "repo3", "test", false, null, user1);
         var member1 = repository3.AddMember(user2);
@@ -97,6 +99,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
 
         var repository5 = Repository.Create(new Guid("8e9b1cc3-35d6-4bf2-9f2c-9e00a21d94a5"), "repo5", "test", true, organization1, user1);
         repository5.AddToStarredBy(user1);
+        repository5.AddToWatchedBy(user1);
         var milestone1 = Milestone.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"), "title", "description", new DateOnly(), new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"));
 
         var branch1 = Branch.Create(new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b1"), "branch1", repository5.Id, true, user1.Id);

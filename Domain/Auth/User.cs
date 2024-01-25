@@ -24,6 +24,7 @@ public class User
     public List<OrganizationMember> Members { get; private set; }
     public List<OrganizationInvite> OrganizationInvites { get; private set; }
     public List<RepositoryInvite> RepositoryInvites { get; private set; }
+    public List<Repository> Watched { get; private set; }
     private User() { }
     private User(string primaryEmail, string fullName, string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails,List<Repository> starred)
     {

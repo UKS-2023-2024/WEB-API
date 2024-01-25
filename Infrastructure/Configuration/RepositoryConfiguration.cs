@@ -30,5 +30,9 @@ public class RepositoryConfiguration: IEntityTypeConfiguration<Repository>
         builder.HasMany(r => r.Labels)
             .WithOne(l => l.Repository)
             .HasForeignKey(l => l.RepositoryId);
+
+        builder
+            .HasMany(o => o.WatchedBy)
+            .WithMany(u => u.Watched);
     }
 }

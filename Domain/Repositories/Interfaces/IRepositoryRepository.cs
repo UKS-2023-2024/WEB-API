@@ -13,4 +13,5 @@ public interface IRepositoryRepository: IBaseRepository<Repository>
     
     Task<bool> DidUserStarRepository(Guid userid,Guid repositoryId);
     Task<IEnumerable<Repository>> FindAllUserBelongsTo(Guid id);
+    Task<bool> IsUserWatchingRepository(Guid userid, Guid repositoryId);
 }
