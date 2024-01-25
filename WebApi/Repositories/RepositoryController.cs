@@ -16,6 +16,7 @@ using Application.Repositories.Queries.FindAllByOwnerId;
 using Application.Repositories.Queries.FindAllRepositoriesUserBelongsTo;
 using Application.Repositories.Queries.FindAllRepositoryMembers;
 using Application.Repositories.Queries.FindAllUsersThatStarredRepository;
+using Application.Repositories.Queries.FindAllUsersWatchingRepository;
 using Application.Repositories.Queries.FindRepositoryMemberRole;
 using Application.Repositories.Queries.IsUserWatchingRepository;
 using Domain.Repositories;
@@ -246,5 +247,14 @@ public class RepositoryController : ControllerBase
             return Unauthorized();
         await _sender.Send(new UnwatchRepositoryCommand(user, repositoryId));
         return Ok();
+    }
+
+    [HttpGet("users-watching/{repositoryId:guid}")]
+    [Authorize]
+    public async Task<IActionResult> GetAllWatching(Guid repositoryId)
+    {
+        var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        var users = await _sender.Send(new FindAllUsersWatchingQuery(userId, repositoryId));
+        return Ok(UserThatStarredPresenter.MapUserToStarredPresenters(users));
     }
 }
