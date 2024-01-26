@@ -2,6 +2,7 @@
 using Domain.Auth;
 using Domain.Auth.Enums;
 using Domain.Auth.Interfaces;
+using Domain.Notifications.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
@@ -23,7 +24,7 @@ public class CreateIssueUnitTests
     private readonly Mock<IUserRepository> _userRepositoryMock;
     private readonly Mock<IRepositoryMemberRepository> _repositoryMemberRepositoryMock;
     private readonly Mock<ILabelRepository> _labelRepositoryMock;
-    private readonly Mock<IEmailService> _emailServiceMock;
+    private readonly Mock<INotificationService> _notificationServiceMock;
 
     public CreateIssueUnitTests()
     {
@@ -33,6 +34,7 @@ public class CreateIssueUnitTests
         _userRepositoryMock = new();
         _repositoryMemberRepositoryMock = new();
         _labelRepositoryMock = new();
+        _notificationServiceMock = new();
     }
 
     [Fact]
@@ -60,7 +62,7 @@ public class CreateIssueUnitTests
         _issueRepositoryMock.Setup(x => x.Create(It.IsAny<Issue>()))
             .ReturnsAsync(issue);
         var handler = new CreateIssueCommandHandler(_repositoryMemberRepositoryMock.Object, _taskRepositoryMock.Object, _repositoryRepositoryMock.Object,
-            _issueRepositoryMock.Object, _userRepositoryMock.Object, _labelRepositoryMock.Object, _emailServiceMock.Object);
+            _issueRepositoryMock.Object, _userRepositoryMock.Object, _labelRepositoryMock.Object, _notificationServiceMock.Object);
 
         //Act
         Guid issueId = await handler.Handle(command, default);
@@ -95,7 +97,7 @@ public class CreateIssueUnitTests
             .ReturnsAsync(issue);
         var handler = new CreateIssueCommandHandler(_repositoryMemberRepositoryMock.Object, _taskRepositoryMock.Object,
             _repositoryRepositoryMock.Object,
-            _issueRepositoryMock.Object, _userRepositoryMock.Object, _labelRepositoryMock.Object, _emailServiceMock.Object);
+            _issueRepositoryMock.Object, _userRepositoryMock.Object, _labelRepositoryMock.Object, _notificationServiceMock.Object);
 
         //Act
         Func<Task> handle = async () =>

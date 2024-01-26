@@ -53,8 +53,13 @@ public class CreateIssueCommandHandler : ICommandHandler<CreateIssueCommand, Gui
             taskNumber,
             repository, creator, assignees, labels, request.MilestoneId);
         Issue createdIssue = await _issueRepository.Create(issue);
-        
-        await _notificationService.SendIssueHasBeenOpenedNotification(repository, issue);
+
+        string message = $"A new issue has been opened in the repository {repository.Name}<br><br>" +
+                         $"Title: {issue.Title} <br>" +
+                         $"Description: {issue.Description}<br>" +
+                         $"Opened by: {issue.Creator?.Username}";
+        string subject = $"[Github] New Issue opened in {repository.Name}";
+        await _notificationService.SendNotification(repository, subject, message);
 
         return createdIssue.Id;
     }

@@ -54,17 +54,11 @@ public class GmailEmailService: IEmailService
         SendMail(newMail);
     }
 
-    public async Task SendNotificationIssueIsOpen(User user, Domain.Tasks.Issue issue, string repositoryName)
+    public async Task SendNotificationToRepositoryWatcher(User watcher, string subject, string message)
     {
-        MailMessage newMail = GenerateMailMessage(user.PrimaryEmail);
-        newMail.Subject = $"[Github] New Issue opened in {repositoryName}";
-        newMail.Body = $"Hello {user.Username}! <br><br>" +
-                        $"A new issue has been opened in the repository {repositoryName}<br><br>" +
-                        $"Title: {issue.Title} <br>" +
-                        $"Description: {issue.Description}<br>" +
-                        $"Opened by: {issue.Creator?.Username}<br><br>" +
-                        $"You are receiving this email because you are watching the repository. <br><br>" +
-                        $"The GitHub Team";
+        MailMessage newMail = GenerateMailMessage(watcher.PrimaryEmail);
+        newMail.Subject = subject;
+        newMail.Body = message;
         SendMail(newMail);
     }
 }

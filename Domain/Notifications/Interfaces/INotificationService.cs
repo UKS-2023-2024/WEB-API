@@ -4,6 +4,6 @@ namespace Domain.Notifications.Interfaces;
 
 public interface INotificationService
 {
-    Task SendIssueHasBeenOpenedNotification(Repository repository, Tasks.Issue issue);
+    Task SendNotification(Repository repository, string subject, string messaage);
    
 }

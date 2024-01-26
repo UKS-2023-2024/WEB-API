@@ -17,23 +17,18 @@ namespace Infrastructure.Notifications.Services
             _emailService = emailService;
             _notificationRepository = notificationRepository;
         }
-        public Task SendIssueHasBeenOpenedNotification(Repository repository, Domain.Tasks.Issue issue)
+        public Task SendNotification(Repository repository, string subject, string message)
         {
             foreach (User watcher in repository.WatchedBy)
             {
                 if (watcher.NotificationPreferences == NotificationPreferences.EMAIL || watcher.NotificationPreferences == NotificationPreferences.BOTH)
                 {
-                    _emailService.SendNotificationIssueIsOpen(watcher, issue, repository.Name);
+                    _emailService.SendNotificationToRepositoryWatcher(watcher, subject, message);
                 }
                 if (watcher.NotificationPreferences == NotificationPreferences.GITHUB || watcher.NotificationPreferences == NotificationPreferences.BOTH)
                 {
-                    string message = $"A new issue has been opened in the repository {repository.Name}<br><br>" +
-                                     $"Title: {issue.Title} <br>" +
-                                     $"Description: {issue.Description}<br>" +
-                                     $"Opened by: {issue.Creator?.Username}";
                     Notification notification = Notification.Create(message, watcher, DateTime.UtcNow);
-                    Notification n = _notificationRepository.Create(notification).Result;
-                    Console.WriteLine(n);
+                   _notificationRepository.Create(notification);
                 }
             }
             return Task.CompletedTask;
