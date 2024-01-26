@@ -19,15 +19,15 @@ namespace Infrastructure.Notifications.Services
         }
         public Task SendNotification(Repository repository, string subject, string message)
         {
-            foreach (User watcher in repository.WatchedBy)
+            foreach (RepositoryWatcher watcher in repository.WatchedBy)
             {
-                if (watcher.NotificationPreferences == NotificationPreferences.EMAIL || watcher.NotificationPreferences == NotificationPreferences.BOTH)
+                if (watcher.User.NotificationPreferences == NotificationPreferences.EMAIL || watcher.User.NotificationPreferences == NotificationPreferences.BOTH)
                 {
-                    _emailService.SendNotificationToRepositoryWatcher(watcher, subject, message);
+                    _emailService.SendNotificationToRepositoryWatcher(watcher.User, subject, message);
                 }
-                if (watcher.NotificationPreferences == NotificationPreferences.GITHUB || watcher.NotificationPreferences == NotificationPreferences.BOTH)
+                if (watcher.User.NotificationPreferences == NotificationPreferences.GITHUB || watcher.User.NotificationPreferences == NotificationPreferences.BOTH)
                 {
-                    Notification notification = Notification.Create(message, watcher, DateTime.UtcNow);
+                    Notification notification = Notification.Create(message, watcher.User, DateTime.UtcNow);
                    _notificationRepository.Create(notification);
                 }
             }

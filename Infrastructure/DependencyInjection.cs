@@ -44,6 +44,7 @@ public static class DependencyInjection
         services.AddScoped<ILabelRepository, LabelRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IRepositoryWatcherRepository, RepositoryWatcherRepository>();
         return services;
     }    
 }

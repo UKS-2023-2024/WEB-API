@@ -37,6 +37,7 @@ public class MainDbContext: DbContext
     public DbSet<Event> Events { get; set; } = null!;
     public DbSet<Issue> Issues { get; set; } = null!;
     public DbSet<Notification> Notifications { get; set; } = null!;
+    public DbSet<RepositoryWatcher> RepositoryWatchers { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
