@@ -20,7 +20,7 @@ public class WatchRepositoryIntegrationTest : BaseIntegrationTest
     }
 
     [Fact]
-    public async void Watch_ShouldReturnSuccess_WhenRepositoryPublicAndUserIsNotAlreadyWatching()
+    public async void Watch_ShouldReturnSuccess_WhenRepositoryPublic()
     {
         //Arrange
         var user = _context.Users.FirstOrDefault(u => u.Id == new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"));
