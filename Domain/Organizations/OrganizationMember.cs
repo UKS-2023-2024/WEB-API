@@ -72,6 +72,16 @@ public class OrganizationMember
         if (Role != OrganizationMemberRole.OWNER && Role != OrganizationMemberRole.MODERATOR) throw new MemberHasNoPrivilegeException();
     }
     
+    public void ThrowIfNotOwner()
+    {
+        if (Role != OrganizationMemberRole.OWNER) throw new MemberHasNoPrivilegeException();
+    }
+    
+    public void ThrowIfSameAs(OrganizationMember organizationMember)
+    {
+        if (MemberId.Equals(organizationMember.MemberId)) throw new MemberCantChangeHimselfException();
+    }
+    
     public void SetRole(OrganizationMemberRole role)
     {
         Role = role;

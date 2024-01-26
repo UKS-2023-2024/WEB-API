@@ -68,7 +68,8 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         var organization1 = Organization.Create("organization1", "contact@example.com", new List<User>(),user1);
         var organization2 = Organization.Create("organization2", "contact2@example.com", new List<User>(),user1);
         
-        organization1.AddMember(user2);
+        var organizationMember = organization1.AddMember(user2);
+        organizationMember.SetRole(OrganizationMemberRole.MODERATOR);
         organization1.AddMember(user4);
 
         var repository1 = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d94a5"), "repo", "test", false, null, user1);

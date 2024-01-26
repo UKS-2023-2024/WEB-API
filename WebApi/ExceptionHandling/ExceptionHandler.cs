@@ -40,9 +40,10 @@ public static class ExceptionHandler
                 or UserNotAOrganizationMemberException => HttpStatusCode.Forbidden,
             InvitationExpiredException
                 or RepositoryAlreadyStarredException
-                or RepositoryMemberCantChangeHimselfException
+                or MemberCantChangeHimselfException
                 or RepositoryMemberCantBeDeletedException
                 or CantRemoveOrganizationOwnerException
+                or CantChangeOrganizationOwnerException
                 or RepositoryNotStarredException => HttpStatusCode.BadRequest
         };
         return (int)code;

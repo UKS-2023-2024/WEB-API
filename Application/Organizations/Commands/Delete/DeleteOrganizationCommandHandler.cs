@@ -19,7 +19,7 @@ public class DeleteOrganizationCommandHandler: ICommandHandler<DeleteOrganizatio
     {
         var sender =
             await _organizationMemberRepository.FindByUserIdAndOrganizationId(request.UserId, request.OrganizationId);
-        sender.ThrowIfNoAdminPrivileges();
+        sender.ThrowIfNotOwner();
         
         var organization = _organizationRepository.Find(request.OrganizationId);
         _organizationRepository.Delete(organization!);
