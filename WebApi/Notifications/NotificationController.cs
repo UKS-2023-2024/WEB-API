@@ -1,9 +1,11 @@
 ﻿using Application.Notifications.Commands.UpdateNotificationPreferences;
+using Application.Notifications.Queries.FindUserNotifications;
 using Domain.Auth.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WEB_API.Notifications.Dtos;
+using WEB_API.Notifications.Presenters;
 using WEB_API.Shared.TokenHandler;
 using WEB_API.Shared.UserIdentityService;
 
@@ -40,5 +42,14 @@ public class NotificationController: ControllerBase
             pref = NotificationPreferences.EMAIL;
         await _sender.Send(new UpdateNotificationPreferencesCommand(id, pref));
         return Ok();
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> FindAllLoggedUserNotifications()
+    {
+        var id = _userIdentityService.FindUserIdentity(HttpContext.User);
+        var notifications = await _sender.Send(new FindUserNotificationsQuery(id));
+        return Ok(NotificationPresenter.MapNotificationsToNotificationPresenters(notifications));
     }
 }
