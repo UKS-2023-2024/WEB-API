@@ -2,6 +2,7 @@
 using Domain.Auth.Enums;
 using Domain.Branches;
 using Domain.Milestones;
+using Domain.Notifications;
 using Domain.Organizations;
 using Domain.Repositories;
 using Domain.Tasks;
@@ -110,6 +111,8 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         
         var issue1 = Issue.Create("first issue", "description", TaskState.OPEN, 1, repository1,
             user1, new List<RepositoryMember>(), new List<Label>() {label1}, null);
+
+        var notification1 = Notification.Create("test", user1, DateTime.UtcNow);
         
         context.Users.AddRange(user1, user2, user3, user4);
         context.Organizations.AddRange(organization1,organization2);
@@ -117,6 +120,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         context.Milestones.AddRange(milestone1);
         context.Branches.AddRange(branch1, branch2, branch3);
         context.Issues.AddRange(issue1);
+        context.Notifications.AddRange(notification1);
         context.SaveChanges();
     }
 
