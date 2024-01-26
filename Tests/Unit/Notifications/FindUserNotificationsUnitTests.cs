@@ -4,6 +4,7 @@ using Domain.Notifications.Interfaces;
 using Application.Notifications.Queries.FindUserNotifications;
 using Domain.Notifications;
 using Domain.Auth;
+using Domain.Shared;
 
 namespace Tests.Unit.Notifications
 {
@@ -20,10 +21,11 @@ namespace Tests.Unit.Notifications
         async Task FindUserNotifications_ShouldReturnNonEmptyList()
         {
             //Arrange
-            var query = new FindUserNotificationsQuery(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"));
+            var query = new FindUserNotificationsQuery(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"), 5, 1);
             Notification notification = Notification.Create("", "", It.IsAny<User>(), DateTime.UtcNow);
             List<Notification> notifications = new() { notification };
-            _notificationRepositoryMock.Setup(x => x.FindByUserId(It.IsAny<Guid>())).ReturnsAsync(notifications);
+            PagedResult<Notification> page = new PagedResult<Notification>(notifications, 1);
+            _notificationRepositoryMock.Setup(x => x.FindByUserId(It.IsAny<Guid>(), 5, 1)).ReturnsAsync(page);
 
             var handler = new FindUserNotificationsQueryHandler(_notificationRepositoryMock.Object);
 
@@ -31,8 +33,8 @@ namespace Tests.Unit.Notifications
             var retList = await handler.Handle(query, default);
 
             //Assert
-            retList.ShouldNotBeEmpty();
-            retList.Count.ShouldBe(1);
+            retList.Data.ShouldNotBeEmpty();
+            retList.TotalItems.ShouldBe(1);
         }
     }
 }
