@@ -14,7 +14,6 @@ namespace Tests.Unit.Organizations;
 
 public class AcceptInviteUnitTests
 {
-    private Mock<IOrganizationRoleRepository> _organizationRoleRepository = new();
     private  Mock<IUserRepository> _userRepository = new();
     private  Mock<IOrganizationInviteRepository> _organizationInviteRepository = new();
     private  Mock<IOrganizationRepository> _organizationRepository = new();
@@ -37,8 +36,7 @@ public class AcceptInviteUnitTests
         var organizationId = new Guid();
         var user = User.Create(memberId, "test@gmail.com", "Test Test", "test123", "asdasdasd", UserRole.USER);
         var invite = OrganizationInvite.Create(memberId, organizationId);
-        var role = OrganizationRole.Create("MEMBER", "");
-        var organization = Organization.Create(organizationId, "org", "", new List<User>());
+        var organization = Organization.Create(organizationId, "org", "", new List<User>(),user);
         
         _organizationInviteRepository.Setup(r => r.FindById(It.IsAny<Guid>()))
             .ReturnsAsync(invite);
@@ -46,15 +44,12 @@ public class AcceptInviteUnitTests
             .ReturnsAsync(user);
         _organizationRepository.Setup(r => r.FindById(It.IsAny<Guid>()))
             .ReturnsAsync(organization);
-        _organizationRoleRepository.Setup(r => r.FindByName(It.IsAny<string>()))
-            .ReturnsAsync(role);
         _organizationRepository.Setup(r => r.Update(It.IsAny<Organization>()))
             .Verifiable();
         _organizationInviteRepository.Setup(r => r.Delete(It.IsAny<OrganizationInvite>()))
             .Verifiable();
         var command = new AcceptInviteCommand(invite.Id);
         var commandHandler = new AcceptInviteCommandHandler(
-            _organizationRoleRepository.Object,
             _userRepository.Object,
             _organizationInviteRepository.Object,
             _organizationRepository.Object
@@ -77,23 +72,19 @@ public class AcceptInviteUnitTests
         var authorized = new Guid();
         var user = User.Create(memberId, "test@gmail.com", "Test Test", "test123", "asdasdasd", UserRole.USER);
         var invite = OrganizationInvite.Create(memberId, organizationId);
-        var role = OrganizationRole.Create("MEMBER", "");
-        var organization = Organization.Create(organizationId, "org", "", new List<User>());
+        var organization = Organization.Create(organizationId, "org", "", new List<User>(),user);
 
         _organizationInviteRepository.Setup(r => r.FindById(It.IsAny<Guid>()));
         _userRepository.Setup(r => r.FindUserById(It.IsAny<Guid>()))
             .ReturnsAsync(user);
         _organizationRepository.Setup(r => r.FindById(It.IsAny<Guid>()))
             .ReturnsAsync(organization);
-        _organizationRoleRepository.Setup(r => r.FindByName(It.IsAny<string>()))
-            .ReturnsAsync(role);
         _organizationRepository.Setup(r => r.Update(It.IsAny<Organization>()))
             .Verifiable();
         _organizationInviteRepository.Setup(r => r.Delete(It.IsAny<OrganizationInvite>()))
             .Verifiable();
         var command = new AcceptInviteCommand(invite.Id);
         var commandHandler = new AcceptInviteCommandHandler(
-            _organizationRoleRepository.Object,
             _userRepository.Object,
             _organizationInviteRepository.Object,
             _organizationRepository.Object
@@ -112,9 +103,8 @@ public class AcceptInviteUnitTests
         var organizationId = new Guid();
         var user = User.Create(memberId, "test@gmail.com", "Test Test", "test123", "asdasdasd", UserRole.USER);
         var invite = OrganizationInvite.Create(memberId, organizationId);
-        var role = OrganizationRole.Create("MEMBER", "");
         invite = OverrideDate(invite, DateTime.Now.AddDays(-1).ToUniversalTime());
-        var organization = Organization.Create(organizationId, "org", "", new List<User>());
+        var organization = Organization.Create(organizationId, "org", "", new List<User>(),user);
         
         _organizationInviteRepository.Setup(r => r.FindById(It.IsAny<Guid>()))
             .ReturnsAsync(invite);
@@ -122,15 +112,12 @@ public class AcceptInviteUnitTests
             .ReturnsAsync(user);
         _organizationRepository.Setup(r => r.FindById(It.IsAny<Guid>()))
             .ReturnsAsync(organization);
-        _organizationRoleRepository.Setup(r => r.FindByName(It.IsAny<string>()))
-            .ReturnsAsync(role);
         _organizationRepository.Setup(r => r.Update(It.IsAny<Organization>()))
             .Verifiable();
         _organizationInviteRepository.Setup(r => r.Delete(It.IsAny<OrganizationInvite>()))
             .Verifiable();
         var command = new AcceptInviteCommand(invite.Id);
         var commandHandler = new AcceptInviteCommandHandler(
-            _organizationRoleRepository.Object,
             _userRepository.Object,
             _organizationInviteRepository.Object,
             _organizationRepository.Object
@@ -149,23 +136,19 @@ public class AcceptInviteUnitTests
         var organizationId = new Guid();
         var user = User.Create(memberId, "test@gmail.com", "Test Test", "test123", "asdasdasd", UserRole.USER);
         var invite = OrganizationInvite.Create(memberId, organizationId);
-        var role = OrganizationRole.Create("MEMBER", "");
-        var organization = Organization.Create(organizationId, "org", "", new List<User>());
+        var organization = Organization.Create(organizationId, "org", "", new List<User>(),user);
         
         _organizationInviteRepository.Setup(r => r.FindById(It.IsAny<Guid>()))
             .ReturnsAsync(invite);
         _userRepository.Setup(r => r.FindUserById(It.IsAny<Guid>()))
             .ReturnsAsync(user);
         _organizationRepository.Setup(r => r.FindById(It.IsAny<Guid>()));
-        _organizationRoleRepository.Setup(r => r.FindByName(It.IsAny<string>()))
-            .ReturnsAsync(role);
         _organizationRepository.Setup(r => r.Update(It.IsAny<Organization>()))
             .Verifiable();
         _organizationInviteRepository.Setup(r => r.Delete(It.IsAny<OrganizationInvite>()))
             .Verifiable();
         var command = new AcceptInviteCommand(invite.Id);
         var commandHandler = new AcceptInviteCommandHandler(
-            _organizationRoleRepository.Object,
             _userRepository.Object,
             _organizationInviteRepository.Object,
             _organizationRepository.Object
@@ -180,27 +163,23 @@ public class AcceptInviteUnitTests
     async Task AcceptInvite_ShouldFail_WhenUserDoesntExist()
     {
         //Arrange
-        var memberId = new Guid();
         var organizationId = new Guid();
-        var user = User.Create(memberId, "test@gmail.com", "Test Test", "test123", "asdasdasd", UserRole.USER);
-        var invite = OrganizationInvite.Create(memberId, organizationId);
-        var role = OrganizationRole.Create("MEMBER", "");
-        var organization = Organization.Create(organizationId, "org", "", new List<User>());
+        var user1 = User.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), "dusanjanosevic007@gmail.com", "full name", "username1", "password", UserRole.USER);
+        var user2 = User.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"), "dusan.janosevic123@gmail.com", "full name", "username2", "password", UserRole.USER);
+        var invite = OrganizationInvite.Create(user1.Id, organizationId);
+        var organization = Organization.Create(organizationId, "org", "", new List<User>(),user1);
         
         _organizationInviteRepository.Setup(r => r.FindById(It.IsAny<Guid>()))
             .ReturnsAsync(invite);
         _userRepository.Setup(r => r.FindUserById(It.IsAny<Guid>()));
         _organizationRepository.Setup(r => r.FindById(It.IsAny<Guid>()))
             .ReturnsAsync(organization);
-        _organizationRoleRepository.Setup(r => r.FindByName(It.IsAny<string>()))
-            .ReturnsAsync(role);
         _organizationRepository.Setup(r => r.Update(It.IsAny<Organization>()))
             .Verifiable();
         _organizationInviteRepository.Setup(r => r.Delete(It.IsAny<OrganizationInvite>()))
             .Verifiable();
         var command = new AcceptInviteCommand(invite.Id);
         var commandHandler = new AcceptInviteCommandHandler(
-            _organizationRoleRepository.Object,
             _userRepository.Object,
             _organizationInviteRepository.Object,
             _organizationRepository.Object

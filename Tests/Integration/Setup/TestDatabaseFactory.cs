@@ -57,27 +57,23 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
     {
         context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
-
-        var ownerPermission = context.OrganizationRoles.FirstOrDefault(o => o.Name.Equals("OWNER"));
-        var memberPermission = context.OrganizationRoles.FirstOrDefault(o => o.Name.Equals("MEMBER"));
         
-        User user1 = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), "anav@gmail.com", "test test", "test", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.ADMINISTRATOR);
-        User user2 = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7"), "saras@gmail.com", "sara test", "sara", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.ADMINISTRATOR);
-        User user3 = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"), "test@gmail.com", "sara test", "dusan", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.ADMINISTRATOR);
-        User user4 = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d9211"), "dusan@gmail.com", "dusan test", "dusan", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.USER);
-        User user5 = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d9213"), "dusan@gmail.com", "dusan test", "dusan", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.USER);
+        
+        var user1 = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), "anav@gmail.com", "test test", "test", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.ADMINISTRATOR);
+        var user2 = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7"), "saras@gmail.com", "sara test", "sara", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.ADMINISTRATOR);
+        var user3 = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"), "test@gmail.com", "sara test", "dusan", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.ADMINISTRATOR);
+        var user4 = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d9211"), "dusan@gmail.com", "dusan test", "dusan", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.USER);
+        var user5 = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d9213"), "dusan@gmail.com", "dusan test", "dusan", "$2a$12$.33VvcDZ.ahQ0wEg3RMncurrbdUU0lkhyLQU2d1vVPXZlQSvgB5qq", UserRole.USER);
 
-        var organization1 = Organization.Create("organization1", "contact@example.com", new List<User>());
-        var organization2 = Organization.Create("organization2", "contact2@example.com", new List<User>());
-
-        organization1.AddMember(user1, ownerPermission);
-        organization1.AddMember(user2, memberPermission);
-        organization1.AddMember(user4, memberPermission);
-        organization2.AddMember(user1, ownerPermission);
+        var organization1 = Organization.Create("organization1", "contact@example.com", new List<User>(),user1);
+        var organization2 = Organization.Create("organization2", "contact2@example.com", new List<User>(),user1);
+        
+        organization1.AddMember(user2);
+        organization1.AddMember(user4);
 
         var repository1 = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d94a5"), "repo", "test", false, null, user1);
-        RepositoryMember member = repository1.AddMember(user2);
-        member.Id = new Guid("11111cc0-35d3-4bf2-9f2c-5e00a21d9111");
+        var repositoryMember = repository1.AddMember(user2);
+        repositoryMember.Id = new Guid("11111cc0-35d3-4bf2-9f2c-5e00a21d9111");
         repository1.AddMember(user1);
         
         var repository2 = Repository.Create(new Guid("8e9b1cc1-35d3-4bf2-9f2c-5e00a21d14a5"), "repo2", "test", false, organization1, user1);

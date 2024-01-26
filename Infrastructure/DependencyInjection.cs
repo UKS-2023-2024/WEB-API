@@ -31,7 +31,6 @@ public static class DependencyInjection
         services.AddScoped<IRepositoryMemberRepository, RepositoryMemberRepository>();
         services.AddScoped<IEmailService, GmailEmailService>();
         services.AddScoped<IOrganizationInviteRepository, OrganizationInviteRepository>();
-        services.AddScoped<IOrganizationRoleRepository, OrganizationRoleRepository>();
         services.AddScoped<IRepositoryInviteRepository, RepositoryInviteRepository>();
         services.AddScoped<IMilestoneRepository, MilestoneRepository>();
         services.AddScoped<IBranchRepository, BranchRepository>();

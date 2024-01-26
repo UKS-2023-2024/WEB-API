@@ -4,7 +4,7 @@ namespace WEB_API.Organizations.Presenters;
 
 public class OrganizationMemberPresenter
 {
-    public string Role { get; private set; }
+    public OrganizationMemberRole Role { get; private set; }
     public Guid MemberId { get; private set; }
     public string PrimaryEmail { get; private set; }
     public string Username { get; private set; }
@@ -12,7 +12,7 @@ public class OrganizationMemberPresenter
     public OrganizationMemberPresenter(OrganizationMember organizationMember)
     {
         MemberId = organizationMember.MemberId;
-        Role = organizationMember.Role.Name;
+        Role = organizationMember.Role;
         PrimaryEmail = organizationMember.Member.PrimaryEmail;
         Username = organizationMember.Member.Username;
     }

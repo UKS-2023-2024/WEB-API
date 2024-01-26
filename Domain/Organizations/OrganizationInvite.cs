@@ -27,12 +27,6 @@ public class OrganizationInvite
         if (expired > 0) throw new InvitationExpiredException();
     }
 
-    public void ThrowIfNotAnOwner(Guid authorized)
-    {
-        if (!authorized.Equals(UserId)) throw new NotInviteOwnerException();
-    }
-
-
     public static OrganizationInvite Create(Guid memberId, Guid organizationId)
     {
         var expiresAt = DateTime.Now.AddDays(5).ToUniversalTime();

@@ -9,45 +9,29 @@ namespace Application.Organizations.Commands.RemoveOrganizationMember;
 
 public class RemoveOrganizationMemberCommandHandler: ICommandHandler<RemoveOrganizationMemberCommand>
 {
-    private readonly IPermissionService _permissionService;
     private readonly IOrganizationMemberRepository _organizationMemberRepository;
     private readonly IRepositoryMemberRepository _repositoryMemberRepository;
     private readonly IOrganizationRepository _organizationRepository;
     private readonly IRepositoryRepository _repositoryRepository;
-    private readonly IOrganizationRoleRepository _organizationRoleRepository;
     
     public RemoveOrganizationMemberCommandHandler(
         IOrganizationMemberRepository organizationMemberRepository,
-        IPermissionService permissionService,
         IOrganizationRepository organizationRepository,
         IRepositoryRepository repositoryRepository,
-        IRepositoryMemberRepository repositoryMemberRepository,
-        IOrganizationRoleRepository organizationRoleRepository)
+        IRepositoryMemberRepository repositoryMemberRepository)
     {
         _organizationMemberRepository = organizationMemberRepository;
-        _permissionService = permissionService;
         _organizationRepository = organizationRepository;
         _repositoryRepository = repositoryRepository;
         _repositoryMemberRepository = repositoryMemberRepository;
-        _organizationRoleRepository = organizationRoleRepository;
     }
     
     public async Task Handle(RemoveOrganizationMemberCommand request, CancellationToken cancellationToken)
     {
-        await _permissionService.ThrowIfNoPermission(new PermissionParams
-        {
-            Authorized = request.OwnerId,
-            OrganizationId = request.OrganizationId,
-            Permission = "admin"
-        });
-
-        var ownerRole = await _organizationRoleRepository.FindByName("OWNER");
-        
         var member = await _organizationMemberRepository.FindByUserIdAndOrganizationId(request.OrganizationMemberId,request.OrganizationId);
-        if (member is null || member.Deleted) 
-            throw new OrganizationMemberNotFoundException();
+        OrganizationMember.ThrowIfDoesntExist(member);
 
-        if (member.HasRole(ownerRole))
+        if (member.HasRole(OrganizationMemberRole.OWNER))
             throw new CantRemoveOrganizationOwnerException();
 
         var organization =  await _organizationRepository.FindById(request.OrganizationId);

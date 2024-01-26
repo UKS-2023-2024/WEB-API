@@ -24,8 +24,7 @@ public class CreateOrganizationCommandHandler: ICommandHandler<CreateOrganizatio
     public async Task<Guid> Handle(CreateOrganizationCommand request, CancellationToken cancellationToken)
     {
         var creator = await _userRepository.FindUserById(request.CreatorId);
-        var role = await _organizationRepository.FindRole("OWNER");
-        
+
         if (creator is null)
             throw new UserNotFoundException();
             
@@ -42,10 +41,7 @@ public class CreateOrganizationCommandHandler: ICommandHandler<CreateOrganizatio
         if (existingOrganization is not null)
             throw new OrganizationWithThisNameExistsException();
 
-        var organization = Organization.Create(request.Name, request.ContactEmail, pendingMembers);
-
-        
-        organization.AddMember(creator,role!);
+        var organization = Organization.Create(request.Name, request.ContactEmail, pendingMembers,creator);
         await _organizationRepository.Create(organization);
         return organization.Id;
     }

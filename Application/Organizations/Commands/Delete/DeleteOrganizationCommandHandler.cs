@@ -9,25 +9,19 @@ public class DeleteOrganizationCommandHandler: ICommandHandler<DeleteOrganizatio
 {
     private readonly IOrganizationMemberRepository _organizationMemberRepository;
     private readonly IOrganizationRepository _organizationRepository;
-    private readonly IPermissionService _permissionService;
-    public DeleteOrganizationCommandHandler(IOrganizationMemberRepository organizationMemberRepository, IOrganizationRepository organizationRepository, IPermissionService permissionService)
+    public DeleteOrganizationCommandHandler(IOrganizationMemberRepository organizationMemberRepository, IOrganizationRepository organizationRepository)
     {
         _organizationMemberRepository = organizationMemberRepository;
         _organizationRepository = organizationRepository;
-        _permissionService = permissionService;
     }
 
     public async Task Handle(DeleteOrganizationCommand request, CancellationToken cancellationToken)
     {
-        await _permissionService.ThrowIfNoPermission(
-            new PermissionParams
-            {
-             Authorized   = request.UserId,
-             OrganizationId = request.OrganizationId,
-             Permission = "owner" 
-            });
+        var sender =
+            await _organizationMemberRepository.FindByUserIdAndOrganizationId(request.UserId, request.OrganizationId);
+        sender.ThrowIfNoAdminPrivileges();
         
         var organization = _organizationRepository.Find(request.OrganizationId);
-        _organizationRepository.Delete(organization);
+        _organizationRepository.Delete(organization!);
     }
 }

@@ -3,6 +3,6 @@
 public enum OrganizationMemberRole
 {
     OWNER,
-    ADMIN,
-    CONTRIBUTOR
+    MODERATOR,
+    MEMBER
 }

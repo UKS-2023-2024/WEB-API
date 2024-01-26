@@ -1,5 +1,6 @@
 ﻿using Application.Organizations.Commands.Delete;
 using Domain.Organizations.Exceptions;
+using Domain.Repositories.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
 using Tests.Integration.Setup;
@@ -44,7 +45,7 @@ public class DeleteOrganizationIntegrationTest: BaseIntegrationTest
         async Task Handle() => await _sender.Send(command);
 
         //Assert
-        await Should.ThrowAsync<PermissionDeniedException>(Handle);
+        await Should.ThrowAsync<MemberHasNoPrivilegeException>(Handle);
     }
     
 }

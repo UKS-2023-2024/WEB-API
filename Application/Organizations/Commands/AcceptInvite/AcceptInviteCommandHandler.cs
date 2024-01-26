@@ -8,18 +8,15 @@ namespace Application.Organizations.Commands.AcceptInvite;
 
 public class AcceptInviteCommandHandler: ICommandHandler<AcceptInviteCommand>
 {
-    private readonly IOrganizationRoleRepository _organizationRoleRepository;
     private readonly IUserRepository _userRepository;
     private readonly IOrganizationInviteRepository _organizationInviteRepository;
     private readonly IOrganizationRepository _organizationRepository;
 
     public AcceptInviteCommandHandler(
-        IOrganizationRoleRepository organizationRoleRepository,
         IUserRepository userRepository, 
         IOrganizationInviteRepository organizationInviteRepository, 
         IOrganizationRepository organizationRepository)
     {
-        _organizationRoleRepository = organizationRoleRepository;
         _userRepository = userRepository;
         _organizationInviteRepository = organizationInviteRepository;
         _organizationRepository = organizationRepository;
@@ -38,9 +35,7 @@ public class AcceptInviteCommandHandler: ICommandHandler<AcceptInviteCommand>
         var user = await _userRepository.FindUserById(invite.UserId);
         User.ThrowIfDoesntExist(user);
 
-        var role = await _organizationRoleRepository.FindByName("MEMBER");
-        
-        organization!.AddMember(user!,role);
+        organization!.AddMember(user!);
         _organizationRepository.Update(organization);
         _organizationInviteRepository.Delete(invite);
     }
