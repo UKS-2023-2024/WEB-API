@@ -1,6 +1,8 @@
 ﻿using Application.Notifications.Commands.UpdateNotificationPreferences;
 using Application.Notifications.Queries.FindUserNotifications;
 using Domain.Auth.Enums;
+using Domain.Notifications;
+using Domain.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -44,12 +46,13 @@ public class NotificationController: ControllerBase
         return Ok();
     }
 
-    [HttpGet]
+    [HttpGet("{pageSize}/{pageNumber}")]
     [Authorize]
-    public async Task<IActionResult> FindAllLoggedUserNotifications()
+    public async Task<IActionResult> FindAllLoggedUserNotifications(int pageSize, int pageNumber)
     {
         var id = _userIdentityService.FindUserIdentity(HttpContext.User);
-        var notifications = await _sender.Send(new FindUserNotificationsQuery(id));
-        return Ok(NotificationPresenter.MapNotificationsToNotificationPresenters(notifications));
+        var ret = await _sender.Send(new FindUserNotificationsQuery(id, pageSize, pageNumber));
+        PagedResult<NotificationPresenter> page = new(NotificationPresenter.MapNotificationsToNotificationPresenters(ret.Data), ret.TotalItems);
+        return Ok(page);
     }
 }
