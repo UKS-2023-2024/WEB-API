@@ -113,7 +113,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         var issue1 = Issue.Create("first issue", "description", TaskState.OPEN, 1, repository1,
             user1, new List<RepositoryMember>(), new List<Label>() {label1}, null);
 
-        var notification1 = Notification.Create("test", user1, DateTime.UtcNow);
+        var notification1 = Notification.Create("test", "subject", user1, DateTime.UtcNow);
         
         context.Users.AddRange(user1, user2, user3, user4);
         context.Organizations.AddRange(organization1,organization2);
