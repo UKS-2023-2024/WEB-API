@@ -18,6 +18,7 @@ using Application.Repositories.Queries.FindAllByOrganizationId;
 using Domain.Organizations;
 using Application.Repositories.Queries.FindAllRepositoriesUserBelongsTo;
 using Application.Repositories.Queries.FindAllUsersWatchingRepository;
+using Domain.Repositories.Enums;
 
 namespace Tests.Unit.Repositories
 {
@@ -40,7 +41,7 @@ namespace Tests.Unit.Repositories
             User user = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), "email@gmail.com", "full name", "username", "password", UserRole.USER);
             Repository repository = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"), "repository", "test", false, null, user);
             repository.AddMember(user);
-            repository.AddToWatchedBy(user);
+            repository.AddToWatchedBy(user, WatchingPreferences.AllActivity);
             _repositoryRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>())).Returns(repository);
 
             var handler = new FindAllUsersWatchingQueryHandler(_repositoryRepositoryMock.Object, _repositoryMemberRepositoryMock.Object);

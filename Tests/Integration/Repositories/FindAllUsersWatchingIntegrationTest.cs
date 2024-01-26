@@ -1,6 +1,7 @@
 ﻿using Application.Repositories.Queries.FindAllUsersThatStarredRepository;
 using Application.Repositories.Queries.FindAllUsersWatchingRepository;
 using Domain.Auth;
+using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Shouldly;
 using Tests.Integration.Setup;
@@ -23,7 +24,7 @@ public class FindAllUsersWatchingIntegrationTest :BaseIntegrationTest
             new Guid("8e9b1cc1-35d3-4bf2-9f2c-5e00a21d14a5"));
 
         //Act
-        async Task<IEnumerable<User>> Handle() => await _sender.Send(command);
+        async Task<IEnumerable<RepositoryWatcher>> Handle() => await _sender.Send(command);
         
 
         //Assert
@@ -39,7 +40,7 @@ public class FindAllUsersWatchingIntegrationTest :BaseIntegrationTest
             new Guid("8e9b1323-35d3-4bf2-9f2c-9e00a21d94a5"));
 
         //Act
-        async Task<IEnumerable<User>> Handle() => await _sender.Send(command);
+        async Task<IEnumerable<RepositoryWatcher>> Handle() => await _sender.Send(command);
         
 
         //Assert
@@ -54,7 +55,7 @@ public class FindAllUsersWatchingIntegrationTest :BaseIntegrationTest
             new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"));
 
         //Act
-        async Task<IEnumerable<User>> Handle() => await _sender.Send(command);
+        async Task<IEnumerable<RepositoryWatcher>> Handle() => await _sender.Send(command);
         
 
         //Assert
@@ -69,7 +70,7 @@ public class FindAllUsersWatchingIntegrationTest :BaseIntegrationTest
             new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"));
 
         //Act
-        async Task<IEnumerable<User>> Handle() => await _sender.Send(command);
+        async Task<IEnumerable<RepositoryWatcher>> Handle() => await _sender.Send(command);
         
 
         //Assert
@@ -84,7 +85,7 @@ public class FindAllUsersWatchingIntegrationTest :BaseIntegrationTest
             new Guid("8e9b1cc3-35d6-4bf2-9f2c-9e00a21d94a5"));
 
         //Act
-        async Task<IEnumerable<User>> Handle() => await _sender.Send(command);
+        async Task<IEnumerable<RepositoryWatcher>> Handle() => await _sender.Send(command);
         
 
         //Assert
