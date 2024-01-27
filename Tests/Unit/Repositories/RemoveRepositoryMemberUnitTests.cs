@@ -126,7 +126,7 @@ public class RemoveRepositoryMemberUnitTests
         async Task Handle() => await handler.Handle(command, default);
 
         //Assert
-        await Should.ThrowAsync<RepositoryMemberCantChangeHimselfException>(Handle);
+        await Should.ThrowAsync<MemberCantChangeHimselfException>(Handle);
     }
     
     [Fact]

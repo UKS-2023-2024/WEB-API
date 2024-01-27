@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240126154254_removedOrganizationPermissions")]
+    partial class removedOrganizationPermissions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -78,9 +81,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Location")
                         .HasColumnType("text");
-
-                    b.Property<int>("NotificationPreferences")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -170,33 +170,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("RepositoryId");
 
                     b.ToTable("Milestones");
-                });
-
-            modelBuilder.Entity("Domain.Notifications.Notification", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Subject")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Domain.Organizations.Organization", b =>
@@ -350,30 +323,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("RepositoryId");
 
                     b.ToTable("RepositoryMembers");
-                });
-
-            modelBuilder.Entity("Domain.Repositories.RepositoryWatcher", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("RepositoryId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("WatchingPreferences")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RepositoryId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("RepositoryWatchers");
                 });
 
             modelBuilder.Entity("Domain.Tasks.Event", b =>
@@ -534,6 +483,21 @@ namespace Infrastructure.Migrations
                     b.ToTable("RepositoryUser");
                 });
 
+            modelBuilder.Entity("RepositoryUser1", b =>
+                {
+                    b.Property<Guid>("WatchedById")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("WatchedId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("WatchedById", "WatchedId");
+
+                    b.HasIndex("WatchedId");
+
+                    b.ToTable("RepositoryUser1");
+                });
+
             modelBuilder.Entity("Domain.Tasks.AssignEvent", b =>
                 {
                     b.HasBaseType("Domain.Tasks.Event");
@@ -617,17 +581,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Repository");
-                });
-
-            modelBuilder.Entity("Domain.Notifications.Notification", b =>
-                {
-                    b.HasOne("Domain.Auth.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Organizations.OrganizationInvite", b =>
@@ -714,25 +667,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Member");
 
                     b.Navigation("Repository");
-                });
-
-            modelBuilder.Entity("Domain.Repositories.RepositoryWatcher", b =>
-                {
-                    b.HasOne("Domain.Repositories.Repository", "Repository")
-                        .WithMany("WatchedBy")
-                        .HasForeignKey("RepositoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Auth.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Repository");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Tasks.Event", b =>
@@ -835,6 +769,21 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("RepositoryUser1", b =>
+                {
+                    b.HasOne("Domain.Auth.User", null)
+                        .WithMany()
+                        .HasForeignKey("WatchedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Repositories.Repository", null)
+                        .WithMany()
+                        .HasForeignKey("WatchedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Domain.Tasks.AssignEvent", b =>
                 {
                     b.HasOne("Domain.Repositories.RepositoryMember", "Assignee")
@@ -897,8 +846,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("PendingInvites");
 
                     b.Navigation("Tasks");
-
-                    b.Navigation("WatchedBy");
                 });
 
             modelBuilder.Entity("Domain.Repositories.RepositoryMember", b =>

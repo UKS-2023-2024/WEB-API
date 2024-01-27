@@ -61,7 +61,7 @@ public class CreateRepositoryUnitTests
 
         User foundUser = User.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), "email@gmail.com", "full name", "username", "password", UserRole.USER);
         _userRepositoryMock.Setup(x => x.FindUserById(foundUser.Id)).ReturnsAsync(foundUser);
-        Organization organization = Organization.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d95a8"), "organizacija", "email@gmail.com", new());
+        Organization organization = Organization.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d95a8"), "organizacija", "email@gmail.com", new(),foundUser);
         _organizationRepositoryMock.Setup(x => x.Find(organization.Id)).Returns(organization);
         _repositoryRepositoryMock.Setup(x => x.FindByNameAndOrganizationId("test-repository", organization.Id)).ReturnsAsync((string name, Guid organizationId) => null);
         _repositoryRepositoryMock.Setup(x => x.Create(It.IsAny<Repository>())).ReturnsAsync((Repository repository) => repository);
@@ -110,7 +110,7 @@ public class CreateRepositoryUnitTests
 
         User foundUser = User.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), "email@gmail.com", "full name", "username", "password", UserRole.USER);
         _userRepositoryMock.Setup(x => x.FindUserById(foundUser.Id)).ReturnsAsync(foundUser);
-        Organization organization = Organization.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d95a8"), "organizacija", "email@gmail.com", new());
+        Organization organization = Organization.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d95a8"), "organizacija", "email@gmail.com", new(),foundUser);
         _organizationRepositoryMock.Setup(x => x.Find(organization.Id)).Returns(organization);
         Repository repository = Repository.Create(new Guid("8e9b1cd0-35d3-4bf2-9f2c-5e00a21d92a8"), "test-repository", "test", false, organization, foundUser);
         _repositoryRepositoryMock.Setup(x => x.FindByNameAndOrganizationId("test-repository", organization.Id)).ReturnsAsync((string name, Guid organizationId) => repository);

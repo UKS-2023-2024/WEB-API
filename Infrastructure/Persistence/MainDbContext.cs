@@ -25,9 +25,6 @@ public class MainDbContext: DbContext
     public DbSet<OrganizationMember> OrganizationMembers { get; set; } = null!;
     public DbSet<Repository> Repositories { get; set; } = null!;
     public DbSet<RepositoryMember> RepositoryMembers { get; set; } = null!;
-    public DbSet<OrganizationRole> OrganizationRoles { get; set; } = null!;
-    public DbSet<OrganizationPermission> OrganizationPermissions { get; set; } = null!;
-    public DbSet<OrganizationRolePermission> OrganizationRolePermissions { get; set; } = null!;
     public DbSet<OrganizationInvite> OrganizationInvites { get; set; } = null!;
     public DbSet<RepositoryInvite> RepositoryInvites { get; set; } = null!;
     public DbSet<Milestone> Milestones { get; set; } = null!;

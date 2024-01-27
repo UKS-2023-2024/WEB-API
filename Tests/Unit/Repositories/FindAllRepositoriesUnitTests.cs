@@ -55,7 +55,7 @@ namespace Tests.Unit.Repositories
             //Arrange
             var query = new FindAllRepositoriesByOrganizationIdQuery(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
             User user = User.Create(new Guid("6e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"), "email@gmail.com", "full name", "username", "password", UserRole.USER);
-            Organization org = Organization.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), "organization", "email@gmail.com", new());
+            Organization org = Organization.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), "organization", "email@gmail.com", new(),user);
             Repository repository = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"), "repository", "test", false, org, user);
             Repository repository2 = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d95a9"), "repository", "test", false, org, user);
             List<Repository> list = new List<Repository>() { repository, repository2 };
