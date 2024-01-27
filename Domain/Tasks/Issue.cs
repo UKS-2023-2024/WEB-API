@@ -1,6 +1,7 @@
 ﻿using Domain.Auth;
 using Domain.Repositories;
 using Domain.Tasks.Enums;
+using Domain.Tasks.Interfaces;
 
 namespace Domain.Tasks;
 
@@ -35,6 +36,13 @@ public class Issue: Task
         CreateRemoveAssigneeEvents(assignees, creatorId);
         Assignees = assignees;
     }
+    
+    public void UpdateMilestone(Guid milestoneId, Guid creatorId)
+    {
+        MilestoneId = milestoneId;
+        Events.Add(new AssignMilestoneEvent("Milestone Assigned", creatorId, Id, milestoneId));
+    }
+    
     private void CreateAddAssigneeEvents(List<RepositoryMember> assignees, Guid creatorId)
     {
         if (assignees is null) return;
@@ -55,6 +63,4 @@ public class Issue: Task
         }
     
     }
-    
-
 }
