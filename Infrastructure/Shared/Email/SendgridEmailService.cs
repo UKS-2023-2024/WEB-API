@@ -1,3 +1,4 @@
+using Domain.Auth;
 using Domain.Shared.Interfaces;
 using Microsoft.Extensions.Configuration;
 using SendGrid;
@@ -35,5 +36,13 @@ public class SendgridEmailService: IEmailService
         string htmlContent = "";
         SendGridMessage message = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
         await _sendgrid.SendEmailAsync(message);
+    }
+
+    public async Task SendNotificationToRepositoryWatcher(User watcher, string subject, string message)
+    {
+        EmailAddress from = new EmailAddress(_sender);
+        EmailAddress to = new EmailAddress(watcher.PrimaryEmail);
+        SendGridMessage emailMessage = MailHelper.CreateSingleEmail(from, to, subject, message, "");
+        await _sendgrid.SendEmailAsync(emailMessage);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Domain.Organizations;
 using Domain.Organizations.Interfaces;
 using Domain.Repositories;
+using Domain.Repositories.Enums;
 using Domain.Repositories.Interfaces;
 using Infrastructure.Persistence;
 using Infrastructure.Shared.Repositories;
@@ -95,6 +96,6 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
     {
         return Task.FromResult(_context.Repositories
             .Include(r => r.WatchedBy)
-            .Count(r => r.Id.Equals(repositoryId) && r.WatchedBy.Any(u => u.Id.Equals(userid))) == 1);
+            .Count(r => r.Id.Equals(repositoryId) && r.WatchedBy.Any(w => w.Id.Equals(userid) && w.WatchingPreferences == WatchingPreferences.AllActivity)) == 1);
     }
 }

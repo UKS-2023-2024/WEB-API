@@ -1,7 +1,9 @@
 ﻿using System.Net;
 using System.Net.Mail;
+using Domain.Auth;
 using Domain.Shared.Interfaces;
 using Microsoft.Extensions.Configuration;
+using SendGrid.Helpers.Mail;
 
 namespace Infrastructure.Shared.Email;
 
@@ -49,6 +51,14 @@ public class GmailEmailService: IEmailService
         newMail.Body = "<h1>You have been invited to repository : "+ repositoryName +"!</h1> <br/>" +
                        "<h2>Accept invite <a href=\"" + link + "\">here<a/>!</h2> <br/>" +
                        "<h2><strong>Sent from Githoob org!</strong></h2>";
+        SendMail(newMail);
+    }
+
+    public async Task SendNotificationToRepositoryWatcher(User watcher, string subject, string message)
+    {
+        MailMessage newMail = GenerateMailMessage(watcher.PrimaryEmail);
+        newMail.Subject = subject;
+        newMail.Body = message;
         SendMail(newMail);
     }
 }

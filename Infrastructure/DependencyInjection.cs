@@ -1,6 +1,7 @@
 ﻿using Domain.Auth.Interfaces;
 using Domain.Branches.Interfaces;
 using Domain.Milestones.Interfaces;
+using Domain.Notifications.Interfaces;
 using Domain.Organizations.Interfaces;
 using Domain.Repositories.Interfaces;
 using Domain.Shared.Interfaces;
@@ -10,6 +11,8 @@ using Infrastructure.Auth.Services;
 using Infrastructure.Branches;
 using Infrastructure.Events;
 using Infrastructure.Milestones;
+using Infrastructure.Notifications.Repositories;
+using Infrastructure.Notifications.Services;
 using Infrastructure.Organizations.Repositories;
 using Infrastructure.Repositories.Repositories;
 using Infrastructure.Shared.Email;
@@ -39,6 +42,9 @@ public static class DependencyInjection
         services.AddScoped<IIssueRepository, IssueRepository>();
         services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<ILabelRepository, LabelRepository>();
+        services.AddScoped<INotificationRepository, NotificationRepository>();
+        services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IRepositoryWatcherRepository, RepositoryWatcherRepository>();
         return services;
     }    
 }

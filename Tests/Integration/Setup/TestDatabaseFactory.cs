@@ -2,8 +2,10 @@
 using Domain.Auth.Enums;
 using Domain.Branches;
 using Domain.Milestones;
+using Domain.Notifications;
 using Domain.Organizations;
 using Domain.Repositories;
+using Domain.Repositories.Enums;
 using Domain.Tasks;
 using Domain.Tasks.Enums;
 using Infrastructure.Persistence;
@@ -83,8 +85,8 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         var repository2 = Repository.Create(new Guid("8e9b1cc1-35d3-4bf2-9f2c-5e00a21d14a5"), "repo2", "test", false, organization1, user1);
         repository2.AddToStarredBy(user3);
         repository2.AddToStarredBy(user4);
-        repository2.AddToWatchedBy(user3);
-        repository2.AddToWatchedBy(user4);
+        repository2.AddToWatchedBy(user3, WatchingPreferences.AllActivity);
+        repository2.AddToWatchedBy(user4, WatchingPreferences.AllActivity);
 
         var repository3 = Repository.Create(new Guid("8e9b1cc2-35d3-4bf2-9f2c-9e00a21d94a5"), "repo3", "test", false, null, user1);
         var member1 = repository3.AddMember(user2);
@@ -99,7 +101,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
 
         var repository5 = Repository.Create(new Guid("8e9b1cc3-35d6-4bf2-9f2c-9e00a21d94a5"), "repo5", "test", true, organization1, user1);
         repository5.AddToStarredBy(user1);
-        repository5.AddToWatchedBy(user1);
+        repository5.AddToWatchedBy(user1, WatchingPreferences.AllActivity);
         var milestone1 = Milestone.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"), "title", "description", new DateOnly(), new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"));
 
         var branch1 = Branch.Create(new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b1"), "branch1", repository5.Id, true, user1.Id);
@@ -110,6 +112,8 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         
         var issue1 = Issue.Create("first issue", "description", TaskState.OPEN, 1, repository1,
             user1, new List<RepositoryMember>(), new List<Label>() {label1}, null);
+
+        var notification1 = Notification.Create("test", user1, DateTime.UtcNow);
         
         context.Users.AddRange(user1, user2, user3, user4);
         context.Organizations.AddRange(organization1,organization2);
@@ -117,6 +121,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         context.Milestones.AddRange(milestone1);
         context.Branches.AddRange(branch1, branch2, branch3);
         context.Issues.AddRange(issue1);
+        context.Notifications.AddRange(notification1);
         context.SaveChanges();
     }
 
