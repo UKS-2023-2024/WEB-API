@@ -23,15 +23,8 @@ public class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand, User>
         if (user is null)
             throw new UserNotFoundException();
 
-        var allSocialAccounts = user.SocialAccounts ?? new();
         user.Update(request.fullName, request.bio, request.company, request.location, request.website, request.socialAccounts);
         _userRepository.Update(user);
-        foreach (SocialAccount acc in allSocialAccounts)
-        {
-            if (!request.socialAccounts.Any(x => x.Id == acc.Id))
-                _socialAccountRepository.Delete(acc);
-
-        }
 
         return user;
     }

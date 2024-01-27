@@ -6,6 +6,7 @@ using Application.Auth.Commands.Update;
 using Application.Auth.Queries.FindAll;
 using Application.Auth.Queries.FindById;
 using Application.Auth.Queries.Login;
+using Domain.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -85,8 +86,8 @@ public class AuthController: ControllerBase
     public async Task<IActionResult> Update([FromBody] UpdateUserDto data)
     {
         var id = _userIdentityService.FindUserIdentity(HttpContext.User);
-        
-        await _sender.Send(new UpdateUserCommand(id, data.FullName, data.Bio, data.Company, data.Location, data.Website, data.SocialAccounts));
+        List<SocialAccount> acc = SocialAccountDto.SocialAccountsFromSocialAccountDtos(data.SocialAccounts, id);
+        await _sender.Send(new UpdateUserCommand(id, data.FullName, data.Bio, data.Company, data.Location, data.Website, acc));
         return Ok();
     }
     
