@@ -1,8 +1,9 @@
+using Domain.Shared;
 using Domain.Shared.Interfaces;
 
 namespace Domain.Notifications.Interfaces;
 
 public interface INotificationRepository: IBaseRepository<Notification>
 {
-    Task<List<Notification>> FindByUserId(Guid userId);
+    Task<PagedResult<Notification>> FindByUserId(Guid userId, int pageSize, int pageNumber);
 }

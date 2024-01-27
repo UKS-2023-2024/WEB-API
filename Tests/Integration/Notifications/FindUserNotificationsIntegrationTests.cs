@@ -20,13 +20,13 @@ public class FindUserNotificationsIntegrationTests : BaseIntegrationTest
     public async Task FindUserNotifications_ShouldReturnNonEmptyList()
     {
         //Arrange
-        var query = new FindUserNotificationsQuery(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"));
+        var query = new FindUserNotificationsQuery(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"), 5, 1);
 
         //Act
         var data = await _sender.Send(query);
 
         //Assert
-        data.ShouldNotBeEmpty();
+        data.Data.ShouldNotBeEmpty();
     }
 
 }
