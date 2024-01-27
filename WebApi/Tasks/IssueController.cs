@@ -54,6 +54,20 @@ public class IssueController: ControllerBase
             UpdateIssueFlag.ASSIGNEES, milestoneId));
         return Ok(new {Id = updatedIssueGuid});
     }
+    
+    [HttpPost("milestone/update")]
+    [Authorize]
+    public async Task<IActionResult> UpdateMilestone([FromBody] UpdateIssueDto issueDto)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Guid milestoneId;
+        Guid.TryParse(issueDto.MilestoneId, out milestoneId);
+        Guid updatedIssueGuid = await _sender.Send(new UpdateIssueCommand(Guid.Parse(issueDto.Id), creatorId,
+            issueDto.Title, issueDto.Description, issueDto.State, issueDto.Number,
+            Guid.Parse(issueDto.RepositoryId), issueDto.AssigneesIds, issueDto.LabelsIds,
+            UpdateIssueFlag.MILESTONE_ASSIGNED, milestoneId));
+        return Ok(new {Id = updatedIssueGuid});
+    }
 
     [HttpGet("{id}")]
     [Authorize]

@@ -1,5 +1,6 @@
 ﻿using Domain.Tasks;
 using Domain.Tasks.Enums;
+using Domain.Tasks.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,6 +13,8 @@ public class EventConfiguration: IEntityTypeConfiguration<Event>
         builder.HasDiscriminator(t => t.EventType)
             .HasValue<AssignEvent>(EventType.ISSUE_ASSIGNED)
             .HasValue<UnassignEvent>(EventType.ISSUE_UNASSIGNED)
-            .HasValue<Event>(EventType.OPENED);
+            .HasValue<Event>(EventType.OPENED)
+            .HasValue<AssignMilestoneEvent>(EventType.MILESTONE_ASSIGNED);
+        // .HasValue<Event>(EventType.MILESTONE_UNASSIGNED);
     }
 }
