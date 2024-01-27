@@ -1,5 +1,6 @@
 ﻿using Application.Shared;
 using Domain.Auth;
+using Domain.Auth.Enums;
 using Domain.Auth.Interfaces;
 using Domain.Notifications.Interfaces;
 using Domain.Repositories;
@@ -59,7 +60,7 @@ public class CreateIssueCommandHandler : ICommandHandler<CreateIssueCommand, Gui
                          $"Description: {issue.Description}<br>" +
                          $"Opened by: {issue.Creator?.Username}";
         string subject = $"[Github] New Issue opened in {repository.Name}";
-        await _notificationService.SendNotification(repository, subject, message);
+        await _notificationService.SendNotification(repository, subject, message, NotificationType.Issues);
 
         return createdIssue.Id;
     }

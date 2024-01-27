@@ -5,6 +5,7 @@ namespace WEB_API.Notifications.Presenters;
 public class NotificationPresenter
 {
     public Guid Id { get; set; }
+    public string Subject { get; set; }
     public string Message { get; set; }
     public DateTime DateTime { get; set; }
 
@@ -14,6 +15,7 @@ public class NotificationPresenter
         Id = notification.Id;
         Message = notification.Message;
         DateTime = notification.DateTime;
+        Subject = notification.Subject;
     }
 
     public static List<NotificationPresenter> MapNotificationsToNotificationPresenters(

@@ -21,7 +21,7 @@ namespace Tests.Unit.Notifications
         {
             //Arrange
             var query = new FindUserNotificationsQuery(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a9"));
-            Notification notification = Notification.Create("", It.IsAny<User>(), DateTime.UtcNow);
+            Notification notification = Notification.Create("", "", It.IsAny<User>(), DateTime.UtcNow);
             List<Notification> notifications = new() { notification };
             _notificationRepositoryMock.Setup(x => x.FindByUserId(It.IsAny<Guid>())).ReturnsAsync(notifications);
 

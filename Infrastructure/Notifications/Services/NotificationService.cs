@@ -3,35 +3,36 @@ using Domain.Auth.Enums;
 using Domain.Notifications;
 using Domain.Notifications.Interfaces;
 using Domain.Repositories;
+using Domain.Repositories.Enums;
 using Domain.Shared.Interfaces;
-
+using MediatR;
 
 namespace Infrastructure.Notifications.Services
 {
     public class NotificationService : INotificationService
     {
-        private IEmailService _emailService;
-        private INotificationRepository _notificationRepository;
-        public NotificationService(IEmailService emailService, INotificationRepository notificationRepository)
+        private readonly IMediator _mediator;
+        public NotificationService(IMediator mediator)
         {
-            _emailService = emailService;
-            _notificationRepository = notificationRepository;
+            _mediator = mediator;
         }
-        public Task SendNotification(Repository repository, string subject, string message)
+        public async Task SendNotification(Repository repository, string subject, string message, NotificationType notificationType)
         {
             foreach (RepositoryWatcher watcher in repository.WatchedBy)
             {
-                if (watcher.User.NotificationPreferences == NotificationPreferences.EMAIL || watcher.User.NotificationPreferences == NotificationPreferences.BOTH)
+                if (watcher.WatchingPreferences == WatchingPreferences.Ignore) return;
+                if (ShouldUserBeNotified(watcher, notificationType)) 
                 {
-                    _emailService.SendNotificationToRepositoryWatcher(watcher.User, subject, message);
-                }
-                if (watcher.User.NotificationPreferences == NotificationPreferences.GITHUB || watcher.User.NotificationPreferences == NotificationPreferences.BOTH)
-                {
-                    Notification notification = Notification.Create(message, watcher.User, DateTime.UtcNow);
-                   _notificationRepository.Create(notification);
+                    await _mediator.Publish(Notification.Create(message, subject, watcher.User, DateTime.UtcNow));
                 }
             }
-            return Task.CompletedTask;
+        }
+
+        private bool ShouldUserBeNotified(RepositoryWatcher watcher, NotificationType notificationType)
+        {
+            WatchingPreferences pref = watcher.WatchingPreferences;
+            if (pref == WatchingPreferences.AllActivity || pref == WatchingPreferences.IssuesAndPullRequests) return true;
+            return pref.ToString() == notificationType.ToString();
         }
     }
 }
