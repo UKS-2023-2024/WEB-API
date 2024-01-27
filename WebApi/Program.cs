@@ -103,7 +103,8 @@ builder.Services.AddAuthorization((options =>
     options.AddPolicy("User" , policy => policy.RequireRole(UserRole.USER.ToString() ));
 }));
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(NotificationHandler).Assembly));
+//vec je registrovan?
+//builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Application.Notifications.EventHandlers.NotificationHandler).Assembly));
 builder.Services
     .AddDomain()
     .AddApplication()
