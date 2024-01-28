@@ -12,7 +12,7 @@ namespace WEB_API.Auth.Dtos
 
         public string? Location { get; set; }
         public string? Website { get; set; }
-        public List<SocialAccount>? SocialAccounts { get; set; } 
+        public List<SocialAccountDto>? SocialAccounts { get; set; } 
 
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Domain.Organizations;
 using Domain.Organizations.Interfaces;
 using Domain.Organizations.Types;
+using Domain.Repositories;
 using Infrastructure.Persistence;
 using Infrastructure.Shared.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -27,5 +28,14 @@ public class OrganizationRepository: BaseRepository<Organization>, IOrganization
         return _context.Organizations
             .Include(organization => organization.Members )
             .FirstOrDefaultAsync(org => org.Id.Equals(organizationId));
+    }
+
+    public async Task<IEnumerable<Organization>> FindAllByOwnerId(Guid id)
+    {
+        return _context.Organizations
+            .Include(r => r.Members)
+            .ThenInclude(m => m.Member)
+            .Where(r => r.Members.Any(m => m.Member.Id == id && m.Role == OrganizationMemberRole.OWNER))
+            .ToList();
     }
 }

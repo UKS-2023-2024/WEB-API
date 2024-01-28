@@ -12,7 +12,7 @@ public class CurrentUserDto
     public string? Location { get; }
     public string? Company { get; }
     public string? Website { get; }
-    public List<SocialAccount> SocialAccounts { get; set; }
+    public List<SocialAccountDto> SocialAccounts { get; set; }
     public NotificationPreferences NotificationPreferences { get; set; }
     
     public CurrentUserDto(User user)
@@ -24,7 +24,7 @@ public class CurrentUserDto
         Location =  user.Location;
         Company =  user.Company;
         Website = user.Website;
-        SocialAccounts = user.SocialAccounts?? new();
+        SocialAccounts = SocialAccountDto.SocialAccountDtosFromSocialAccounts(user.SocialAccounts ?? new());
         NotificationPreferences = user.NotificationPreferences;
     }
 }

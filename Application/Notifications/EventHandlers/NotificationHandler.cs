@@ -5,6 +5,7 @@ using Domain.Repositories.Interfaces;
 using Domain.Shared.Interfaces;
 using MediatR;
 
+namespace Application.Notifications.EventHandlers;
 
 public class NotificationHandler : INotificationHandler<Notification>
 {
