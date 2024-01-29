@@ -1,9 +1,12 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=268f3f30_002Defc7_002D402a_002D8148_002D6cc014c13507/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Integration.Issues.AssignUserToUserIntegrationTests.AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Integration.Issues.AssignIssueToMilestoneIntegrationTests.AssignIssueToMilestone_ShouldBeSuccessful_WhenCommandIsValid&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=268f3f30_002Defc7_002D402a_002D8148_002D6cc014c13507/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Integration.Issues.AssignUserToUserIntegrationTests.AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Integration.Issues.AssignIssueToMilestoneIntegrationTests.AssignIssueToMilestone_ShouldBeSuccessful_WhenCommandIsValid&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+    &lt;ProjectFile&gt;1C585274-3F29-447E-991D-5BE6A12EE105/d:Unit/d:Auth/f:SetPublicKeyUnitTests.cs&lt;/ProjectFile&gt;&#xD;
+  &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=26968290_002Dc144_002D46ce_002Db66f_002D3eaebc33e379/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AssignIssueToIsser_ShouldFail_WhenUserIsNull #4" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
@@ -91,10 +94,13 @@
     &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Integration.Issues.AssignUserToUserIntegrationTests.AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=dea615c3_002Deb0c_002D4581_002D8f2b_002D92383b3fc504/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AssignIssueToIsser_ShouldFail_WhenUserIsNull #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Unit.Issues.AssignIssueToUserUnitTests.AssignIssueToIsser_ShouldFail_WhenUserIsNull&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=dea615c3_002Deb0c_002D4581_002D8f2b_002D92383b3fc504/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="AssignIssueToIsser_ShouldFail_WhenUserIsNull #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;TestAncestor&gt;&#xD;
+      &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Unit.Issues.AssignIssueToUserUnitTests.AssignIssueToIsser_ShouldFail_WhenUserIsNull&lt;/TestId&gt;&#xD;
+    &lt;/TestAncestor&gt;&#xD;
+    &lt;ProjectFile&gt;1C585274-3F29-447E-991D-5BE6A12EE105/d:Unit/d:Auth/f:SetPublicKeyUnitTests.cs&lt;/ProjectFile&gt;&#xD;
+  &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	
 	

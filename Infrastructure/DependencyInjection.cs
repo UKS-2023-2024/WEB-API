@@ -16,6 +16,7 @@ using Infrastructure.Notifications.Services;
 using Infrastructure.Organizations.Repositories;
 using Infrastructure.Repositories.Repositories;
 using Infrastructure.Shared.Email;
+using Infrastructure.Shared.Git;
 using Infrastructure.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -44,6 +45,7 @@ public static class DependencyInjection
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IRepositoryWatcherRepository, RepositoryWatcherRepository>();
+        services.AddScoped<IGitService, GiteaService>();
         return services;
     }    
 }
