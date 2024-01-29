@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using Application.Auth.Commands.Delete;
 using Application.Auth.Commands.Register;
+using Application.Auth.Commands.SetPublicKey;
 using Application.Auth.Commands.Update;
 using Application.Auth.Queries.FindAll;
 using Application.Auth.Queries.FindById;
@@ -88,6 +89,16 @@ public class AuthController: ControllerBase
         var id = _userIdentityService.FindUserIdentity(HttpContext.User);
         List<SocialAccount> acc = SocialAccountDto.SocialAccountsFromSocialAccountDtos(data.SocialAccounts, id);
         await _sender.Send(new UpdateUserCommand(id, data.FullName, data.Bio, data.Company, data.Location, data.Website, acc));
+        return Ok();
+    }
+
+    [HttpPatch]
+    [Authorize]
+    [Route("user/pk")]
+    public async Task<IActionResult> SetPublickey([FromBody] SetPublicKeyDto data)
+    {
+        var id = _userIdentityService.FindUserIdentity(HttpContext.User);
+        await _sender.Send(new SetPublicKeyCommand(id, data.pk));
         return Ok();
     }
     
