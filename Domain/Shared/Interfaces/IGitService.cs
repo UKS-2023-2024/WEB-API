@@ -1,9 +1,12 @@
 using Domain.Auth;
+using Domain.Repositories;
 
 namespace Domain.Shared.Interfaces;
 
 public interface IGitService
 {
-    public Task CreateUser(User user, string password);
+    public Task<string> CreateUser(User user, string password);
+    public Task<GiteaRepoCreated?> CreateRepository(User user, Repository repository);
+    public Task DeleteRepository(User user, Repository repository);
     public Task SetPublicKey(User user, string pk);
 }

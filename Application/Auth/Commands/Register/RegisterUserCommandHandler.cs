@@ -31,7 +31,14 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, G
         var registeredUser = User.Create(request.PrimaryEmail, request.FullName, request.Username,
             hashedPassword, UserRole.USER);
         var created = await _userRepository.Create(registeredUser);
-        await _gitService.CreateUser(created, request.Password);
+        
+        
+        // Git related data
+        var token = await _gitService.CreateUser(created, request.Password);
+        created.SetGitToken(token);
+        _userRepository.Update(created);
+        
+        
         return created.Id;
     }
 }

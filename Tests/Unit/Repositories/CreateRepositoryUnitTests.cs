@@ -15,6 +15,7 @@ using Moq;
 using Shouldly;
 using Application.Repositories.Commands.Create.CreateForUser;
 using Application.Repositories.Commands.Create.CreateForOrganization;
+using Domain.Shared.Interfaces;
 
 namespace Tests.Unit.Repositories;
 
@@ -23,12 +24,14 @@ public class CreateRepositoryUnitTests
     private Mock<IUserRepository> _userRepositoryMock;
     private Mock<IRepositoryRepository> _repositoryRepositoryMock;
     private Mock<IOrganizationRepository> _organizationRepositoryMock;
+    private Mock<IGitService> _gitServiceMock;
 
     public CreateRepositoryUnitTests()
     {
         _userRepositoryMock = new();
         _repositoryRepositoryMock = new();
-        _organizationRepositoryMock = new(); 
+        _organizationRepositoryMock = new();
+        _gitServiceMock = new();
     }
 
     [Fact]
@@ -43,7 +46,7 @@ public class CreateRepositoryUnitTests
         _repositoryRepositoryMock.Setup(x => x.FindByNameAndOwnerId("test-repository", foundUser.Id)).ReturnsAsync((string name, Guid ownerId) => null);
         _repositoryRepositoryMock.Setup(x => x.Create(It.IsAny<Repository>())).ReturnsAsync((Repository repository) => repository);
 
-        var handler = new CreateRepositoryForUserCommandHandler(_userRepositoryMock.Object, _repositoryRepositoryMock.Object);
+        var handler = new CreateRepositoryForUserCommandHandler(_userRepositoryMock.Object, _repositoryRepositoryMock.Object, _gitServiceMock.Object);
 
         //Act
         Guid repositoryId = await handler.Handle(command, CancellationToken.None);
@@ -87,7 +90,7 @@ public class CreateRepositoryUnitTests
         Repository repository = Repository.Create(new Guid("8e9b1cd0-35d3-4bf2-9f2c-5e00a21d92a8"), "test-repository", "test", false, null, foundUser);
         _repositoryRepositoryMock.Setup(x => x.FindByNameAndOwnerId("test-repository", foundUser.Id)).ReturnsAsync((string name, Guid ownerId) => repository);
 
-        var handler = new CreateRepositoryForUserCommandHandler(_userRepositoryMock.Object, _repositoryRepositoryMock.Object);
+        var handler = new CreateRepositoryForUserCommandHandler(_userRepositoryMock.Object, _repositoryRepositoryMock.Object,  _gitServiceMock.Object);
 
         //Act
         Func<Task> handle = async () =>

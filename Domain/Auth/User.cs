@@ -25,6 +25,7 @@ public class User
     public List<OrganizationInvite> OrganizationInvites { get; private set; }
     public List<RepositoryInvite> RepositoryInvites { get; private set; }
     public NotificationPreferences NotificationPreferences { get; private set; }
+    public string? GitToken { get; private set; }
     private User() { }
     private User(string primaryEmail, string fullName, string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails,List<Repository> starred)
     {
@@ -54,6 +55,11 @@ public class User
         SecondaryEmails = new();
         SocialAccounts = new();
         Deleted = false;
+    }
+
+    public void SetGitToken(string? token)
+    {
+        GitToken = token;
     }
 
     public static User Create(string primaryEmail, string fullName,string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails, List<Repository> starred)
