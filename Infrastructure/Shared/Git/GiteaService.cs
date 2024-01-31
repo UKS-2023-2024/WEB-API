@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using Domain.Auth;
+using Domain.Branches;
 using Domain.Repositories;
 using Domain.Shared.Git.Payloads;
 using Domain.Shared.Interfaces;
@@ -40,7 +41,7 @@ public class GiteaService: IGitService
         };
         _httpClient.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", _adminToken);
+        SetAuthTokenHeader(_adminToken);
     }
     
     
@@ -118,10 +119,18 @@ public class GiteaService: IGitService
     public async Task DeleteRepository(User user, Repository repository)
     {
         var url = $"repos/{user.Username}/{repository.Name}";
+        SetAuthTokenHeader(user.GitToken);
+        var response = await _httpClient.DeleteAsync(url);
+        await LogStatusAndResponseContent(response);
+        SetAuthTokenHeader(_adminToken);
+    }
+
+    public async Task DeleteBranch(User user, Branch branch)
+    {
+        var url = $"repos/{user.Username}/{branch.Repository.Name}/branches/{branch.Name}";
         var response = await _httpClient.DeleteAsync(url);
         await LogStatusAndResponseContent(response);
     }
-
     private async Task<T?> DeserializeBody<T>(HttpResponseMessage response)
     {
         var result = await response.Content.ReadAsStringAsync();
@@ -137,6 +146,11 @@ public class GiteaService: IGitService
     {
         var jsonData = JsonSerializer.Serialize(data);
         return new StringContent(jsonData, Encoding.UTF8, "application/json");
+    }
+
+    private void SetAuthTokenHeader(string token)
+    {
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", token);
     }
     
     
