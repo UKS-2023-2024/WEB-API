@@ -80,8 +80,8 @@ public class GiteaService: IGitService
         AccessTokenPayload? obj = await DeserializeBody<AccessTokenPayload>(response);
         if (obj is not null)
         {
-            Console.WriteLine(obj.Sha1);
-            return obj.Sha1;
+            Console.WriteLine(obj.sha1);
+            return obj.sha1;
         }
         return "";
 

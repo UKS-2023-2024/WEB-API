@@ -5,18 +5,13 @@ namespace Domain.Shared.Git.Payloads;
 public class AccessTokenPayload
 {
     
-    [JsonPropertyName("id")]
-    public int Id { get; set; }
+    public int id { get; set; }
 
-    [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public string name { get; set; }
 
-    [JsonPropertyName("sha1")]
-    public string Sha1 { get; set; }
+    public string sha1 { get; set; }
     
-    [JsonPropertyName("token_last_eight")]
-    public string TokenLastEight { get; set; }
+    public string token_last_eighth { get; set; }
     
-    [JsonPropertyName("scopes")]
-    public List<string>? Scopes { get; set; }
+    public List<string>? scopes { get; set; }
 }

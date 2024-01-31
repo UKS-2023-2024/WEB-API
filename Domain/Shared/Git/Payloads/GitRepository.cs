@@ -2,258 +2,175 @@ using System.Text.Json.Serialization;
 
 public class Owner
 {
-    [JsonPropertyName("id")]
     public int Id { get; set; }
 
-    [JsonPropertyName("login")]
-    public string Login { get; set; }
+    public string login { get; set; }
 
-    [JsonPropertyName("login_name")]
-    public string LoginName { get; set; }
+    public string login_name { get; set; }
 
-    [JsonPropertyName("full_name")]
-    public string FullName { get; set; }
+    public string full_name { get; set; }
 
-    [JsonPropertyName("email")]
-    public string Email { get; set; }
+    public string email { get; set; }
 
-    [JsonPropertyName("avatar_url")]
-    public string AvatarUrl { get; set; }
+    public string avatar_url { get; set; }
 
-    [JsonPropertyName("language")]
-    public string Language { get; set; }
+    public string language { get; set; }
 
-    [JsonPropertyName("is_admin")]
-    public bool IsAdmin { get; set; }
+    public bool is_admin { get; set; }
 
-    [JsonPropertyName("last_login")]
-    public DateTime LastLogin { get; set; }
+    public DateTime last_login { get; set; }
 
-    [JsonPropertyName("created")]
-    public DateTime Created { get; set; }
+    public DateTime created { get; set; }
 
-    [JsonPropertyName("restricted")]
-    public bool Restricted { get; set; }
+    public bool restricted { get; set; }
 
-    [JsonPropertyName("active")]
-    public bool Active { get; set; }
+    public bool active { get; set; }
 
-    [JsonPropertyName("prohibit_login")]
-    public bool ProhibitLogin { get; set; }
+    public bool prohibit_login { get; set; }
 
-    [JsonPropertyName("location")]
-    public string Location { get; set; }
+    public string location { get; set; }
+    public string website { get; set; }
 
-    [JsonPropertyName("website")]
-    public string Website { get; set; }
+    public string description { get; set; }
 
-    [JsonPropertyName("description")]
-    public string Description { get; set; }
+    public string visibility { get; set; }
 
-    [JsonPropertyName("visibility")]
-    public string Visibility { get; set; }
+    public int followers_count { get; set; }
 
-    [JsonPropertyName("followers_count")]
-    public int FollowersCount { get; set; }
+    public int following_count { get; set; }
 
-    [JsonPropertyName("following_count")]
-    public int FollowingCount { get; set; }
+    public int starred_repos_count { get; set; }
 
-    [JsonPropertyName("starred_repos_count")]
-    public int StarredReposCount { get; set; }
-
-    [JsonPropertyName("username")]
-    public string Username { get; set; }
+    public string username { get; set; }
 }
 
 public class Permissions
 {
-    [JsonPropertyName("admin")]
-    public bool Admin { get; set; }
+    public bool admin { get; set; }
 
-    [JsonPropertyName("push")]
-    public bool Push { get; set; }
+    public bool push { get; set; }
 
-    [JsonPropertyName("pull")]
-    public bool Pull { get; set; }
+    public bool pull { get; set; }
 }
 
 public class InternalTracker
 {
-    [JsonPropertyName("enable_time_tracker")]
-    public bool EnableTimeTracker { get; set; }
+    public bool enable_time_tracker { get; set; }
 
-    [JsonPropertyName("allow_only_contributors_to_track_time")]
-    public bool AllowOnlyContributorsToTrackTime { get; set; }
+    public bool allow_only_contributors_to_track_time { get; set; }
 
-    [JsonPropertyName("enable_issue_dependencies")]
-    public bool EnableIssueDependencies { get; set; }
+    public bool enable_issue_dependencies { get; set; }
 }
 
 public class GiteaRepoCreated
 {
-    [JsonPropertyName("id")]
-    public int Id { get; set; }
+    public int id { get; set; }
 
-    [JsonPropertyName("owner")]
-    public Owner Owner { get; set; }
+    public Owner owner { get; set; }
 
-    [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public string name { get; set; }
 
-    [JsonPropertyName("full_name")]
-    public string FullName { get; set; }
+    public string full_name { get; set; }
 
-    [JsonPropertyName("description")]
-    public string Description { get; set; }
+    public string description { get; set; }
 
-    [JsonPropertyName("empty")]
-    public bool Empty { get; set; }
+    public bool empty { get; set; }
 
-    [JsonPropertyName("private")]
-    public bool Private { get; set; }
+    public bool @private { get; set; }
 
-    [JsonPropertyName("fork")]
-    public bool Fork { get; set; }
+    public bool fork { get; set; }
 
-    [JsonPropertyName("template")]
-    public bool Template { get; set; }
+    public bool template { get; set; }
 
-    [JsonPropertyName("parent")]
-    public object Parent { get; set; }
+    public object parent { get; set; }
 
-    [JsonPropertyName("mirror")]
-    public bool Mirror { get; set; }
+    public bool mirror { get; set; }
 
-    [JsonPropertyName("size")]
-    public int Size { get; set; }
+    public int size { get; set; }
 
-    [JsonPropertyName("language")]
-    public string Language { get; set; }
+    public string language { get; set; }
+    
+    public string languages_url { get; set; }
 
-    [JsonPropertyName("languages_url")]
-    public string LanguagesUrl { get; set; }
+    public string html_url { get; set; }
 
-    [JsonPropertyName("html_url")]
-    public string HtmlUrl { get; set; }
+    public string url { get; set; }
 
-    [JsonPropertyName("url")]
-    public string Url { get; set; }
+    public string link { get; set; }
 
-    [JsonPropertyName("link")]
-    public string Link { get; set; }
+    public string ssh_url { get; set; }
 
-    [JsonPropertyName("ssh_url")]
-    public string SshUrl { get; set; }
+    public string clone_url { get; set; }
 
-    [JsonPropertyName("clone_url")]
-    public string CloneUrl { get; set; }
+    public string original_url { get; set; }
 
-    [JsonPropertyName("original_url")]
-    public string OriginalUrl { get; set; }
+    public string website { get; set; }
 
-    [JsonPropertyName("website")]
-    public string Website { get; set; }
+    public int stars_count { get; set; }
 
-    [JsonPropertyName("stars_count")]
-    public int StarsCount { get; set; }
+    public int forks_count { get; set; }
 
-    [JsonPropertyName("forks_count")]
-    public int ForksCount { get; set; }
+    public int watchers_count { get; set; }
 
-    [JsonPropertyName("watchers_count")]
-    public int WatchersCount { get; set; }
+    public int open_issues_count { get; set; }
 
-    [JsonPropertyName("open_issues_count")]
-    public int OpenIssuesCount { get; set; }
+    public int open_pr_counter { get; set; }
 
-    [JsonPropertyName("open_pr_counter")]
-    public int OpenPrCounter { get; set; }
+    public int release_counter { get; set; }
 
-    [JsonPropertyName("release_counter")]
-    public int ReleaseCounter { get; set; }
+    public string default_branch { get; set; }
 
-    [JsonPropertyName("default_branch")]
-    public string DefaultBranch { get; set; }
+    public bool archived { get; set; }
 
-    [JsonPropertyName("archived")]
-    public bool Archived { get; set; }
+    public DateTime created_at { get; set; }
 
-    [JsonPropertyName("created_at")]
-    public DateTime CreatedAt { get; set; }
+    public DateTime updated_at { get; set; }
 
-    [JsonPropertyName("updated_at")]
-    public DateTime UpdatedAt { get; set; }
+    public DateTime archived_at { get; set; }
 
-    [JsonPropertyName("archived_at")]
-    public DateTime ArchivedAt { get; set; }
+    public Permissions permissions { get; set; }
 
-    [JsonPropertyName("permissions")]
-    public Permissions Permissions { get; set; }
+    public bool has_issues { get; set; }
 
-    [JsonPropertyName("has_issues")]
-    public bool HasIssues { get; set; }
+    public InternalTracker internal_tracker { get; set; }
 
-    [JsonPropertyName("internal_tracker")]
-    public InternalTracker InternalTracker { get; set; }
+    public bool has_wiki { get; set; }
 
-    [JsonPropertyName("has_wiki")]
-    public bool HasWiki { get; set; }
+    public bool has_pull_requests { get; set; }
 
-    [JsonPropertyName("has_pull_requests")]
-    public bool HasPullRequests { get; set; }
+    public bool has_projects { get; set; }
 
-    [JsonPropertyName("has_projects")]
-    public bool HasProjects { get; set; }
+    public bool has_releases { get; set; }
 
-    [JsonPropertyName("has_releases")]
-    public bool HasReleases { get; set; }
+    public bool has_packages { get; set; }
 
-    [JsonPropertyName("has_packages")]
-    public bool HasPackages { get; set; }
+    public bool has_actions { get; set; }
 
-    [JsonPropertyName("has_actions")]
-    public bool HasActions { get; set; }
+    public bool ignore_whitespace_conflicts { get; set; }
 
-    [JsonPropertyName("ignore_whitespace_conflicts")]
-    public bool IgnoreWhitespaceConflicts { get; set; }
+    public bool allow_merge_commits { get; set; }
 
-    [JsonPropertyName("allow_merge_commits")]
-    public bool AllowMergeCommits { get; set; }
+    public bool allow_rebase { get; set; }
 
-    [JsonPropertyName("allow_rebase")]
-    public bool AllowRebase { get; set; }
+    public bool allow_rebase_explicit { get; set; }
 
-    [JsonPropertyName("allow_rebase_explicit")]
-    public bool AllowRebaseExplicit { get; set; }
+    public bool allow_squash_merge { get; set; }
 
-    [JsonPropertyName("allow_squash_merge")]
-    public bool AllowSquashMerge { get; set; }
+    public bool allow_rebase_update { get; set; }
 
-    [JsonPropertyName("allow_rebase_update")]
-    public bool AllowRebaseUpdate { get; set; }
+    public bool default_delete_branch_after_merge { get; set; }
 
-    [JsonPropertyName("default_delete_branch_after_merge")]
-    public bool DefaultDeleteBranchAfterMerge { get; set; }
+    public string default_merge_style { get; set; }
 
-    [JsonPropertyName("default_merge_style")]
-    public string DefaultMergeStyle { get; set; }
+    public bool default_allow_maintainer_edit { get; set; }
 
-    [JsonPropertyName("default_allow_maintainer_edit")]
-    public bool DefaultAllowMaintainerEdit { get; set; }
+    public string avatar_url { get; set; }
 
-    [JsonPropertyName("avatar_url")]
-    public string AvatarUrl { get; set; }
+    public bool @internal { get; set; }
 
-    [JsonPropertyName("internal")]
-    public bool Internal { get; set; }
+    public string mirror_interval { get; set; }
 
-    [JsonPropertyName("mirror_interval")]
-    public string MirrorInterval { get; set; }
+    public DateTime mirror_updated { get; set; }
 
-    [JsonPropertyName("mirror_updated")]
-    public DateTime MirrorUpdated { get; set; }
-
-    [JsonPropertyName("repo_transfer")]
-    public object RepoTransfer { get; set; }
+    public object repo_transfer { get; set; }
 }
