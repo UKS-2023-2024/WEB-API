@@ -25,6 +25,8 @@ namespace Domain.Repositories
         public List<Tasks.Task> Tasks { get; private set; } = new();
         public List<Label> Labels { get; private set; } = new();
         public List<RepositoryWatcher> WatchedBy { get; private set; } = new();
+        public string? HttpCloneUrl { get; private set; }
+        public string? SshCloneUrl { get; private set; }
 
         private Repository() { }
 
@@ -36,6 +38,12 @@ namespace Domain.Repositories
             Organization = organization;
             StarredBy = starredBy;
             _members.Add(RepositoryMember.Create(creator, this, RepositoryMemberRole.OWNER));
+        }
+
+        public void SetCloneUrls(string? httpsCloneUrl, string? sshCloneUrl)
+        {
+            HttpCloneUrl = httpsCloneUrl;
+            SshCloneUrl = sshCloneUrl;
         }
 
         public static Repository Create(string name, string description, bool isPrivate, Organization? organization,User creator)

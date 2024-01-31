@@ -8,6 +8,7 @@ using Domain.Organizations.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
+using Domain.Shared.Interfaces;
 
 namespace Application.Repositories.Commands.Create.CreateForUser;
 
@@ -15,11 +16,13 @@ public class CreateRepositoryForUserCommandHandler : ICommandHandler<CreateRepos
 {
     private IUserRepository _userRepository;
     private IRepositoryRepository _repositoryRepository;
+    private IGitService _gitService;
 
-    public CreateRepositoryForUserCommandHandler(IUserRepository userRepository, IRepositoryRepository repositoryRepository)
+    public CreateRepositoryForUserCommandHandler(IUserRepository userRepository, IRepositoryRepository repositoryRepository, IGitService gitService)
     {
         _userRepository = userRepository;
         _repositoryRepository = repositoryRepository;
+        _gitService = gitService;
     }
 
     public async Task<Guid> Handle(CreateRepositoryForUserCommand request, CancellationToken cancellationToken)
@@ -37,7 +40,13 @@ public class CreateRepositoryForUserCommandHandler : ICommandHandler<CreateRepos
         repository.AddBranch(Branch.Create("main", Guid.Empty, true, creator.Id));
 
         repository = await _repositoryRepository.Create(repository);
-
+        
+        
+        // Git related updates
+        var gitRepoData = await _gitService.CreateRepository(creator, repository);
+        repository.SetCloneUrls(gitRepoData?.CloneUrl, gitRepoData?.SshUrl);
+        _repositoryRepository.Update(repository);
+        
         return repository.Id;
     }
 }
