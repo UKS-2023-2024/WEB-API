@@ -7,6 +7,7 @@ using Infrastructure.Persistence;
 using Infrastructure.Shared.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Xml.Linq;
+using Domain.Auth;
 
 namespace Infrastructure.Repositories.Repositories;
 
@@ -97,5 +98,15 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
         return Task.FromResult(_context.Repositories
             .Include(r => r.WatchedBy)
             .Count(r => r.Id.Equals(repositoryId) && r.WatchedBy.Any(w => w.Id.Equals(userid) && w.WatchingPreferences == WatchingPreferences.AllActivity)) == 1);
+    }
+
+    public async Task<User?> FindRepositoryOwner(Guid repositoryId)
+    {
+        var member = await _context.RepositoryMembers
+            .Where(member => member.RepositoryId.Equals(repositoryId) && member.Role == RepositoryMemberRole.OWNER)
+            .Include(mem => mem.Member)
+            .FirstOrDefaultAsync();
+        return member?.Member;
+
     }
 }

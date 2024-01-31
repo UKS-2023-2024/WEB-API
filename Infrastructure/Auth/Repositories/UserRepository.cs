@@ -35,6 +35,13 @@ public class UserRepository : BaseRepository<User>, IUserRepository
             .FirstOrDefaultAsync();
     }
 
+    public Task<User?> FindByUsername(string username)
+    {
+        return _context.Users
+            .Where(u => u.Username.Equals(username))
+            .FirstOrDefaultAsync();
+    }
+
     public Task<List<User>> SearchUsers(String value)
     {
         return _context.Users
