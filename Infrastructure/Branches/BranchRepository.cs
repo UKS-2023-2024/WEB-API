@@ -22,6 +22,13 @@ namespace Infrastructure.Branches
                 .FirstOrDefaultAsync();
         }
 
+        public Task<Branch?> FindById(Guid branchId)
+        {
+            return _context.Branches.Where(b => b.Id.Equals(branchId))
+                .Include(b => b.Repository)
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<Branch?> FindByRepositoryIdAndIsDefault(Guid repositoryId, bool isDefault)
         {
             return await _context.Branches

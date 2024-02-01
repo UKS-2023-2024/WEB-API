@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System.Web;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WEB_API.Shared.TokenHandler;
@@ -8,6 +9,7 @@ using Application.Branches.Commands.Create;
 using Application.Branches.Commands.Update;
 using Application.Branches.Commands.Delete;
 using Application.Branches.Commands.Restore;
+using Application.Branches.Queries.ListBranchFiles;
 using Application.Repositories.Queries.FindAllUserWithoutDefaultByRepositoryId;
 using Application.Repositories.Queries.FindAllWithoutDefaultByRepositoryId;
 using Application.Repositories.Queries.FindAllWithoutDefaultByRepositoryIdPagination;
@@ -105,5 +107,13 @@ public class BranchController : ControllerBase
     {
         var branches = await _sender.Send(new FindDefaultBranchByRepositoryIdQuery(repositoryId));
         return Ok(branches);
+    }
+
+    [HttpGet("{id}/tree/{path}")]
+    [Authorize]
+    public async Task<IActionResult> ListFileTree(Guid id, string path)
+    {
+        var result = await _sender.Send(new ListBranchFilesQuery(id, HttpUtility.UrlDecode(path)));
+        return Ok(result);
     }
 }
