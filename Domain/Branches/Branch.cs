@@ -2,6 +2,7 @@
 using Domain.Repositories;
 using System.Data.Entity.Migrations.Model;
 using System.Security.Policy;
+using Domain.Branches.Exceptions;
 
 namespace Domain.Branches
 {
@@ -43,6 +44,12 @@ namespace Domain.Branches
             branch.Id = id;
             branch.Deleted = deleted;
             return branch;
+        }
+
+        public static void ThrowIfDoesntExist(Branch? branch)
+        {
+            if (branch is not null) return;
+            throw new BranchNotFoundException();
         }
 
 

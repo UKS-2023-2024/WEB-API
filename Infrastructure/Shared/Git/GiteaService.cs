@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Text;
+using System.Web;
 using Domain.Auth;
 using Domain.Branches;
 using Domain.Repositories;
@@ -131,6 +132,22 @@ public class GiteaService: IGitService
         var response = await _httpClient.DeleteAsync(url);
         await LogStatusAndResponseContent(response);
     }
+
+    public async Task<List<ContributionFile>> ListFolderContent(User user, Branch branch, string path)
+    {
+        var url = $"repos/{user.Username}/{branch.Repository.Name}/contents";
+        var pathBasedUrl = path.Equals("/") ? url : url + $"{path}";
+        var query = HttpUtility.ParseQueryString(string.Empty);
+        query["ref"] = branch.Name;
+        var fullUrl = $"{pathBasedUrl}?{query}";
+        var response = await _httpClient.GetAsync(fullUrl);
+        await LogStatusAndResponseContent(response);
+        List<FileInformation> files = await DeserializeBody<List<FileInformation>>(response) ?? new();
+        return files
+            .Select(f => new ContributionFile(f.name, f.type.Equals("dir"), f.path))
+            .ToList();
+    }
+    
     private async Task<T?> DeserializeBody<T>(HttpResponseMessage response)
     {
         var result = await response.Content.ReadAsStringAsync();
