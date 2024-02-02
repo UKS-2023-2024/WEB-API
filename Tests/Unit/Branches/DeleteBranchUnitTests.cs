@@ -31,7 +31,7 @@ public class DeleteBranchUnitTests
         var command = new DeleteBranchCommand(new Guid("705a6c69-5b51-4156-b4cc-71e8dd111579"));
         Branch branch = Branch.Create("name", new Guid("705a6c69-5b51-4156-b4cc-71e8dd111579"), false, new Guid("805a6c69-5b51-4156-b4cc-71e8dd111579"));
 
-        _branchRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>())).Returns(branch);
+        _branchRepositoryMock.Setup(x => x.FindById(It.IsAny<Guid>())).ReturnsAsync(branch);
         _branchRepositoryMock.Setup(x => x.Update(It.IsAny<Branch>()));
 
         var handler = new DeleteBranchCommandHandler(_branchRepositoryMock.Object,  _gitServiceMock.Object, _repositoryRepositoryMock.Object);
