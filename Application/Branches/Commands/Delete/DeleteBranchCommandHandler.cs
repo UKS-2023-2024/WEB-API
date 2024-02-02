@@ -24,7 +24,7 @@ public class DeleteBranchCommandHandler : ICommandHandler<DeleteBranchCommand, B
 
     public async Task<Branch> Handle(DeleteBranchCommand request, CancellationToken cancellationToken)
     {
-        Branch? branch = _branchRepository.Find(request.BranchId);
+        Branch? branch = await _branchRepository.FindById(request.BranchId);
         if (branch is null)
             throw new BranchNotFoundException();
         branch.Delete();

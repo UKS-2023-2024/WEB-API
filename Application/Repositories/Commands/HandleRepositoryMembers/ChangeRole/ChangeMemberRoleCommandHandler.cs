@@ -41,7 +41,8 @@ public class ChangeMemberRoleCommandHandler: ICommandHandler<ChangeMemberRoleCom
         var repository = _repositoryRepository.Find(request.RepositoryId);
         Repository.ThrowIfDoesntExist(repository);
         
-        var repoOwner = repository!.Organization == null ? repository.Members.First(repoMember => repoMember.Role == RepositoryMemberRole.OWNER).Member.Username : repository.Organization.Name;
+        var repoOwner = repository!.Organization == null ? repository.Members.First(repoMember =>
+            repoMember.Role == RepositoryMemberRole.OWNER).Member.Username : repository.Organization.Name;
         await _gitService.RemoveRepositoryMember(repoOwner, repository, member.Member);
         await _gitService.AddRepositoryMember(repoOwner, repository, member.Member,request.Role.ToString("G").ToLower());
     }
