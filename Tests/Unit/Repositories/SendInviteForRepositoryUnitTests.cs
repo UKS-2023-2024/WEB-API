@@ -60,9 +60,9 @@ public class SendInviteForRepositoryUnitTests
         _repository2.AddMember(_user2);
         var repoMember1 = RepositoryMember.Create(_user1, _repository1, RepositoryMemberRole.OWNER);
         var repoMember2 = RepositoryMember.Create(_user1, _repository1, RepositoryMemberRole.OWNER);
-        var repoMember3 = RepositoryMember.Create(_user2, _repository1, RepositoryMemberRole.CONTRIBUTOR);
+        var repoMember3 = RepositoryMember.Create(_user2, _repository1, RepositoryMemberRole.WRITE);
         var repoMember4 = RepositoryMember.Create(_user1, _repository3, RepositoryMemberRole.OWNER);
-        var repoMember5 = RepositoryMember.Create(_user4, _repository3, RepositoryMemberRole.CONTRIBUTOR);
+        var repoMember5 = RepositoryMember.Create(_user4, _repository3, RepositoryMemberRole.WRITE);
         repoMember5.Delete();
         
         _userRepository.Setup(x => x.Find(_user1.Id)).Returns(_user1);

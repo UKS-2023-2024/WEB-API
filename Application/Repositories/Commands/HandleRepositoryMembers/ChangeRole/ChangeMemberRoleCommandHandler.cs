@@ -1,7 +1,9 @@
 ﻿using Application.Shared;
+using Domain.Organizations.Exceptions;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
+using Domain.Shared.Interfaces;
 
 namespace Application.Repositories.Commands.HandleRepositoryMembers.ChangeRole;
 
@@ -9,11 +11,13 @@ public class ChangeMemberRoleCommandHandler: ICommandHandler<ChangeMemberRoleCom
 {
     private readonly IRepositoryMemberRepository _repositoryMemberRepository;
     private readonly IRepositoryRepository _repositoryRepository;
+    private readonly IGitService _gitService;
 
-    public ChangeMemberRoleCommandHandler(IRepositoryMemberRepository repositoryMemberRepository, IRepositoryRepository repositoryRepository)
+    public ChangeMemberRoleCommandHandler(IRepositoryMemberRepository repositoryMemberRepository, IRepositoryRepository repositoryRepository, IGitService gitService)
     {
         _repositoryMemberRepository = repositoryMemberRepository;
         _repositoryRepository = repositoryRepository;
+        _gitService = gitService;
     }
 
     public async Task Handle(ChangeMemberRoleCommand request, CancellationToken cancellationToken)
@@ -28,13 +32,17 @@ public class ChangeMemberRoleCommandHandler: ICommandHandler<ChangeMemberRoleCom
         RepositoryMember.ThrowIfDoesntExist(member);
         member!.ThrowIfSameAs(owner);
         
-        var numberOfOwners =
-            _repositoryMemberRepository.FindNumberRepositoryMembersThatAreOwnersExceptSingleMember(request.RepositoryId,
-                request.RepositoryMemberId);
-        if (numberOfOwners <= 0)
-            throw new RepositoryMemberCantBeChangedException();
+        if (request.Role == RepositoryMemberRole.OWNER || member.HasRole(RepositoryMemberRole.OWNER))
+            throw new CantChangeOwnerException();
 
         member.SetRole(request.Role);
         _repositoryMemberRepository.Update(member);
+
+        var repository = _repositoryRepository.Find(request.RepositoryId);
+        Repository.ThrowIfDoesntExist(repository);
+        
+        var repoOwner = repository!.Organization == null ? repository.Members.First(repoMember => repoMember.Role == RepositoryMemberRole.OWNER).Member.Username : repository.Organization.Name;
+        await _gitService.RemoveRepositoryMember(repoOwner, repository, member.Member);
+        await _gitService.AddRepositoryMember(repoOwner, repository, member.Member,request.Role.ToString("G").ToLower());
     }
 }

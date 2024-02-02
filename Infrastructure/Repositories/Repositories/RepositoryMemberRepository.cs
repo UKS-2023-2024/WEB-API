@@ -15,6 +15,13 @@ public class RepositoryMemberRepository: BaseRepository<RepositoryMember>, IRepo
         _context = context;
     }
     
+    public override RepositoryMember? Find(Guid id)
+    {
+        return _context.RepositoryMembers
+            .Include(x => x.Member)
+            .FirstOrDefault(x => x.Id == id);
+    }
+    
     public Task<RepositoryMember?> FindByUserIdAndRepositoryId(Guid userId, Guid repositoryId)
     {
         return _context.RepositoryMembers
@@ -25,6 +32,7 @@ public class RepositoryMemberRepository: BaseRepository<RepositoryMember>, IRepo
     public Task<RepositoryMember?> FindByRepositoryMemberIdAndRepositoryId(Guid repositoryMemberId, Guid repositoryId)
     {
         return _context.RepositoryMembers
+            .Include(r=> r.Member)
             .Where(r => r.Id.Equals(repositoryMemberId) && r.RepositoryId.Equals(repositoryId))
             .FirstOrDefaultAsync();
     }

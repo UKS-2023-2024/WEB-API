@@ -7,6 +7,7 @@ using Domain.Auth.Interfaces;
 using Domain.Organizations;
 using Domain.Organizations.Exceptions;
 using Domain.Organizations.Interfaces;
+using Domain.Shared.Interfaces;
 using Moq;
 using Shouldly;
 
@@ -17,8 +18,7 @@ public class AcceptInviteUnitTests
     private  Mock<IUserRepository> _userRepository = new();
     private  Mock<IOrganizationInviteRepository> _organizationInviteRepository = new();
     private  Mock<IOrganizationRepository> _organizationRepository = new();
-
-
+    private Mock<IGitService> _gitService = new();
 
     private OrganizationInvite OverrideDate(OrganizationInvite invite, DateTime date)
     {
@@ -52,7 +52,8 @@ public class AcceptInviteUnitTests
         var commandHandler = new AcceptInviteCommandHandler(
             _userRepository.Object,
             _organizationInviteRepository.Object,
-            _organizationRepository.Object
+            _organizationRepository.Object,
+            _gitService.Object
         );
         //Act
         Func<Task> handle = async () => { await commandHandler.Handle(command, default); };
@@ -87,7 +88,8 @@ public class AcceptInviteUnitTests
         var commandHandler = new AcceptInviteCommandHandler(
             _userRepository.Object,
             _organizationInviteRepository.Object,
-            _organizationRepository.Object
+            _organizationRepository.Object,
+            _gitService.Object
         );
         //Act
         Func<Task> handle = async () => { await commandHandler.Handle(command, default); };
@@ -120,7 +122,8 @@ public class AcceptInviteUnitTests
         var commandHandler = new AcceptInviteCommandHandler(
             _userRepository.Object,
             _organizationInviteRepository.Object,
-            _organizationRepository.Object
+            _organizationRepository.Object,
+            _gitService.Object
         );
         //Act
         Func<Task> handle = async () => { await commandHandler.Handle(command, default); };
@@ -151,7 +154,8 @@ public class AcceptInviteUnitTests
         var commandHandler = new AcceptInviteCommandHandler(
             _userRepository.Object,
             _organizationInviteRepository.Object,
-            _organizationRepository.Object
+            _organizationRepository.Object,
+            _gitService.Object
         );
         //Act
         Func<Task> handle = async () => { await commandHandler.Handle(command, default); };
@@ -182,7 +186,8 @@ public class AcceptInviteUnitTests
         var commandHandler = new AcceptInviteCommandHandler(
             _userRepository.Object,
             _organizationInviteRepository.Object,
-            _organizationRepository.Object
+            _organizationRepository.Object,
+            _gitService.Object
         );
         //Act
         Func<Task> handle = async () => { await commandHandler.Handle(command, default); };

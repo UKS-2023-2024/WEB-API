@@ -3,7 +3,9 @@ using System.Text;
 using System.Web;
 using Domain.Auth;
 using Domain.Branches;
+using Domain.Organizations;
 using Domain.Repositories;
+using Domain.Shared.Exceptions;
 using Domain.Shared.Git.Payloads;
 using Domain.Shared.Interfaces;
 using Microsoft.Extensions.Configuration;
@@ -28,9 +30,10 @@ public class GiteaService: IGitService
         "read:repository",
         "write:repository",
         "read:user",
-        "write:user"
+        "write:user",
+        "write:admin"
     };
-    
+
     public GiteaService(IConfiguration configuration)
     {
         var giteaBaseUrl = configuration["Gitea:BaseUrl"] ?? "";
@@ -42,12 +45,16 @@ public class GiteaService: IGitService
         };
         _httpClient.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
-        SetAuthTokenHeader(_adminToken);
     }
-    
-    
+
+    private void SetAuthToken(string token)
+    {
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", token);
+    }
+
     public async Task<string> CreateUser(User user, string password)
     {
+        SetAuthToken(_adminToken);
         var url = "admin/users";
 
         var body = Body(new
@@ -65,6 +72,7 @@ public class GiteaService: IGitService
 
     public async Task<string> GenerateAccessToken(User user, string plainPassword)
     {
+        SetAuthToken(_adminToken);
         var url = $"users/{user.Username}/tokens";
         var base64Credentials = Convert.ToBase64String(
             System.Text.Encoding.ASCII.GetBytes($"{user.Username}:{plainPassword}")
@@ -89,8 +97,17 @@ public class GiteaService: IGitService
 
     }
 
+    public async Task DeleteUser(User user)
+    {
+        SetAuthToken(_adminToken);
+        var url = $"admin/users/{user.Username}";
+        var response = await _httpClient.DeleteAsync(url);
+        await LogStatusAndResponseContent(response);
+    }
+
     public async Task SetPublicKey(User user, string key)
     {
+        SetAuthToken(_adminToken);
         var url = $"admin/users/{user.Username}/keys";
         var body = Body(new
         {
@@ -103,8 +120,9 @@ public class GiteaService: IGitService
         await LogStatusAndResponseContent(response);
     }
 
-    public async Task<GiteaRepoCreated?> CreateRepository(User user, Repository repository)
+    public async Task<GiteaRepoCreated?> CreatePersonalRepository(User user, Repository repository)
     {
+        SetAuthToken(_adminToken);
         var url = $"admin/users/{user.Username}/repos";
         var body = Body(new
         {
@@ -117,24 +135,128 @@ public class GiteaService: IGitService
         await LogStatusAndResponseContent(response);
         return await DeserializeBody<GiteaRepoCreated>(response);
     }
-    public async Task DeleteRepository(User user, Repository repository)
+    
+    public async Task<GiteaRepoCreated?> CreateOrganizationRepository(User user, Organization organization,Repository repository)
     {
-        var url = $"repos/{user.Username}/{repository.Name}";
-        SetAuthTokenHeader(user.GitToken);
+        SetAuthToken(_adminToken);
+        var url = $"orgs/{organization.Name}/repos";
+        var body = Body(new
+        {
+            name = repository.Name,
+            default_branch = "main",
+            @private = repository.IsPrivate,
+            description = repository.Description,
+        });
+        var response = await _httpClient.PostAsync(url, body);
+        await LogStatusAndResponseContent(response);
+        return await DeserializeBody<GiteaRepoCreated>(response);
+    }
+    public async Task RemoveRepositoryMember(string owner, Repository repository, User user)
+    {
+        SetAuthToken(_adminToken);
+        var url = $"repos/{owner}/{repository.Name}/collaborators/{user.Username}";
         var response = await _httpClient.DeleteAsync(url);
         await LogStatusAndResponseContent(response);
-        SetAuthTokenHeader(_adminToken);
     }
-
     public async Task DeleteBranch(User user, Branch branch)
     {
+        SetAuthToken(_adminToken);
         var url = $"repos/{user.Username}/{branch.Repository.Name}/branches/{branch.Name}";
         var response = await _httpClient.DeleteAsync(url);
         await LogStatusAndResponseContent(response);
     }
 
+    public async Task<int> CreateOrganization(User user, Organization organization)
+    {
+        SetAuthToken(user.GitToken!);
+        var url = $"orgs";
+        var body = Body(new
+        {
+            email = organization.ContactEmail,
+            full_name = organization.Name,
+            location = organization.Location,
+            description = organization.Description,
+            username = organization.Name,
+            visibility = "public",
+            website = "",
+            repo_admin_change_team_access = true
+        });
+        var response = await _httpClient.PostAsync(url, body);
+        await LogStatusAndResponseContent(response);
+
+        return await CreateTeam(organization.Name);
+    }
+
+    private async Task<int> CreateTeam(string organizationName)
+    {
+        var url = $"orgs/{organizationName}/teams";
+        var createTeamOption = new CreateTeamOption();
+
+        var body = Body(new
+        {
+            description = createTeamOption.description,
+            can_create_org_repo = createTeamOption.can_create_org_repo,
+            includes_all_repositories = true,
+            name = "members",
+            permission = "admin",
+            units = createTeamOption.units,
+            units_map = createTeamOption.units_map
+        });
+        var response = await _httpClient.PostAsync(url, body);
+        await LogStatusAndResponseContent(response);
+        var team = await DeserializeBody<CreateTeamOption>(response);
+        if (team is null)
+            throw new GitException("Problem creating initial team!");
+        return ((await DeserializeBody<CreateTeamOption>(response))!).id;
+    }
+
+    public async Task DeleteRepository(string owner, Repository repository)
+    {
+        SetAuthToken(_adminToken);
+        var url = $"repos/{owner}/{repository.Name}";
+        var response = await _httpClient.DeleteAsync(url);
+        await LogStatusAndResponseContent(response);
+    }
+
+    public async Task DeleteOrganization(User user, Organization organization)
+    {
+        SetAuthToken(user.GitToken!);
+        var url = $"orgs/{organization.Name}";
+        var response = await _httpClient.DeleteAsync(url);
+        await LogStatusAndResponseContent(response);
+    }
+    
+    public async Task AddOrganizationMember(User user, Organization organization)
+    {
+        SetAuthToken(_adminToken);
+        var url = $"teams/{organization.memberTeamId}/members/{user.Username}";
+        var response = await _httpClient.PutAsync(url,null);
+        await LogStatusAndResponseContent(response);
+    }
+    
+    public async Task RemoveOrganizationMember(User user, Organization organization)
+    {
+        SetAuthToken(_adminToken);
+        var url = $"teams/{organization.memberTeamId}/members/{user.Username}";
+        var response = await _httpClient.DeleteAsync(url);
+        await LogStatusAndResponseContent(response);
+    }
+    
+    public async Task AddRepositoryMember(string owner, Repository repository, User user, string permission)
+    {
+        SetAuthToken(_adminToken);
+        var url = $"repos/{owner}/{repository.Name}/collaborators/{user.Username}";
+        var body = Body(new
+        {
+            permission,
+        });
+        var response = await _httpClient.PutAsync(url,body);
+        await LogStatusAndResponseContent(response);
+    }
+
     public async Task<List<ContributionFile>> ListFolderContent(User user, Branch branch, string path)
     {
+        SetAuthToken(_adminToken);
         var url = $"repos/{user.Username}/{branch.Repository.Name}/contents";
         var pathBasedUrl = path.Equals("/") ? url : url + $"{path}";
         var query = HttpUtility.ParseQueryString(string.Empty);
@@ -164,15 +286,5 @@ public class GiteaService: IGitService
         var jsonData = JsonSerializer.Serialize(data);
         return new StringContent(jsonData, Encoding.UTF8, "application/json");
     }
-
-    private void SetAuthTokenHeader(string token)
-    {
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", token);
-    }
-    
-    
-    
-    
-    
 
 }

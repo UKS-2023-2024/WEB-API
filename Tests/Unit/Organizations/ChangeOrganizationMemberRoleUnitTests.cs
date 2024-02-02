@@ -136,7 +136,7 @@ public class ChangeOrganizationMemberRoleUnitTests
         async Task Handle() => await handler.Handle(command, default);
 
         //Assert
-        await Should.ThrowAsync<CantChangeOrganizationOwnerException>(Handle);
+        await Should.ThrowAsync<CantChangeOwnerException>(Handle);
     }
     
     [Fact]
@@ -151,7 +151,7 @@ public class ChangeOrganizationMemberRoleUnitTests
         async Task Handle() => await handler.Handle(command, default);
 
         //Assert
-        await Should.ThrowAsync<CantChangeOrganizationOwnerException>(Handle);
+        await Should.ThrowAsync<CantChangeOwnerException>(Handle);
     }
     
     [Fact]

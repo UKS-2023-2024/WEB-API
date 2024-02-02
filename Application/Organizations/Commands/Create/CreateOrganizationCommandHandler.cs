@@ -7,6 +7,7 @@ using Domain.Exceptions;
 using Domain.Organizations;
 using Domain.Organizations.Exceptions;
 using Domain.Organizations.Interfaces;
+using Domain.Shared.Interfaces;
 
 namespace Application.Organizations.Commands.Create;
 
@@ -14,11 +15,13 @@ public class CreateOrganizationCommandHandler: ICommandHandler<CreateOrganizatio
 {
     private IUserRepository _userRepository;
     private IOrganizationRepository _organizationRepository;
+    private IGitService _gitService;
 
-    public CreateOrganizationCommandHandler(IUserRepository userRepository, IOrganizationRepository organizationRepository)
+    public CreateOrganizationCommandHandler(IUserRepository userRepository, IOrganizationRepository organizationRepository, IGitService gitService)
     {
         _userRepository = userRepository;
         _organizationRepository = organizationRepository;
+        _gitService = gitService;
     }
 
     public async Task<Guid> Handle(CreateOrganizationCommand request, CancellationToken cancellationToken)
@@ -43,6 +46,9 @@ public class CreateOrganizationCommandHandler: ICommandHandler<CreateOrganizatio
 
         var organization = Organization.Create(request.Name, request.ContactEmail, pendingMembers,creator);
         await _organizationRepository.Create(organization);
+        var membersTeamId = await _gitService.CreateOrganization(creator,organization);
+        organization.SetMemberTeamId(membersTeamId);
+        _organizationRepository.Update(organization);
         return organization.Id;
     }
 }

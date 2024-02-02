@@ -69,7 +69,7 @@ public class CreateRepositoryUnitTests
         _repositoryRepositoryMock.Setup(x => x.FindByNameAndOrganizationId("test-repository", organization.Id)).ReturnsAsync((string name, Guid organizationId) => null);
         _repositoryRepositoryMock.Setup(x => x.Create(It.IsAny<Repository>())).ReturnsAsync((Repository repository) => repository);
 
-        var handler = new CreateRepositoryForOrganizationCommandHandler(_userRepositoryMock.Object, _repositoryRepositoryMock.Object, _organizationRepositoryMock.Object);
+        var handler = new CreateRepositoryForOrganizationCommandHandler(_userRepositoryMock.Object, _repositoryRepositoryMock.Object, _organizationRepositoryMock.Object,_gitServiceMock.Object);
 
         //Act
         Guid repositoryId = await handler.Handle(command, CancellationToken.None);
@@ -118,7 +118,7 @@ public class CreateRepositoryUnitTests
         Repository repository = Repository.Create(new Guid("8e9b1cd0-35d3-4bf2-9f2c-5e00a21d92a8"), "test-repository", "test", false, organization, foundUser);
         _repositoryRepositoryMock.Setup(x => x.FindByNameAndOrganizationId("test-repository", organization.Id)).ReturnsAsync((string name, Guid organizationId) => repository);
       
-        var handler = new CreateRepositoryForOrganizationCommandHandler(_userRepositoryMock.Object, _repositoryRepositoryMock.Object, _organizationRepositoryMock.Object);
+        var handler = new CreateRepositoryForOrganizationCommandHandler(_userRepositoryMock.Object, _repositoryRepositoryMock.Object, _organizationRepositoryMock.Object, _gitServiceMock.Object);
 
         //Act
 

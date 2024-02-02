@@ -1,8 +1,11 @@
 ﻿using Application.Shared;
+using Domain.Auth;
+using Domain.Auth.Interfaces;
 using Domain.Organizations;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
+using Domain.Shared.Interfaces;
 
 namespace Application.Repositories.Commands.Delete;
 
@@ -10,10 +13,17 @@ public class DeleteRepositoryCommandHandler: ICommandHandler<DeleteRepositoryCom
 {
     private readonly IRepositoryRepository _repositoryRepository;
     private readonly IRepositoryMemberRepository _repositoryMemberRepository;
-    public DeleteRepositoryCommandHandler(IRepositoryRepository repositoryRepository, IRepositoryMemberRepository repositoryMemberRepository)
+    private readonly IGitService _gitService;
+    private readonly IUserRepository _userRepository;
+    public DeleteRepositoryCommandHandler(
+        IRepositoryRepository repositoryRepository,
+        IRepositoryMemberRepository repositoryMemberRepository,
+        IGitService gitService, IUserRepository userRepository)
     {
         _repositoryRepository = repositoryRepository;
         _repositoryMemberRepository = repositoryMemberRepository;
+        _gitService = gitService;
+        _userRepository = userRepository;
     }
 
     public async Task Handle(DeleteRepositoryCommand request, CancellationToken cancellationToken)
@@ -25,5 +35,14 @@ public class DeleteRepositoryCommandHandler: ICommandHandler<DeleteRepositoryCom
         if (repository is null)
             throw new RepositoryNotFoundException(); 
         _repositoryRepository.Delete(repository);
+        
+        if (repository.Organization != null)
+        {
+            await _gitService.DeleteRepository(repository.Organization.Name, repository);
+            return;
+        }
+        var user = await _userRepository.FindUserById(request.userId);
+        User.ThrowIfDoesntExist(user);
+        await _gitService.DeleteRepository(user!.Username, repository);
     }
 }

@@ -3,6 +3,7 @@ using Domain.Auth;
 using Domain.Auth.Interfaces;
 using Domain.Organizations;
 using Domain.Organizations.Interfaces;
+using Domain.Shared.Interfaces;
 
 namespace Application.Organizations.Commands.AcceptInvite;
 
@@ -11,15 +12,18 @@ public class AcceptInviteCommandHandler: ICommandHandler<AcceptInviteCommand>
     private readonly IUserRepository _userRepository;
     private readonly IOrganizationInviteRepository _organizationInviteRepository;
     private readonly IOrganizationRepository _organizationRepository;
+    private readonly IGitService _gitService;
 
     public AcceptInviteCommandHandler(
         IUserRepository userRepository, 
         IOrganizationInviteRepository organizationInviteRepository, 
-        IOrganizationRepository organizationRepository)
+        IOrganizationRepository organizationRepository,
+        IGitService gitService)
     {
         _userRepository = userRepository;
         _organizationInviteRepository = organizationInviteRepository;
         _organizationRepository = organizationRepository;
+        _gitService = gitService;
     }
     
     
@@ -38,5 +42,6 @@ public class AcceptInviteCommandHandler: ICommandHandler<AcceptInviteCommand>
         organization!.AddMember(user!);
         _organizationRepository.Update(organization);
         _organizationInviteRepository.Delete(invite);
+        await _gitService.AddOrganizationMember(user!, organization);
     }
 }

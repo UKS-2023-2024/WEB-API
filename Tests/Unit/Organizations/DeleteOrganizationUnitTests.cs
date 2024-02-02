@@ -1,12 +1,14 @@
 ﻿using Application.Organizations.Commands.Delete;
 using Domain.Auth;
 using Domain.Auth.Enums;
+using Domain.Auth.Interfaces;
 using Domain.Exceptions;
 using Domain.Organizations;
 using Domain.Organizations.Exceptions;
 using Domain.Organizations.Interfaces;
 using Domain.Organizations.Types;
 using Domain.Repositories.Exceptions;
+using Domain.Shared.Interfaces;
 using Moq;
 using Shouldly;
 
@@ -16,10 +18,14 @@ public class DeleteOrganizationUnitTests
 {
     private readonly Mock<IOrganizationMemberRepository> _organizationMemberRepository;
     private readonly Mock<IOrganizationRepository> _organizationRepository;
+    private readonly Mock<IUserRepository> _userRepository;
+    private readonly Mock<IGitService> _gitServiceMock;
     public DeleteOrganizationUnitTests()
     {
         _organizationMemberRepository = new();
         _organizationRepository = new();
+        _userRepository = new();
+        _gitServiceMock = new();
     }
     
     [Fact]
@@ -39,11 +45,18 @@ public class DeleteOrganizationUnitTests
             .ReturnsAsync(member1);
         _organizationMemberRepository.Setup(x => x.FindByUserIdAndOrganizationId(user2.Id, organization.Id))
             .ReturnsAsync(member2);
+        
+        _userRepository.Setup(x => x.FindUserById(user1.Id))
+            .ReturnsAsync(user1);
+        _userRepository.Setup(x => x.FindUserById(user2.Id))
+            .ReturnsAsync(user2);
 
         var handler =
             new DeleteOrganizationCommandHandler(
                 _organizationMemberRepository.Object, 
-                _organizationRepository.Object
+                _organizationRepository.Object,
+                _gitServiceMock.Object,
+                _userRepository.Object
                 );
         
         //Act
@@ -68,11 +81,15 @@ public class DeleteOrganizationUnitTests
         var command = new DeleteOrganizationCommand(organization.Id, user.Id);
         _organizationMemberRepository.Setup(x => x.FindByUserIdAndOrganizationId(It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(member);
+        _userRepository.Setup(x => x.FindUserById(user.Id))
+            .ReturnsAsync(user);
 
         var handler =
             new DeleteOrganizationCommandHandler(
                 _organizationMemberRepository.Object, 
-                _organizationRepository.Object
+                _organizationRepository.Object,
+                _gitServiceMock.Object,
+                _userRepository.Object
             );
 
         //Act
