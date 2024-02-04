@@ -114,7 +114,7 @@ public class ChangeOrganizationMemberRoleIntegrationTests : BaseIntegrationTest
         async Task Handle() => await _sender.Send(command);
 
         //Assert
-        await Should.ThrowAsync<CantChangeOrganizationOwnerException>(Handle);
+        await Should.ThrowAsync<CantChangeOwnerException>(Handle);
     }
     
     [Fact]
@@ -131,6 +131,6 @@ public class ChangeOrganizationMemberRoleIntegrationTests : BaseIntegrationTest
         async Task Handle() => await _sender.Send(command);
 
         //Assert
-        await Should.ThrowAsync<CantChangeOrganizationOwnerException>(Handle);
+        await Should.ThrowAsync<CantChangeOwnerException>(Handle);
     }
 }

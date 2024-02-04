@@ -60,5 +60,10 @@ namespace Domain.Repositories
         {
             Role = role;
         }
+        
+        public bool HasRole(RepositoryMemberRole role)
+        {
+            return Role.Equals(role);
+        }
     }
 }

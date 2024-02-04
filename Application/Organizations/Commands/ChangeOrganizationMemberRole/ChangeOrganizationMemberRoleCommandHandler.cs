@@ -22,14 +22,16 @@ public class ChangeOrganizationMemberRoleCommandHandler : ICommandHandler<Change
 
         var member =
             await _organizationMemberRepository.FindByUserIdAndOrganizationId(request.MemberId, request.OrganizationId);
+        
         OrganizationMember.ThrowIfDoesntExist(member);
         member.ThrowIfSameAs(owner);
         
         if (request.Role == OrganizationMemberRole.OWNER || member.HasRole(OrganizationMemberRole.OWNER))
-            throw new CantChangeOrganizationOwnerException();
+            throw new CantChangeOwnerException();
         
         member.SetRole(request.Role);
         _organizationMemberRepository.Update(member);
-
+        
+        
     }
 }

@@ -16,6 +16,7 @@ using Domain.Organizations.Interfaces;
 using Domain.Repositories.Interfaces;
 using Domain.Organizations;
 using Domain.Repositories;
+using Domain.Shared.Interfaces;
 
 namespace Tests.Unit.Auth
 {
@@ -24,12 +25,14 @@ namespace Tests.Unit.Auth
         private readonly Mock<IUserRepository> _userRepositoryMock;
         private readonly Mock<IOrganizationRepository> _organizationRepositoryMock;
         private readonly Mock<IRepositoryRepository> _repositoryRepositoryMock;
+        private readonly Mock<IGitService> _gitServiceMock;
 
         public DeleteUserUnitTests()
         {
             _userRepositoryMock = new();
             _organizationRepositoryMock = new();
             _repositoryRepositoryMock = new();
+            _gitServiceMock = new();
             var user = User.Create(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7"), "test@gmail.com", "full name", "username", "password", UserRole.USER);
             _userRepositoryMock.Setup(x => x.FindUserById(user.Id)).ReturnsAsync(user);
             _organizationRepositoryMock.Setup(x => x.FindAllByOwnerId(user.Id)).ReturnsAsync(new List<Organization>());
@@ -43,7 +46,7 @@ namespace Tests.Unit.Auth
             //Arrange
             var command = new DeleteUserCommand(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a7"));
 
-            var handler = new DeleteUserCommandHandler(_userRepositoryMock.Object, _repositoryRepositoryMock.Object, _organizationRepositoryMock.Object);
+            var handler = new DeleteUserCommandHandler(_userRepositoryMock.Object, _repositoryRepositoryMock.Object, _organizationRepositoryMock.Object, _gitServiceMock.Object);
 
             //Act
             Func<Task> handle = async () =>
@@ -61,7 +64,7 @@ namespace Tests.Unit.Auth
             //Arrange
             var command = new DeleteUserCommand(new Guid("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a8"));
 
-            var handler = new DeleteUserCommandHandler(_userRepositoryMock.Object, _repositoryRepositoryMock.Object, _organizationRepositoryMock.Object);
+            var handler = new DeleteUserCommandHandler(_userRepositoryMock.Object, _repositoryRepositoryMock.Object, _organizationRepositoryMock.Object, _gitServiceMock.Object);
 
             //Act
             Func<Task> handle = async () =>

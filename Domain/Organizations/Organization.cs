@@ -16,6 +16,9 @@ public class Organization
     public string? Location { get; private set; }
     public List<OrganizationInvite> PendingInvites { get; private set; }
     public List<Repository> Repositories { get; private set; }
+
+    public int? memberTeamId { get; private set; }
+
     private Organization()
     {
     }
@@ -70,5 +73,10 @@ public class Organization
     public static void ThrowIfDoesntExist(Organization? organization)
     {
         if (organization is null) throw new OrganizationNotFoundException();
+    }
+
+    public void SetMemberTeamId(int teamId)
+    {
+        memberTeamId = teamId;
     }
 }

@@ -2,9 +2,11 @@
 using Application.Repositories.Commands.HandleRepositoryMembers.ChangeRole;
 using Domain.Auth;
 using Domain.Auth.Enums;
+using Domain.Organizations.Exceptions;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
+using Domain.Shared.Interfaces;
 using Moq;
 using Shouldly;
 
@@ -14,6 +16,7 @@ public class ChangeRepositoryMemberRoleUnitTests
 {
     private readonly Mock<IRepositoryMemberRepository> _repositoryMemberRepositoryMock = new();
     private readonly Mock<IRepositoryRepository> _repositoryRepository = new();
+    private readonly Mock<IGitService> _gitServiceMock = new();
     private readonly User _user1;
     private readonly User _user2;
     private readonly User _user3;
@@ -39,9 +42,9 @@ public class ChangeRepositoryMemberRoleUnitTests
         OverrideId(_repoMember1, new Guid("8e9b1111-ffaa-4bf2-9f2c-5e00a21d92a9"));
         _repoMember2 = RepositoryMember.Create(_user4, _repository1, RepositoryMemberRole.ADMIN);
         OverrideId(_repoMember2, new Guid("8e9b1111-ffbb-4bf2-9f2c-5e00a21d92a9"));
-        _repoMember3 = RepositoryMember.Create(_user2, _repository1, RepositoryMemberRole.CONTRIBUTOR);
+        _repoMember3 = RepositoryMember.Create(_user2, _repository1, RepositoryMemberRole.WRITE);
         OverrideId(_repoMember3, new Guid("8e9b3333-ffaa-4bf2-9f2c-5e00a21d92a9"));
-        _repoMember4 = RepositoryMember.Create(_user3, _repository2, RepositoryMemberRole.CONTRIBUTOR);
+        _repoMember4 = RepositoryMember.Create(_user3, _repository2, RepositoryMemberRole.WRITE);
         OverrideId(_repoMember4, new Guid("8e9b4444-ffaa-4bf2-9f2c-5e00a21d92a9"));
         _repoMember4.Delete();
         _repoMember5 = RepositoryMember.Create(_user1, _repository2, RepositoryMemberRole.OWNER);
@@ -98,7 +101,8 @@ public class ChangeRepositoryMemberRoleUnitTests
             _repoMember3.Id, _repository1.Id,RepositoryMemberRole.ADMIN);
 
         //Act
-        var result = new ChangeMemberRoleCommandHandler(_repositoryMemberRepositoryMock.Object,_repositoryRepository.Object)
+        var result = new ChangeMemberRoleCommandHandler(_repositoryMemberRepositoryMock.Object,_repositoryRepository.Object
+            ,_gitServiceMock.Object)
             .Handle(command,default);
 
         //Assert
@@ -111,7 +115,8 @@ public class ChangeRepositoryMemberRoleUnitTests
         //Arrange
         var command = new ChangeMemberRoleCommand(_user2.Id,
             _repoMember1.Id, _repository1.Id,RepositoryMemberRole.ADMIN);
-        var handler = new ChangeMemberRoleCommandHandler(_repositoryMemberRepositoryMock.Object,_repositoryRepository.Object);
+        var handler = new ChangeMemberRoleCommandHandler(_repositoryMemberRepositoryMock.Object,_repositoryRepository.Object
+            ,_gitServiceMock.Object);
         
         //Act
         async Task Handle() => await handler.Handle(command, default);
@@ -121,18 +126,35 @@ public class ChangeRepositoryMemberRoleUnitTests
     }
     
     [Fact]
-    public async void Handle_ShouldReturnError_WhenNumberOfOwnersIs1()
+    public async void Handle_ShouldReturnError_WhenTryingToChangeOwner()
     {
         //Arrange
         var command = new ChangeMemberRoleCommand(_user4.Id,
-            _repoMember1.Id, _repository1.Id,RepositoryMemberRole.CONTRIBUTOR);
-        var handler = new ChangeMemberRoleCommandHandler(_repositoryMemberRepositoryMock.Object,_repositoryRepository.Object);
+            _repoMember1.Id, _repository1.Id,RepositoryMemberRole.READ);
+        var handler = new ChangeMemberRoleCommandHandler(_repositoryMemberRepositoryMock.Object,_repositoryRepository.Object
+            ,_gitServiceMock.Object);
 
         //Act
         async Task Handle() => await handler.Handle(command, default);
 
         //Assert
-        await Should.ThrowAsync<RepositoryMemberCantBeChangedException>(Handle);
+        await Should.ThrowAsync<CantChangeOwnerException>(Handle);
+    }
+    
+    [Fact]
+    public async void Handle_ShouldReturnError_WhenTryingToChangeOwner2()
+    {
+        //Arrange
+        var command = new ChangeMemberRoleCommand(_user4.Id,
+            _repoMember3.Id, _repository1.Id,RepositoryMemberRole.OWNER);
+        var handler = new ChangeMemberRoleCommandHandler(_repositoryMemberRepositoryMock.Object,_repositoryRepository.Object
+            ,_gitServiceMock.Object);
+
+        //Act
+        async Task Handle() => await handler.Handle(command, default);
+
+        //Assert
+        await Should.ThrowAsync<CantChangeOwnerException>(Handle);
     }
     
     [Fact]
@@ -140,8 +162,9 @@ public class ChangeRepositoryMemberRoleUnitTests
     {
         //Arrange
         var command = new ChangeMemberRoleCommand(_user1.Id,
-            _repoMember1.Id, _repository1.Id,RepositoryMemberRole.CONTRIBUTOR);
-        var handler = new ChangeMemberRoleCommandHandler(_repositoryMemberRepositoryMock.Object,_repositoryRepository.Object);
+            _repoMember1.Id, _repository1.Id,RepositoryMemberRole.READ);
+        var handler = new ChangeMemberRoleCommandHandler(_repositoryMemberRepositoryMock.Object,_repositoryRepository.Object
+            ,_gitServiceMock.Object);
 
         //Act
         async Task Handle() => await handler.Handle(command, default);
@@ -156,7 +179,8 @@ public class ChangeRepositoryMemberRoleUnitTests
         //Arrange
         var command = new ChangeMemberRoleCommand(_user3.Id,
             _repoMember1.Id, _repository1.Id,RepositoryMemberRole.ADMIN);
-        var handler = new ChangeMemberRoleCommandHandler(_repositoryMemberRepositoryMock.Object,_repositoryRepository.Object);
+        var handler = new ChangeMemberRoleCommandHandler(_repositoryMemberRepositoryMock.Object,_repositoryRepository.Object
+            ,_gitServiceMock.Object);
         
         //Act
         async Task Handle() => await handler.Handle(command, default);
@@ -172,7 +196,8 @@ public class ChangeRepositoryMemberRoleUnitTests
         var command = new ChangeMemberRoleCommand(_user1.Id,
             new Guid("8e9b2233-ffaa-4bf2-9f2c-5e00a21d92a9"),
             _repository1.Id,RepositoryMemberRole.ADMIN);
-        var handler = new ChangeMemberRoleCommandHandler(_repositoryMemberRepositoryMock.Object,_repositoryRepository.Object);
+        var handler = new ChangeMemberRoleCommandHandler(_repositoryMemberRepositoryMock.Object,_repositoryRepository.Object
+            ,_gitServiceMock.Object);
         
         //Act
         async Task Handle() => await handler.Handle(command, default);
@@ -187,7 +212,8 @@ public class ChangeRepositoryMemberRoleUnitTests
         //Arrange
         var command = new ChangeMemberRoleCommand(_user1.Id,
             _repoMember4.Id, _repository2.Id,RepositoryMemberRole.ADMIN);
-        var handler = new ChangeMemberRoleCommandHandler(_repositoryMemberRepositoryMock.Object,_repositoryRepository.Object);
+        var handler = new ChangeMemberRoleCommandHandler(_repositoryMemberRepositoryMock.Object,_repositoryRepository.Object
+            ,_gitServiceMock.Object);
         
         //Act
         async Task Handle() => await handler.Handle(command, default);

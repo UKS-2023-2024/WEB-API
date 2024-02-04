@@ -68,7 +68,7 @@ namespace Domain.Repositories
                 member.ActivateMemberAgain();
                 return member;
             }
-            member = RepositoryMember.Create(user, this, RepositoryMemberRole.CONTRIBUTOR);
+            member = RepositoryMember.Create(user, this, RepositoryMemberRole.READ);
             _members.Add(member);
             return member;
         }

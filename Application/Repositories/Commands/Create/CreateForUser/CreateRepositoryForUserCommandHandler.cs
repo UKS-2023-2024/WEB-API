@@ -43,7 +43,7 @@ public class CreateRepositoryForUserCommandHandler : ICommandHandler<CreateRepos
         
         
         // Git related updates
-        var gitRepoData = await _gitService.CreateRepository(creator, repository);
+        var gitRepoData = await _gitService.CreatePersonalRepository(creator, repository);
         repository.SetCloneUrls(gitRepoData?.clone_url, gitRepoData?.ssh_url);
         _repositoryRepository.Update(repository);
         

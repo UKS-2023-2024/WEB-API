@@ -32,7 +32,7 @@ public class StarringRepositoryUnitTests
         _repositoryRepositoryMock.Setup(x => x.Find(repository3.Id)).Returns(repository3);
         _repositoryRepositoryMock.Setup(x => x.Find(repository4.Id)).Returns(repository4);
 
-        var repositoryMember = RepositoryMember.Create(_user, repository3, RepositoryMemberRole.CONTRIBUTOR);
+        var repositoryMember = RepositoryMember.Create(_user, repository3, RepositoryMemberRole.WRITE);
         _repositoryMemberRepositoryMock.Setup(x => x.FindByUserIdAndRepositoryId(_user.Id,repository3.Id)).ReturnsAsync(repositoryMember);
     }
     

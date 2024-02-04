@@ -1,12 +1,14 @@
 ﻿using Application.Organizations.Commands.RemoveOrganizationMember;
 using Domain.Auth;
 using Domain.Auth.Enums;
+using Domain.Auth.Interfaces;
 using Domain.Organizations;
 using Domain.Organizations.Exceptions;
 using Domain.Organizations.Interfaces;
 using Domain.Organizations.Types;
 using Domain.Repositories;
 using Domain.Repositories.Interfaces;
+using Domain.Shared.Interfaces;
 using Moq;
 using Shouldly;
 
@@ -18,6 +20,8 @@ public class RemoveOrganizationMemberUnitTests
     private Mock<IRepositoryMemberRepository> _repositoryMemberRepositoryMock = new();
     private Mock<IOrganizationRepository> _organizationRepositoryMock = new();
     private Mock<IRepositoryRepository> _repositoryRepositoryMock = new();
+    private Mock<IGitService> _gitServiceMock = new();
+    private Mock<IUserRepository> _userRepositoryMock = new();
     private readonly User _user1;
     private readonly User _user2;
     private readonly User _user3;
@@ -52,7 +56,10 @@ public class RemoveOrganizationMemberUnitTests
         OverrideId<Repository>(_repository1, new Guid("8e9b1cc0-abab-1111-9f2c-5e00a21d92a8"));
         var repositoryMember = _repository1.AddMember(_user2);
         OverrideId<RepositoryMember>(repositoryMember, new Guid("8e9b1cc0-abab-3434-9f2c-5e00a21d92a8"));
-        
+
+        _userRepositoryMock.Setup(x => x.FindUserById(_user1.Id)).ReturnsAsync(_user1);
+        _userRepositoryMock.Setup(x => x.FindUserById(_user2.Id)).ReturnsAsync(_user2);
+        _userRepositoryMock.Setup(x => x.FindUserById(_user3.Id)).ReturnsAsync(_user3);
         _organizationMemberRepositoryMock.Setup(x => x.FindByUserIdAndOrganizationId(_organizationMember1.MemberId,_organization1.Id))
             .ReturnsAsync(_organizationMember1);
         _organizationMemberRepositoryMock.Setup(x => x.FindByUserIdAndOrganizationId(_organizationMember2.MemberId,_organization1.Id))
@@ -87,7 +94,8 @@ public class RemoveOrganizationMemberUnitTests
         var command = new RemoveOrganizationMemberCommand(_user1.Id,
             new Guid("8e9b1cc0-abab-1111-bbbb-5e00a21d92a8"), _organization1.Id);
         var handler = new RemoveOrganizationMemberCommandHandler(_organizationMemberRepositoryMock.Object,
-            _organizationRepositoryMock.Object,_repositoryRepositoryMock.Object,_repositoryMemberRepositoryMock.Object);
+            _organizationRepositoryMock.Object,_repositoryRepositoryMock.Object,_repositoryMemberRepositoryMock.Object,
+            _gitServiceMock.Object,_userRepositoryMock.Object);
         
         //Act
         async Task Handle() => await handler.Handle(command, default);
@@ -103,7 +111,8 @@ public class RemoveOrganizationMemberUnitTests
         var command = new RemoveOrganizationMemberCommand(_user1.Id,
             _organizationMember1.MemberId, _organization1.Id);
         var handler = new RemoveOrganizationMemberCommandHandler(_organizationMemberRepositoryMock.Object,
-            _organizationRepositoryMock.Object,_repositoryRepositoryMock.Object, _repositoryMemberRepositoryMock.Object);
+            _organizationRepositoryMock.Object,_repositoryRepositoryMock.Object, _repositoryMemberRepositoryMock.Object,
+            _gitServiceMock.Object,_userRepositoryMock.Object);
         
         //Act
         async Task Handle() => await handler.Handle(command, default);
@@ -119,7 +128,8 @@ public class RemoveOrganizationMemberUnitTests
         var command = new RemoveOrganizationMemberCommand(_user1.Id,
             _organizationMember2.MemberId, new Guid("8e9b1cc0-abab-1111-bbbb-5e00a21d92a8"));
         var handler = new RemoveOrganizationMemberCommandHandler(_organizationMemberRepositoryMock.Object,
-            _organizationRepositoryMock.Object,_repositoryRepositoryMock.Object, _repositoryMemberRepositoryMock.Object);
+            _organizationRepositoryMock.Object,_repositoryRepositoryMock.Object, _repositoryMemberRepositoryMock.Object,
+            _gitServiceMock.Object,_userRepositoryMock.Object);
         
         //Act
         async Task Handle() => await handler.Handle(command, default);
@@ -135,7 +145,8 @@ public class RemoveOrganizationMemberUnitTests
         var command = new RemoveOrganizationMemberCommand(_user1.Id,
             _organizationMember5.MemberId, _organization1.Id);
         var handler = new RemoveOrganizationMemberCommandHandler(_organizationMemberRepositoryMock.Object,
-            _organizationRepositoryMock.Object,_repositoryRepositoryMock.Object, _repositoryMemberRepositoryMock.Object);
+            _organizationRepositoryMock.Object,_repositoryRepositoryMock.Object, _repositoryMemberRepositoryMock.Object,
+            _gitServiceMock.Object,_userRepositoryMock.Object);
         
         //Act
         async Task Handle() => await handler.Handle(command, default);
@@ -153,7 +164,8 @@ public class RemoveOrganizationMemberUnitTests
 
         //Act
         var result = new RemoveOrganizationMemberCommandHandler(_organizationMemberRepositoryMock.Object,
-            _organizationRepositoryMock.Object,_repositoryRepositoryMock.Object,_repositoryMemberRepositoryMock.Object)
+            _organizationRepositoryMock.Object,_repositoryRepositoryMock.Object,_repositoryMemberRepositoryMock.Object,
+            _gitServiceMock.Object,_userRepositoryMock.Object)
             .Handle(command,default);
 
         //Assert
@@ -169,7 +181,8 @@ public class RemoveOrganizationMemberUnitTests
 
         //Act
         var result = new RemoveOrganizationMemberCommandHandler(_organizationMemberRepositoryMock.Object,
-            _organizationRepositoryMock.Object,_repositoryRepositoryMock.Object, _repositoryMemberRepositoryMock.Object)
+            _organizationRepositoryMock.Object,_repositoryRepositoryMock.Object, _repositoryMemberRepositoryMock.Object,
+            _gitServiceMock.Object,_userRepositoryMock.Object)
             .Handle(command,default);
 
         //Assert
