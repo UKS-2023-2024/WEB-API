@@ -269,7 +269,21 @@ public class GiteaService: IGitService
             .Select(f => new ContributionFile(f.name, f.type.Equals("dir"), f.path))
             .ToList();
     }
-    
+
+    public async Task<FileContent> ListFileContent(User user, Branch branch, string path)
+    {
+        SetAuthToken(_adminToken);
+        var url = $"repos/{user.Username}/{branch.Repository.Name}/contents/{path}";
+        var query = HttpUtility.ParseQueryString(string.Empty);
+        query["ref"] = branch.Name;
+        var fullUrl = $"{url}?{query}";
+        var response = await _httpClient.GetAsync(fullUrl);
+        await LogStatusAndResponseContent(response);
+        var fileContent = await DeserializeBody<GitFileContent>(response);
+        if (fileContent is null) return null;
+        return new FileContent(fileContent.content, fileContent.name, fileContent.path,  fileContent.encoding);        
+    }
+
     private async Task<T?> DeserializeBody<T>(HttpResponseMessage response)
     {
         var result = await response.Content.ReadAsStringAsync();
