@@ -6,5 +6,6 @@ public enum UpdateIssueFlag
     TITLE,
     DESCRIPTION,
     LABELS,
-    MILESTONE_ASSIGNED
+    MILESTONE_ASSIGNED,
+    MILESTONE_UNASSIGNED
 }

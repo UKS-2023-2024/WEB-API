@@ -1,6 +1,7 @@
 ﻿using Application.Issues.Commands.Create;
 using Application.Issues.Commands.Enums;
 using Application.Issues.Commands.Update;
+using Application.Issues.Queries.FindIssueEventsQuery;
 using Application.Issues.Queries.FindIssueQuery;
 using Application.Issues.Queries.FindRepositoryIssues;
 using Domain.Tasks;
@@ -68,6 +69,20 @@ public class IssueController: ControllerBase
             UpdateIssueFlag.MILESTONE_ASSIGNED, milestoneId));
         return Ok(new {Id = updatedIssueGuid});
     }
+    
+    [HttpPost("unassign/milestone/update")]
+    [Authorize]
+    public async Task<IActionResult> UpdateUnassignMilestone([FromBody] UpdateIssueDto issueDto)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Guid milestoneId;
+        Guid.TryParse(issueDto.MilestoneId, out milestoneId);
+        Guid updatedIssueGuid = await _sender.Send(new UpdateIssueCommand(Guid.Parse(issueDto.Id), creatorId,
+            issueDto.Title, issueDto.Description, issueDto.State, issueDto.Number,
+            Guid.Parse(issueDto.RepositoryId), issueDto.AssigneesIds, issueDto.LabelsIds,
+            UpdateIssueFlag.MILESTONE_UNASSIGNED, milestoneId));
+        return Ok(new {Id = updatedIssueGuid});
+    }
 
     [HttpGet("{id}")]
     [Authorize]
@@ -89,5 +104,14 @@ public class IssueController: ControllerBase
         Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
         List<Issue> issues = await _sender.Send(new FindRepositoryIssuesQuery(creatorId, Guid.Parse(repositoryId)));
         return Ok(IssuePresenter.MapIssueToIssuePresenter(issues));
+    }
+    
+    [HttpGet("{id}/events")]
+    [Authorize]
+    public async Task<IActionResult> FindIssueEvents(string id)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        List<Event> events = await _sender.Send(new FindIssueEventsQuery(creatorId, Guid.Parse(id)));
+        return Ok(events);
     }
 }

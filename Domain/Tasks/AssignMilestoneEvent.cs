@@ -5,8 +5,8 @@ namespace Domain.Tasks.Interfaces;
 
 public class AssignMilestoneEvent: Event
 {
-    public Guid MilestoneId;
-    public Milestone? Milestone;
+    public Guid MilestoneId { get; set; }
+    public Milestone? Milestone { get; set; }
 
     public AssignMilestoneEvent() {}
     public AssignMilestoneEvent(string title, Guid creatorId, Guid taskId, Guid milestoneId) 

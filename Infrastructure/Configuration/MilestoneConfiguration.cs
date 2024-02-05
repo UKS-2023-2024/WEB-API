@@ -11,5 +11,6 @@ public class MilestoneConfiguration : IEntityTypeConfiguration<Milestone>
         builder.HasOne(m => m.Repository)
             .WithMany(r => r.Milestones)
             .HasForeignKey(m => m.RepositoryId);
+        
     }
 }

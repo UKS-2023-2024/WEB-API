@@ -1,4 +1,5 @@
 ﻿using Domain.Tasks;
+using Domain.Tasks.Enums;
 using Domain.Tasks.Interfaces;
 using Infrastructure.Persistence;
 using Infrastructure.Shared.Repositories;
@@ -46,4 +47,12 @@ public class IssueRepository: BaseRepository<Issue>, IIssueRepository
             )
             .ToList();
     }
+
+    public async Task<List<Event>> FindOpenedIssueEvents(Guid issueId)
+    {
+        return await _context.Events.Where(e => e.TaskId.Equals(issueId))
+            .OrderByDescending(e => e.CreatedAt)
+            .ToListAsync();
+    }
+    
 }

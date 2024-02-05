@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240128212729_AddedMilestoneId")]
+    partial class AddedMilestoneId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -651,17 +654,6 @@ namespace Infrastructure.Migrations
                 {
                     b.HasBaseType("Domain.Tasks.Event");
 
-                    b.Property<Guid?>("MilestoneId")
-                        .HasColumnType("uuid");
-
-                    b.HasIndex("MilestoneId");
-
-                    b.ToTable("Events", t =>
-                        {
-                            t.Property("MilestoneId")
-                                .HasColumnName("UnassignMilestoneEvent_MilestoneId");
-                        });
-
                     b.HasDiscriminator().HasValue(5);
                 });
 
@@ -979,15 +971,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Assignee");
-                });
-
-            modelBuilder.Entity("Domain.Tasks.UnassignMilestoneEvent", b =>
-                {
-                    b.HasOne("Domain.Milestones.Milestone", "Milestone")
-                        .WithMany()
-                        .HasForeignKey("MilestoneId");
-
-                    b.Navigation("Milestone");
                 });
 
             modelBuilder.Entity("Domain.Auth.User", b =>
