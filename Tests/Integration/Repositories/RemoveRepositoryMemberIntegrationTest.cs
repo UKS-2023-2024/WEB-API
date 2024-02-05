@@ -135,7 +135,7 @@ public class RemoveRepositoryMemberIntegrationTest: BaseIntegrationTest
         async Task Handle() => await _sender.Send(command);
 
         //Assert
-        await Should.ThrowAsync<RepositoryMemberCantChangeHimselfException>(Handle);
+        await Should.ThrowAsync<MemberCantChangeHimselfException>(Handle);
     }
     
 }

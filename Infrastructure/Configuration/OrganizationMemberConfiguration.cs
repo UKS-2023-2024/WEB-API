@@ -10,9 +10,6 @@ public class OrganizationMemberConfiguration: IEntityTypeConfiguration<Organizat
     {
 
         builder.HasKey(member => new { member.OrganizationId, member.MemberId });
-        builder
-            .HasOne(mem => mem.Role)
-            .WithMany(r => r.Members);
         builder.HasOne(mem => mem.Member)
             .WithMany(u => u.Members)
             .HasForeignKey(mem => mem.MemberId);

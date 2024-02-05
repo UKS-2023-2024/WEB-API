@@ -32,7 +32,9 @@ public class RepositoryConfiguration: IEntityTypeConfiguration<Repository>
             .HasForeignKey(l => l.RepositoryId);
 
         builder
-            .HasMany(o => o.WatchedBy)
-            .WithMany(u => u.Watched);
+              .HasMany(r => r.WatchedBy)
+              .WithOne(w => w.Repository)
+              .HasForeignKey(w => w.RepositoryId)
+              .OnDelete(DeleteBehavior.Cascade);
     }
 }

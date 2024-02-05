@@ -1,53 +1,46 @@
 ﻿using Application.Shared;
+using Domain.Auth;
+using Domain.Auth.Interfaces;
 using Domain.Organizations;
 using Domain.Organizations.Exceptions;
 using Domain.Organizations.Interfaces;
 using Domain.Organizations.Types;
 using Domain.Repositories.Interfaces;
+using Domain.Shared.Interfaces;
 
 namespace Application.Organizations.Commands.RemoveOrganizationMember;
 
 public class RemoveOrganizationMemberCommandHandler: ICommandHandler<RemoveOrganizationMemberCommand>
 {
-    private readonly IPermissionService _permissionService;
     private readonly IOrganizationMemberRepository _organizationMemberRepository;
     private readonly IRepositoryMemberRepository _repositoryMemberRepository;
     private readonly IOrganizationRepository _organizationRepository;
     private readonly IRepositoryRepository _repositoryRepository;
-    private readonly IOrganizationRoleRepository _organizationRoleRepository;
+    private readonly IGitService _gitService;
+    private readonly IUserRepository _userRepository;
     
     public RemoveOrganizationMemberCommandHandler(
         IOrganizationMemberRepository organizationMemberRepository,
-        IPermissionService permissionService,
         IOrganizationRepository organizationRepository,
         IRepositoryRepository repositoryRepository,
         IRepositoryMemberRepository repositoryMemberRepository,
-        IOrganizationRoleRepository organizationRoleRepository)
+        IGitService gitService,
+        IUserRepository userRepository)
     {
         _organizationMemberRepository = organizationMemberRepository;
-        _permissionService = permissionService;
         _organizationRepository = organizationRepository;
         _repositoryRepository = repositoryRepository;
         _repositoryMemberRepository = repositoryMemberRepository;
-        _organizationRoleRepository = organizationRoleRepository;
+        _gitService = gitService;
+        _userRepository = userRepository;
     }
     
     public async Task Handle(RemoveOrganizationMemberCommand request, CancellationToken cancellationToken)
     {
-        await _permissionService.ThrowIfNoPermission(new PermissionParams
-        {
-            Authorized = request.OwnerId,
-            OrganizationId = request.OrganizationId,
-            Permission = "admin"
-        });
-
-        var ownerRole = await _organizationRoleRepository.FindByName("OWNER");
-        
         var member = await _organizationMemberRepository.FindByUserIdAndOrganizationId(request.OrganizationMemberId,request.OrganizationId);
-        if (member is null || member.Deleted) 
-            throw new OrganizationMemberNotFoundException();
+        OrganizationMember.ThrowIfDoesntExist(member);
 
-        if (member.HasRole(ownerRole))
+        if (member.HasRole(OrganizationMemberRole.OWNER))
             throw new CantRemoveOrganizationOwnerException();
 
         var organization =  await _organizationRepository.FindById(request.OrganizationId);
@@ -64,5 +57,9 @@ public class RemoveOrganizationMemberCommandHandler: ICommandHandler<RemoveOrgan
             repository.RemoveMember(repositoryMember);
             _repositoryRepository.Update(repository);
         }
+
+        var user = await _userRepository.FindUserById(request.OrganizationMemberId);
+        User.ThrowIfDoesntExist(user);
+        await _gitService.RemoveOrganizationMember(user!, organization);
     }
 }

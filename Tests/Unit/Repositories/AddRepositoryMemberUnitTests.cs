@@ -8,6 +8,7 @@ using Domain.Organizations.Exceptions;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
+using Domain.Shared.Interfaces;
 using Moq;
 using Shouldly;
 
@@ -18,6 +19,7 @@ public class AddRepositoryMemberUnitTests
     private readonly Mock<IRepositoryRepository> _repositoryRepository = new();
     private readonly Mock<IUserRepository> _userRepository = new();
     private readonly Mock<IRepositoryInviteRepository> _repositoryInviteRepository = new();
+    private readonly Mock<IGitService> _gitServiceMock = new();
     private readonly User _user1;
     private readonly User _user2;
     private readonly Repository _repository1;
@@ -62,7 +64,7 @@ public class AddRepositoryMemberUnitTests
 
         //Act
         var result = new AddRepositoryMemberCommandHandler(_userRepository.Object,_repositoryInviteRepository.Object,
-            _repositoryRepository.Object).Handle(command,default);
+            _repositoryRepository.Object, _gitServiceMock.Object).Handle(command,default);
 
         //Assert
         result.IsFaulted.ShouldBe(false);
@@ -80,7 +82,7 @@ public class AddRepositoryMemberUnitTests
         var command = new AddRepositoryMemberCommand(repositoryInvite.Id);
 
         var handler = new AddRepositoryMemberCommandHandler(_userRepository.Object,_repositoryInviteRepository.Object,
-            _repositoryRepository.Object);
+            _repositoryRepository.Object, _gitServiceMock.Object);
         
         //Act
         async Task Handle() => await handler.Handle(command, default);
@@ -100,7 +102,7 @@ public class AddRepositoryMemberUnitTests
         var command = new AddRepositoryMemberCommand(repositoryInvite.Id);
 
         var handler = new AddRepositoryMemberCommandHandler(_userRepository.Object,_repositoryInviteRepository.Object,
-            _repositoryRepository.Object);
+            _repositoryRepository.Object, _gitServiceMock.Object);
         
         //Act
         async Task Handle() => await handler.Handle(command, default);
@@ -120,7 +122,7 @@ public class AddRepositoryMemberUnitTests
         var command = new AddRepositoryMemberCommand(repositoryInvite.Id);
 
         var handler = new AddRepositoryMemberCommandHandler(_userRepository.Object,_repositoryInviteRepository.Object,
-            _repositoryRepository.Object);
+            _repositoryRepository.Object, _gitServiceMock.Object);
         
         //Act
         async Task Handle() => await handler.Handle(command, default);
@@ -141,7 +143,7 @@ public class AddRepositoryMemberUnitTests
         var command = new AddRepositoryMemberCommand(new Guid("bbbb1cc0-35d3-4bf2-9f2c-5e00a21d92a9"));
 
         var handler = new AddRepositoryMemberCommandHandler(_userRepository.Object,_repositoryInviteRepository.Object,
-            _repositoryRepository.Object);
+            _repositoryRepository.Object, _gitServiceMock.Object);
         
         //Act
         async Task Handle() => await handler.Handle(command, default);

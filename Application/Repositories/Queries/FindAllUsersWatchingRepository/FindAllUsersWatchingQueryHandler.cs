@@ -1,11 +1,12 @@
 ﻿using Domain.Auth;
 using Domain.Repositories;
+using Domain.Repositories.Enums;
 using Domain.Repositories.Interfaces;
 using MediatR;
 
 namespace Application.Repositories.Queries.FindAllUsersWatchingRepository;
 
-public class FindAllUsersWatchingQueryHandler: IRequestHandler<FindAllUsersWatchingQuery, IEnumerable<User>>
+public class FindAllUsersWatchingQueryHandler: IRequestHandler<FindAllUsersWatchingQuery, IEnumerable<RepositoryWatcher>>
 {
     private readonly IRepositoryMemberRepository _repositoryMemberRepository;
     private readonly IRepositoryRepository _repositoryRepository;
@@ -16,11 +17,12 @@ public class FindAllUsersWatchingQueryHandler: IRequestHandler<FindAllUsersWatch
         _repositoryMemberRepository = repositoryMemberRepository;
     }
 
-    public Task<IEnumerable<User>> Handle(FindAllUsersWatchingQuery request, CancellationToken cancellationToken)
+    public Task<IEnumerable<RepositoryWatcher>> Handle(FindAllUsersWatchingQuery request, CancellationToken cancellationToken)
     {
         var repository = _repositoryRepository.Find(request.RepositoryId);
         Repository.ThrowIfDoesntExist(repository);
         repository!.ThrowIfUserCantAccessRepositoryData(request.UserId);
-        return Task.FromResult<IEnumerable<User>>(repository.WatchedBy);
+        var watchers = repository.WatchedBy.Where(w => w.WatchingPreferences == WatchingPreferences.AllActivity).ToList();
+        return Task.FromResult<IEnumerable<RepositoryWatcher>>(watchers);
     }
 }

@@ -43,7 +43,7 @@ namespace Domain.Repositories
         
         public void ThrowIfSameAs(RepositoryMember repositoryMember)
         {
-            if (Id.Equals(repositoryMember.Id)) throw new RepositoryMemberCantChangeHimselfException();
+            if (Id.Equals(repositoryMember.Id)) throw new MemberCantChangeHimselfException();
         }
 
         public void ActivateMemberAgain()
@@ -59,6 +59,11 @@ namespace Domain.Repositories
         public void SetRole(RepositoryMemberRole role)
         {
             Role = role;
+        }
+        
+        public bool HasRole(RepositoryMemberRole role)
+        {
+            return Role.Equals(role);
         }
     }
 }

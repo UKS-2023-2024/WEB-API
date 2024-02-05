@@ -4,6 +4,7 @@ using Domain.Auth.Enums;
 using Domain.Auth.Exceptions;
 using Domain.Auth.Interfaces;
 using Domain.Exceptions;
+using Domain.Shared.Interfaces;
 using Moq;
 using Shouldly;
 
@@ -13,11 +14,13 @@ public class RegistrationUnitTests
 {
     private readonly Mock<IUserRepository> _userRepositoryMock;
     private readonly Mock<IHashingService> _hashingService;
+    private readonly Mock<IGitService> _gitService;
 
     public RegistrationUnitTests()
     {
         _userRepositoryMock = new();
         _hashingService = new();
+        _gitService = new();
     }
 
     [Fact]
@@ -32,7 +35,7 @@ public class RegistrationUnitTests
 
         _userRepositoryMock.Setup(x => x.FindUserByEmail(It.IsAny<string>()))
             .ReturnsAsync(foundUser);
-        var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object, _hashingService.Object);
+        var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object, _hashingService.Object, _gitService.Object);
         //Act
         Func<Task> handle = async () =>
         {
@@ -58,7 +61,7 @@ public class RegistrationUnitTests
         _userRepositoryMock.Setup(x => x.FindUserByEmail(It.IsAny<string>()))
             .ReturnsAsync(foundUser);
         _userRepositoryMock.Setup(x => x.Create(It.IsAny<User>())).ReturnsAsync(registeredUser);
-        var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object, _hashingService.Object);
+        var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object, _hashingService.Object, _gitService.Object);
         //Act
         Func<Task> handle = async () =>
         {
@@ -81,7 +84,7 @@ public class RegistrationUnitTests
         
         _userRepositoryMock.Setup(x => x.FindUserByEmail(It.IsAny<string>()))
             .ReturnsAsync(foundUser);
-        var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object, _hashingService.Object);
+        var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object, _hashingService.Object, _gitService.Object);
         //Act
         Func<Task> handle = async () =>
         {
@@ -103,7 +106,7 @@ public class RegistrationUnitTests
         
         _userRepositoryMock.Setup(x => x.FindUserByEmail(It.IsAny<string>()))
             .ReturnsAsync(foundUser);
-        var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object, _hashingService.Object);
+        var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object, _hashingService.Object, _gitService.Object);
         //Act
         Func<Task> handle = async () =>
         {
@@ -129,7 +132,7 @@ public class RegistrationUnitTests
             .ReturnsAsync(foundUser);
         _userRepositoryMock.Setup(x => x.Create(It.IsAny<User>()))
             .ReturnsAsync(registeredUser);
-        var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object, _hashingService.Object);
+        var handler = new RegisterUserCommandHandler(_userRepositoryMock.Object, _hashingService.Object, _gitService.Object);
         //Act
         await handler.Handle(command, default);
 

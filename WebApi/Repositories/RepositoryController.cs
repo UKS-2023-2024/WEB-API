@@ -217,14 +217,14 @@ public class RepositoryController : ControllerBase
     }
 
 
-    [HttpPatch("watch/{repositoryId:guid}")]
+    [HttpPatch("watch")]
     [Authorize]
-    public async Task<IActionResult> WatchRepository(Guid repositoryId)
+    public async Task<IActionResult> WatchRepository([FromBody] WatchRepositoryDto dto)
     {
         var user = await _userIdentityService.FindUserFromToken(HttpContext.User);
         if (user is null)
             return Unauthorized();
-        await _sender.Send(new WatchRepositoryCommand(user, repositoryId));
+        await _sender.Send(new WatchRepositoryCommand(user, dto.RepositoryId, dto.WatchingPreferences));
         return Ok();
     }
 
@@ -234,8 +234,8 @@ public class RepositoryController : ControllerBase
     public async Task<IActionResult> IsUserWatchingRepository(Guid repositoryId)
     {
         var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        var didUserStar = await _sender.Send(new IsUserWatchingRepositoryQuery(userId, repositoryId));
-        return Ok(didUserStar);
+        var watchingPref = await _sender.Send(new IsUserWatchingRepositoryQuery(userId, repositoryId));
+        return Ok(watchingPref);
     }
 
     [HttpPatch("unwatch/{repositoryId}")]
@@ -254,7 +254,7 @@ public class RepositoryController : ControllerBase
     public async Task<IActionResult> GetAllWatching(Guid repositoryId)
     {
         var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        var users = await _sender.Send(new FindAllUsersWatchingQuery(userId, repositoryId));
-        return Ok(UserThatStarredPresenter.MapUserToStarredPresenters(users));
+        var watchers = await _sender.Send(new FindAllUsersWatchingQuery(userId, repositoryId));
+        return Ok(RepositoryWatcherPresenter.MapRepositoryWatcherToRepositoryWatcherPresenters(watchers));
     }
 }

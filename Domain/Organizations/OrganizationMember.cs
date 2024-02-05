@@ -1,6 +1,7 @@
 ﻿using Domain.Auth;
 using Domain.Auth.Enums;
 using Domain.Organizations.Exceptions;
+using Domain.Repositories.Exceptions;
 
 namespace Domain.Organizations;
 
@@ -12,14 +13,14 @@ public class OrganizationMember
     
     public bool Deleted { get; private set; }
     public Guid OrganizationId { get; private set; }
-    public OrganizationRole Role { get; private set; }
+    public OrganizationMemberRole Role { get; private set; }
 
     public OrganizationMember()
     {
     }
 
     private OrganizationMember(User member, Guid memberId, Organization organization, 
-        Guid organizationId, OrganizationRole role)
+        Guid organizationId, OrganizationMemberRole role)
     {
         Member = member;
         MemberId = memberId;
@@ -29,24 +30,24 @@ public class OrganizationMember
         Deleted = false;
     }
 
-    private OrganizationMember(Guid userId, Guid organizationId, OrganizationRole role)
+    private OrganizationMember(Guid userId, Guid organizationId, OrganizationMemberRole role)
     {
         MemberId = userId;
         OrganizationId = organizationId;
         Role = role;
     }
 
-    public bool HasRole(OrganizationRole role)
+    public bool HasRole(OrganizationMemberRole role)
     {
         return Role.Equals(role);
     }
 
-    public static OrganizationMember Create(User member, Organization organization, OrganizationRole role)
+    public static OrganizationMember Create(User member, Organization organization, OrganizationMemberRole role)
     {
         return new OrganizationMember(member, member.Id, organization, organization.Id, role);
     }
 
-    public static OrganizationMember Create(Guid userId, Guid organizationId, OrganizationRole role)
+    public static OrganizationMember Create(Guid userId, Guid organizationId, OrganizationMemberRole role)
     {
         return new OrganizationMember(userId, organizationId, role);
     }
@@ -63,10 +64,25 @@ public class OrganizationMember
 
     public static void ThrowIfDoesntExist(OrganizationMember? member)
     {
-        if (member is null) throw new OrganizationMemberNotFoundException();
+        if (member is null || member.Deleted) throw new OrganizationMemberNotFoundException();
     }
     
-    public void SetRole(OrganizationRole role)
+    public void ThrowIfNoAdminPrivileges()
+    {
+        if (Role != OrganizationMemberRole.OWNER && Role != OrganizationMemberRole.MODERATOR) throw new MemberHasNoPrivilegeException();
+    }
+    
+    public void ThrowIfNotOwner()
+    {
+        if (Role != OrganizationMemberRole.OWNER) throw new MemberHasNoPrivilegeException();
+    }
+    
+    public void ThrowIfSameAs(OrganizationMember organizationMember)
+    {
+        if (MemberId.Equals(organizationMember.MemberId)) throw new MemberCantChangeHimselfException();
+    }
+    
+    public void SetRole(OrganizationMemberRole role)
     {
         Role = role;
     }

@@ -5,6 +5,7 @@ using Domain.Auth.Enums;
 using Domain.Auth.Exceptions;
 using Domain.Auth.Interfaces;
 using Domain.Exceptions;
+using Domain.Shared.Interfaces;
 
 namespace Application.Auth.Commands.Register;
 
@@ -12,11 +13,13 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, G
 {
     private readonly IUserRepository _userRepository;
     private readonly IHashingService _hashingService;
+    private readonly IGitService _gitService;
 
-    public RegisterUserCommandHandler(IUserRepository userRepository, IHashingService hashingService)
+    public RegisterUserCommandHandler(IUserRepository userRepository, IHashingService hashingService, IGitService gitService)
     {
         _userRepository = userRepository;
         _hashingService = hashingService;
+        _gitService = gitService;
     }
     
     public async Task<Guid> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
@@ -28,6 +31,14 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, G
         var registeredUser = User.Create(request.PrimaryEmail, request.FullName, request.Username,
             hashedPassword, UserRole.USER);
         var created = await _userRepository.Create(registeredUser);
+        
+        
+        // Git related data
+        var token = await _gitService.CreateUser(created, request.Password);
+        created.SetGitToken(token);
+        _userRepository.Update(created);
+        
+        
         return created.Id;
     }
 }

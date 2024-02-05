@@ -17,6 +17,7 @@ using WEB_API.Shared.UserIdentityService;
 using TokenHandler = WEB_API.Shared.TokenHandler.TokenHandler;
 using Newtonsoft.Json;
 
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
@@ -102,6 +103,8 @@ builder.Services.AddAuthorization((options =>
     options.AddPolicy("User" , policy => policy.RequireRole(UserRole.USER.ToString() ));
 }));
 
+//vec je registrovan?
+//builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Application.Notifications.EventHandlers.NotificationHandler).Assembly));
 builder.Services
     .AddDomain()
     .AddApplication()

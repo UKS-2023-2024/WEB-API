@@ -5,6 +5,7 @@ using Domain.Exceptions;
 using Domain.Milestones.Exceptions;
 using Domain.Organizations.Exceptions;
 using Domain.Repositories.Exceptions;
+using Domain.Shared.Exceptions;
 using Domain.Tasks.Exceptions;
 
 namespace WEB_API.ExceptionHandling;
@@ -40,9 +41,11 @@ public static class ExceptionHandler
                 or UserNotAOrganizationMemberException => HttpStatusCode.Forbidden,
             InvitationExpiredException
                 or RepositoryAlreadyStarredException
-                or RepositoryMemberCantChangeHimselfException
+                or MemberCantChangeHimselfException
                 or RepositoryMemberCantBeDeletedException
                 or CantRemoveOrganizationOwnerException
+                or CantChangeOwnerException
+                or GitException
                 or RepositoryNotStarredException => HttpStatusCode.BadRequest
         };
         return (int)code;

@@ -2,6 +2,7 @@
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
+using Domain.Shared.Interfaces;
 
 namespace Application.Repositories.Commands.HandleRepositoryMembers.RemoveRepositoryMember;
 
@@ -10,11 +11,16 @@ public class RemoveRepositoryMemberCommandHandler: ICommandHandler<RemoveReposit
     
     private readonly IRepositoryMemberRepository _repositoryMemberRepository;
     private readonly IRepositoryRepository _repositoryRepository;
+    private readonly IGitService _gitService;
 
-    public RemoveRepositoryMemberCommandHandler(IRepositoryRepository repositoryRepository, IRepositoryMemberRepository repositoryMemberRepository)
+    public RemoveRepositoryMemberCommandHandler(
+        IRepositoryRepository repositoryRepository,
+        IRepositoryMemberRepository repositoryMemberRepository,
+        IGitService gitService)
     {
         _repositoryRepository = repositoryRepository;
         _repositoryMemberRepository = repositoryMemberRepository;
+        _gitService = gitService;
     }
 
     public async Task Handle(RemoveRepositoryMemberCommand request, CancellationToken cancellationToken)
@@ -36,5 +42,9 @@ public class RemoveRepositoryMemberCommandHandler: ICommandHandler<RemoveReposit
 
         repository!.RemoveMember(member!);
         _repositoryRepository.Update(repository);
+        
+        var repoOwner = repository!.Organization == null ? repository.Members.First(repoMember => 
+            repoMember.Role == RepositoryMemberRole.OWNER).Member.Username : repository.Organization.Name;
+        await _gitService.RemoveRepositoryMember(repoOwner, repository, member.Member);
     }
 }

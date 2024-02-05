@@ -8,6 +8,7 @@ using Domain.Organizations.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
+using Domain.Shared.Interfaces;
 
 namespace Application.Repositories.Commands.Create.CreateForOrganization;
 
@@ -16,12 +17,14 @@ public class CreateRepositoryForOrganizationCommandHandler : ICommandHandler<Cre
     private IUserRepository _userRepository;
     private IRepositoryRepository _repositoryRepository;
     private IOrganizationRepository _organizationRepository;
+    private IGitService _gitService;
 
-    public CreateRepositoryForOrganizationCommandHandler(IUserRepository userRepository, IRepositoryRepository repositoryRepository, IOrganizationRepository organizationRepository)
+    public CreateRepositoryForOrganizationCommandHandler(IUserRepository userRepository, IRepositoryRepository repositoryRepository, IOrganizationRepository organizationRepository, IGitService gitService)
     {
         _userRepository = userRepository;
         _repositoryRepository = repositoryRepository;
         _organizationRepository = organizationRepository;
+        _gitService = gitService;
     }
 
     public async Task<Guid> Handle(CreateRepositoryForOrganizationCommand request, CancellationToken cancellationToken)
@@ -40,7 +43,7 @@ public class CreateRepositoryForOrganizationCommandHandler : ICommandHandler<Cre
         repository.AddBranch(Branch.Create("main", Guid.Empty, true, creator.Id));
 
         repository = await _repositoryRepository.Create(repository);
-
+        await _gitService.CreateOrganizationRepository(creator, organization, repository);
         return repository.Id;
     }
 }

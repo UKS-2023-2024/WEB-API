@@ -2,6 +2,7 @@
 using Domain.Branches;
 using Domain.Milestones;
 using Domain.Organizations;
+using Domain.Repositories.Enums;
 using Domain.Repositories.Exceptions;
 using Domain.Tasks;
 
@@ -23,7 +24,9 @@ namespace Domain.Repositories
         public List<Branch> Branches { get; private set; } = new();
         public List<Tasks.Task> Tasks { get; private set; } = new();
         public List<Label> Labels { get; private set; } = new();
-        public List<User> WatchedBy { get; private set; } = new();
+        public List<RepositoryWatcher> WatchedBy { get; private set; } = new();
+        public string? HttpCloneUrl { get; private set; }
+        public string? SshCloneUrl { get; private set; }
 
         private Repository() { }
 
@@ -35,6 +38,12 @@ namespace Domain.Repositories
             Organization = organization;
             StarredBy = starredBy;
             _members.Add(RepositoryMember.Create(creator, this, RepositoryMemberRole.OWNER));
+        }
+
+        public void SetCloneUrls(string? httpsCloneUrl, string? sshCloneUrl)
+        {
+            HttpCloneUrl = httpsCloneUrl;
+            SshCloneUrl = sshCloneUrl;
         }
 
         public static Repository Create(string name, string description, bool isPrivate, Organization? organization,User creator)
@@ -59,7 +68,7 @@ namespace Domain.Repositories
                 member.ActivateMemberAgain();
                 return member;
             }
-            member = RepositoryMember.Create(user, this, RepositoryMemberRole.CONTRIBUTOR);
+            member = RepositoryMember.Create(user, this, RepositoryMemberRole.READ);
             _members.Add(member);
             return member;
         }
@@ -139,25 +148,19 @@ namespace Domain.Repositories
             Branches.Add(branch);
         }
 
-        public void AddToWatchedBy(User user)
+        public void AddToWatchedBy(User user, WatchingPreferences preferences)
         {
-            WatchedBy.Add(user);
+            WatchedBy.Add(RepositoryWatcher.Create(user.Id, preferences, this.Id));
         }
 
-        public void ThrowIfAlreadyWatchedBy(Guid userId)
+        public void RemoveFromWatchedBy(RepositoryWatcher watcher)
         {
-            if (WatchedBy.Any(user => user.Id == userId))
-                throw new RepositoryAlreadyWatchedException();
-        }
-
-        public void RemoveFromWatchedBy(User user)
-        {
-            WatchedBy.Remove(user);
+            WatchedBy.Remove(watcher);
         }
 
         public void ThrowIfNotWatchedBy(Guid userId)
         {
-            if (WatchedBy.All(u => u.Id != userId))
+            if (WatchedBy.All(u => u.UserId != userId))
                 throw new RepositoryNotWatchedException();
         }
     }

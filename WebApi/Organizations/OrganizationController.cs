@@ -1,4 +1,5 @@
 ﻿using Application.Organizations.Commands.AcceptInvite;
+using Application.Organizations.Commands.ChangeOrganizationMemberRole;
 using Application.Organizations.Commands.Create;
 using Application.Organizations.Commands.Delete;
 using Application.Organizations.Commands.RemoveOrganizationMember;
@@ -101,6 +102,15 @@ public class OrganizationController : ControllerBase
     public async Task<IActionResult> AcceptOrgInvitation(string inviteId)
     {
         await _sender.Send(new AcceptInviteCommand(new Guid(inviteId)));
+        return Ok();
+    }
+    
+    [HttpPatch("change-user-role/{repositoryId:guid}/{organizationMemberId:guid}/{role}")]
+    [Authorize]
+    public async Task<IActionResult> ChangeOrganizationMemberRole(Guid repositoryId, Guid organizationMemberId,OrganizationMemberRole role)
+    {
+        var ownerId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        await _sender.Send(new ChangeOrganizationMemberRoleCommand(ownerId, organizationMemberId, repositoryId, role));
         return Ok();
     }
     

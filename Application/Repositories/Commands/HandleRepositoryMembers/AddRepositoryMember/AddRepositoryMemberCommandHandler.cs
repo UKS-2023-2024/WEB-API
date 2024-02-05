@@ -3,6 +3,7 @@ using Domain.Auth;
 using Domain.Auth.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Interfaces;
+using Domain.Shared.Interfaces;
 
 namespace Application.Repositories.Commands.HandleRepositoryMembers.AddRepositoryMember;
 
@@ -11,15 +12,18 @@ public class AddRepositoryMemberCommandHandler : ICommandHandler<AddRepositoryMe
     private readonly IUserRepository _userRepository;
     private readonly IRepositoryInviteRepository _repositoryInviteRepository;
     private readonly IRepositoryRepository _repositoryRepository;
+    private readonly IGitService _gitService;
 
     public AddRepositoryMemberCommandHandler(
         IUserRepository userRepository, 
         IRepositoryInviteRepository repositoryInviteRepository, 
-        IRepositoryRepository repositoryRepository)
+        IRepositoryRepository repositoryRepository,
+        IGitService gitService)
     {
         _userRepository = userRepository;
         _repositoryInviteRepository = repositoryInviteRepository;
         _repositoryRepository = repositoryRepository;
+        _gitService = gitService;
     }
     
     
@@ -38,5 +42,9 @@ public class AddRepositoryMemberCommandHandler : ICommandHandler<AddRepositoryMe
         repository!.AddMember(user!);
         _repositoryRepository.Update(repository);
         _repositoryInviteRepository.Delete(invite);
+        
+        var repoOwner = repository!.Organization == null ? repository.Members.First(repoMember => 
+            repoMember.Role == RepositoryMemberRole.OWNER).Member.Username : repository.Organization.Name;
+        await _gitService.AddRepositoryMember(repoOwner, repository, user!,"read");
     }
 }

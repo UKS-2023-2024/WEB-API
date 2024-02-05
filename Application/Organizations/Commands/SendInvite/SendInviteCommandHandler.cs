@@ -11,29 +11,23 @@ namespace Application.Organizations.Commands.SendInvite;
 public class SendInviteCommandHandler: ICommandHandler<SendInviteCommand>
 {
     private readonly IMediator _mediator;
-    private readonly IPermissionService _permissionService;
     private readonly IOrganizationInviteRepository _organizationInviteRepository;
     private readonly IOrganizationMemberRepository _organizationMemberRepository;
     public SendInviteCommandHandler(
         IMediator mediator,
         IOrganizationMemberRepository organizationMemberRepository,
-        IPermissionService permissionService,
         IOrganizationInviteRepository organizationInviteRepository)
     {
         _organizationMemberRepository = organizationMemberRepository;
-        _permissionService = permissionService;
         _mediator = mediator;
         _organizationInviteRepository = organizationInviteRepository;
     }
 
     public async Task Handle(SendInviteCommand request, CancellationToken cancellationToken)
     {
-        await _permissionService.ThrowIfNoPermission(new PermissionParams
-        {
-            Authorized = request.Authorized,
-            OrganizationId = request.OrganizationId,
-            Permission = "admin"
-        });
+        var sender = await _organizationMemberRepository.FindByUserIdAndOrganizationId(request.Authorized, request.OrganizationId);
+        OrganizationMember.ThrowIfDoesntExist(sender);
+        sender.ThrowIfNoAdminPrivileges();
         
         var member = await _organizationMemberRepository.FindByUserIdAndOrganizationId(request.MemberId, request.OrganizationId);
         if (member is not null && !member.Deleted) 

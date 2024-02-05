@@ -16,11 +16,14 @@ public class Organization
     public string? Location { get; private set; }
     public List<OrganizationInvite> PendingInvites { get; private set; }
     public List<Repository> Repositories { get; private set; }
+
+    public int? memberTeamId { get; private set; }
+
     private Organization()
     {
     }
 
-    private Organization(string name, string contactEmail, List<User> pendingMembers)
+    private Organization(string name, string contactEmail, List<User> pendingMembers,User creator)
     {
         Name = name;
         ContactEmail = contactEmail;
@@ -28,31 +31,33 @@ public class Organization
         PendingInvites = pendingMembers
             .Select(mem => OrganizationInvite.Create(mem.Id, Id))
             .ToList();
+        var member = OrganizationMember.Create(creator, this, OrganizationMemberRole.OWNER);
+        _members.Add(member);
     }
 
-    public static Organization Create(string name, string contactEmail, List<User> pendingMembers)
+    public static Organization Create(string name, string contactEmail, List<User> pendingMembers,User creator)
     {
-        Organization newOrganization = new Organization(name, contactEmail, pendingMembers);
+        var newOrganization = new Organization(name, contactEmail, pendingMembers,creator);
         return newOrganization;
     }
 
-    public static Organization Create(Guid id, string name, string contactEmail, List<User> pendingMembers)
+    public static Organization Create(Guid id, string name, string contactEmail, List<User> pendingMembers,User creator)
     {
-        Organization newOrganization = new Organization(name, contactEmail, pendingMembers);
+        Organization newOrganization = new Organization(name, contactEmail, pendingMembers,creator);
         newOrganization.Id = id;
         return newOrganization;
     }
     
-    public OrganizationMember AddMember(User user,OrganizationRole role)
+    public OrganizationMember AddMember(User user)
     {
         var member = _members.FirstOrDefault(m => m.MemberId == user.Id);
         if (member is not null)
         {
             member.ActivateMemberAgain();
-            member.SetRole(role);
+            member.SetRole(OrganizationMemberRole.MEMBER);
             return member;
         }
-        member = OrganizationMember.Create(user, this, role);
+        member = OrganizationMember.Create(user, this, OrganizationMemberRole.MEMBER);
         _members.Add(member);
         return member;
     }
@@ -68,5 +73,10 @@ public class Organization
     public static void ThrowIfDoesntExist(Organization? organization)
     {
         if (organization is null) throw new OrganizationNotFoundException();
+    }
+
+    public void SetMemberTeamId(int teamId)
+    {
+        memberTeamId = teamId;
     }
 }

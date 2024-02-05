@@ -1,6 +1,7 @@
 ﻿using Domain.Organizations;
 using Domain.Organizations.Interfaces;
 using Domain.Organizations.Types;
+using Domain.Repositories;
 using Infrastructure.Persistence;
 using Infrastructure.Shared.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -22,28 +23,19 @@ public class OrganizationRepository: BaseRepository<Organization>, IOrganization
             .FirstOrDefaultAsync();
     }
 
-    public Task<OrganizationMember?> FindMemberWithOrgPermission(PermissionParams data)
-    {
-        return _context.OrganizationMembers
-            .Include(mem => mem.Role)
-            .ThenInclude(role => role.Permissions)
-            .Where(o =>
-                o.MemberId.Equals(data.Authorized) &&
-                o.OrganizationId.Equals(data.OrganizationId) &&
-                o.Role.Permissions.Any(p => p.PermissionName.Equals(data.Permission))
-            ).FirstOrDefaultAsync();
-    }
-
-    public Task<OrganizationRole?> FindRole(string name)
-    {
-        return _context.OrganizationRoles
-            .FirstOrDefaultAsync(r => r.Name.Equals(name));
-    }
-
     public Task<Organization?> FindById(Guid organizationId)
     {
         return _context.Organizations
             .Include(organization => organization.Members )
             .FirstOrDefaultAsync(org => org.Id.Equals(organizationId));
+    }
+
+    public async Task<IEnumerable<Organization>> FindAllByOwnerId(Guid id)
+    {
+        return _context.Organizations
+            .Include(r => r.Members)
+            .ThenInclude(m => m.Member)
+            .Where(r => r.Members.Any(m => m.Member.Id == id && m.Role == OrganizationMemberRole.OWNER))
+            .ToList();
     }
 }

@@ -20,7 +20,6 @@ public class OrganizationMemberRepository: BaseRepository<OrganizationMember>, I
     public Task<OrganizationMember?> FindByUserIdAndOrganizationId(Guid userId, Guid organizationId)
     {
         return _context.OrganizationMembers
-            .Include(member => member.Role )
             .Where(o => o.MemberId.Equals(userId) && o.OrganizationId.Equals(organizationId)
             && !o.Deleted)
             .FirstOrDefaultAsync();
@@ -30,7 +29,7 @@ public class OrganizationMemberRepository: BaseRepository<OrganizationMember>, I
     {
         return _context.OrganizationMembers
             .Include(x => x.Organization)
-            .Where(x => x.MemberId.Equals(userId))
+            .Where(x => x.MemberId.Equals(userId) && !x.Deleted)
             .Select(x => x.Organization)
             .ToListAsync();
     }
@@ -54,7 +53,6 @@ public class OrganizationMemberRepository: BaseRepository<OrganizationMember>, I
     {
         return Task.FromResult(_context.OrganizationMembers
             .Include(member => member.Member)
-            .Include(member => member.Role)
             .Where(member => member.OrganizationId.Equals(organizationId) && !member.Deleted).AsEnumerable());
     }
 }

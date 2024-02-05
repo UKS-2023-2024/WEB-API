@@ -2,6 +2,7 @@
 using Domain.Auth;
 using Domain.Branches;
 using Domain.Milestones;
+using Domain.Notifications;
 using Domain.Organizations;
 using Domain.Repositories;
 using Domain.Tasks;
@@ -25,9 +26,6 @@ public class MainDbContext: DbContext
     public DbSet<OrganizationMember> OrganizationMembers { get; set; } = null!;
     public DbSet<Repository> Repositories { get; set; } = null!;
     public DbSet<RepositoryMember> RepositoryMembers { get; set; } = null!;
-    public DbSet<OrganizationRole> OrganizationRoles { get; set; } = null!;
-    public DbSet<OrganizationPermission> OrganizationPermissions { get; set; } = null!;
-    public DbSet<OrganizationRolePermission> OrganizationRolePermissions { get; set; } = null!;
     public DbSet<OrganizationInvite> OrganizationInvites { get; set; } = null!;
     public DbSet<RepositoryInvite> RepositoryInvites { get; set; } = null!;
     public DbSet<Milestone> Milestones { get; set; } = null!;
@@ -36,6 +34,8 @@ public class MainDbContext: DbContext
     public DbSet<Label> Labels { get; set; } = null!;
     public DbSet<Event> Events { get; set; } = null!;
     public DbSet<Issue> Issues { get; set; } = null!;
+    public DbSet<Notification> Notifications { get; set; } = null!;
+    public DbSet<RepositoryWatcher> RepositoryWatchers { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

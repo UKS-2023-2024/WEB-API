@@ -1,18 +1,25 @@
-﻿using Domain.Repositories.Interfaces;
+﻿using Domain.Repositories;
+using Domain.Repositories.Enums;
+using Domain.Repositories.Interfaces;
 using MediatR;
 
 namespace Application.Repositories.Queries.IsUserWatchingRepository;
 
-public class IsUserWatchingRepositoryQueryHandler: IRequestHandler<IsUserWatchingRepositoryQuery, bool>
+public class IsUserWatchingRepositoryQueryHandler : IRequestHandler<IsUserWatchingRepositoryQuery, WatchingPreferences?>
 {
-    private readonly IRepositoryRepository _repositoryRepository;
-    public IsUserWatchingRepositoryQueryHandler(IRepositoryRepository repositoryRepository)
+    private readonly IRepositoryWatcherRepository _repositoryWatcherRepository;
+    public IsUserWatchingRepositoryQueryHandler(IRepositoryWatcherRepository repositoryWatcherRepository)
     {
-        _repositoryRepository = repositoryRepository;
+        _repositoryWatcherRepository = repositoryWatcherRepository;
     }
     
-    public async Task<bool> Handle(IsUserWatchingRepositoryQuery request, CancellationToken cancellationToken)
+    public async Task<WatchingPreferences?> Handle(IsUserWatchingRepositoryQuery request, CancellationToken cancellationToken)
     {
-       return await _repositoryRepository.IsUserWatchingRepository(request.UserId,request.RepositoryId);
+       RepositoryWatcher watcher = await _repositoryWatcherRepository.FindByUserIdAndRepositoryId(request.UserId, request.RepositoryId);
+        if (watcher == null)
+        {
+            return null;
+        }
+        return watcher.WatchingPreferences;
     }
 }
