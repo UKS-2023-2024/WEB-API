@@ -102,7 +102,12 @@ public class MilestoneController : ControllerBase
     {
         Guid userId = _userIdentityService.FindUserIdentity(HttpContext.User);
         List<Milestone> milestones = await _sender.Send(new FindRepositoryClosedMilestonesQuery(userId, Guid.Parse(id)));
-        return Ok(MilestonePresenter.MapFromMilestonesToMilestonePresenters(milestones));
+        var presenters = MilestonePresenter.MapFromMilestonesToMilestonePresenters(milestones);
+        foreach (MilestonePresenter presenter in presenters)
+        {
+            presenter.CompletionPercentage = await _sender.Send(new FindCompletionPercentageOfMilestoneQuery(presenter.Id));
+        }
+        return Ok(presenters);
     }
 
     [HttpGet("completion-percentage/{id}")]
