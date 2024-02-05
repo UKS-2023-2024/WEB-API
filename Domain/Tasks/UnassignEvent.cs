@@ -5,8 +5,8 @@ namespace Domain.Tasks;
 
 public class UnassignEvent: Event
 {
-    public Guid AssigneeId;
-    public RepositoryMember? Assignee;
+    public Guid AssigneeId { get; set; }
+    public RepositoryMember? Assignee { get; set; }
 
     public UnassignEvent(string title, Guid creatorId, Guid taskId, Guid assigneeId) 
         : base(title, EventType.ISSUE_UNASSIGNED, creatorId, taskId)

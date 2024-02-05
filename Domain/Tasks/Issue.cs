@@ -42,7 +42,13 @@ public class Issue: Task
         MilestoneId = milestoneId;
         Events.Add(new AssignMilestoneEvent("Milestone Assigned", creatorId, Id, milestoneId));
     }
-    
+
+    public void UnassignMilestone(Guid milestoneId, Guid creatorId, Guid currentMilestoneId)
+    {
+        Events.Add(new UnassignMilestoneEvent("Milestone Unassigned", creatorId, Id, currentMilestoneId));
+        UpdateMilestone(milestoneId, creatorId);
+    }
+
     private void CreateAddAssigneeEvents(List<RepositoryMember> assignees, Guid creatorId)
     {
         if (assignees is null) return;

@@ -6,6 +6,7 @@ using Domain.Notifications;
 using Domain.Organizations;
 using Domain.Repositories;
 using Domain.Tasks;
+using Domain.Tasks.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Task = System.Threading.Tasks.Task;
 

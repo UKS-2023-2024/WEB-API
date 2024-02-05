@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240128213857_UpdatedEvents")]
+    partial class UpdatedEvents
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,11 +42,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Auth.SocialAccount", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Value")
@@ -76,14 +79,8 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("GitToken")
-                        .HasColumnType("text");
-
                     b.Property<string>("Location")
                         .HasColumnType("text");
-
-                    b.Property<int>("NotificationPreferences")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -175,33 +172,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("Milestones");
                 });
 
-            modelBuilder.Entity("Domain.Notifications.Notification", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Subject")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Notifications");
-                });
-
             modelBuilder.Entity("Domain.Organizations.Organization", b =>
                 {
                     b.Property<Guid>("Id")
@@ -224,9 +194,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Url")
                         .HasColumnType("text");
-
-                    b.Property<int?>("memberTeamId")
-                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -269,14 +236,124 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("Role")
-                        .HasColumnType("integer");
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("OrganizationId", "MemberId");
 
                     b.HasIndex("MemberId");
 
+                    b.HasIndex("RoleName");
+
                     b.ToTable("OrganizationMembers");
+                });
+
+            modelBuilder.Entity("Domain.Organizations.OrganizationPermission", b =>
+                {
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.HasKey("Value");
+
+                    b.ToTable("OrganizationPermissions");
+
+                    b.HasData(
+                        new
+                        {
+                            Value = "owner",
+                            Description = ""
+                        },
+                        new
+                        {
+                            Value = "admin",
+                            Description = ""
+                        },
+                        new
+                        {
+                            Value = "manager",
+                            Description = ""
+                        },
+                        new
+                        {
+                            Value = "read_only",
+                            Description = ""
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Organizations.OrganizationRole", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.HasKey("Name");
+
+                    b.ToTable("OrganizationRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Name = "OWNER",
+                            Description = "Has all rights!"
+                        },
+                        new
+                        {
+                            Name = "MEMBER",
+                            Description = "Member has all rights except owners"
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Organizations.OrganizationRolePermission", b =>
+                {
+                    b.Property<string>("RoleName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PermissionName")
+                        .HasColumnType("text");
+
+                    b.HasKey("RoleName", "PermissionName");
+
+                    b.HasIndex("PermissionName");
+
+                    b.ToTable("OrganizationRolePermissions");
+
+                    b.HasData(
+                        new
+                        {
+                            RoleName = "OWNER",
+                            PermissionName = "owner"
+                        },
+                        new
+                        {
+                            RoleName = "OWNER",
+                            PermissionName = "admin"
+                        },
+                        new
+                        {
+                            RoleName = "OWNER",
+                            PermissionName = "manager"
+                        },
+                        new
+                        {
+                            RoleName = "OWNER",
+                            PermissionName = "read_only"
+                        },
+                        new
+                        {
+                            RoleName = "MEMBER",
+                            PermissionName = "manager"
+                        },
+                        new
+                        {
+                            RoleName = "MEMBER",
+                            PermissionName = "read_only"
+                        });
                 });
 
             modelBuilder.Entity("Domain.Repositories.Repository", b =>
@@ -289,9 +366,6 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("HttpCloneUrl")
-                        .HasColumnType("text");
-
                     b.Property<bool>("IsPrivate")
                         .HasColumnType("boolean");
 
@@ -301,9 +375,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<Guid?>("OrganizationId")
                         .HasColumnType("uuid");
-
-                    b.Property<string>("SshCloneUrl")
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -362,30 +433,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("RepositoryId");
 
                     b.ToTable("RepositoryMembers");
-                });
-
-            modelBuilder.Entity("Domain.Repositories.RepositoryWatcher", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("RepositoryId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("WatchingPreferences")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RepositoryId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("RepositoryWatchers");
                 });
 
             modelBuilder.Entity("Domain.Tasks.Event", b =>
@@ -546,6 +593,21 @@ namespace Infrastructure.Migrations
                     b.ToTable("RepositoryUser");
                 });
 
+            modelBuilder.Entity("RepositoryUser1", b =>
+                {
+                    b.Property<Guid>("WatchedById")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("WatchedId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("WatchedById", "WatchedId");
+
+                    b.HasIndex("WatchedId");
+
+                    b.ToTable("RepositoryUser1");
+                });
+
             modelBuilder.Entity("Domain.Tasks.AssignEvent", b =>
                 {
                     b.HasBaseType("Domain.Tasks.Event");
@@ -626,13 +688,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Auth.SocialAccount", b =>
                 {
-                    b.HasOne("Domain.Auth.User", "User")
+                    b.HasOne("Domain.Auth.User", null)
                         .WithMany("SocialAccounts")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Domain.Branches.Branch", b =>
@@ -663,17 +721,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Repository");
-                });
-
-            modelBuilder.Entity("Domain.Notifications.Notification", b =>
-                {
-                    b.HasOne("Domain.Auth.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Organizations.OrganizationInvite", b =>
@@ -709,9 +756,36 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Organizations.OrganizationRole", "Role")
+                        .WithMany("Members")
+                        .HasForeignKey("RoleName")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Member");
 
                     b.Navigation("Organization");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("Domain.Organizations.OrganizationRolePermission", b =>
+                {
+                    b.HasOne("Domain.Organizations.OrganizationPermission", "Permission")
+                        .WithMany("Roles")
+                        .HasForeignKey("PermissionName")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Organizations.OrganizationRole", "Role")
+                        .WithMany("Permissions")
+                        .HasForeignKey("RoleName")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("Domain.Repositories.Repository", b =>
@@ -760,25 +834,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Member");
 
                     b.Navigation("Repository");
-                });
-
-            modelBuilder.Entity("Domain.Repositories.RepositoryWatcher", b =>
-                {
-                    b.HasOne("Domain.Repositories.Repository", "Repository")
-                        .WithMany("WatchedBy")
-                        .HasForeignKey("RepositoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Auth.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Repository");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Tasks.Event", b =>
@@ -881,6 +936,21 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("RepositoryUser1", b =>
+                {
+                    b.HasOne("Domain.Auth.User", null)
+                        .WithMany()
+                        .HasForeignKey("WatchedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Repositories.Repository", null)
+                        .WithMany()
+                        .HasForeignKey("WatchedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Domain.Tasks.AssignEvent", b =>
                 {
                     b.HasOne("Domain.Repositories.RepositoryMember", "Assignee")
@@ -950,6 +1020,18 @@ namespace Infrastructure.Migrations
                     b.Navigation("Repositories");
                 });
 
+            modelBuilder.Entity("Domain.Organizations.OrganizationPermission", b =>
+                {
+                    b.Navigation("Roles");
+                });
+
+            modelBuilder.Entity("Domain.Organizations.OrganizationRole", b =>
+                {
+                    b.Navigation("Members");
+
+                    b.Navigation("Permissions");
+                });
+
             modelBuilder.Entity("Domain.Repositories.Repository", b =>
                 {
                     b.Navigation("Branches");
@@ -963,8 +1045,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("PendingInvites");
 
                     b.Navigation("Tasks");
-
-                    b.Navigation("WatchedBy");
                 });
 
             modelBuilder.Entity("Domain.Repositories.RepositoryMember", b =>

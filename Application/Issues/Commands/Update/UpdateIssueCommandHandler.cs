@@ -57,6 +57,11 @@ public class UpdateIssueCommandHandler: ICommandHandler<UpdateIssueCommand, Guid
             issue.UpdateMilestone(request.MilestoneId.GetValueOrDefault(), user.Id);
         }
 
+        if (request.Flag == UpdateIssueFlag.MILESTONE_UNASSIGNED)
+        {
+            issue.UnassignMilestone(request.MilestoneId.GetValueOrDefault(), user.Id, issue.MilestoneId.GetValueOrDefault());
+        }
+
         //var labelGuids = request.LabelsIds.Select(l => Guid.Parse(l));
         //var labels = await _labelRepository.FindAllByIds(repository.Id, labelGuids.ToList());
         //Issue updatedIssue = Issue.Update(foundIssue, request.Title, request.Description, request.State,assignees , request.MilestoneId, labels);
