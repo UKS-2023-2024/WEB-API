@@ -1,5 +1,7 @@
-﻿using Application.Issues.Commands.Create;
+﻿using Application.Issues.Commands.Close;
+using Application.Issues.Commands.Create;
 using Application.Issues.Commands.Enums;
+using Application.Issues.Commands.Reopen;
 using Application.Issues.Commands.Update;
 using Application.Issues.Queries.FindIssueEventsQuery;
 using Application.Issues.Queries.FindIssueQuery;
@@ -40,6 +42,24 @@ public class IssueController: ControllerBase
             issueDto.Description, Guid.Parse(issueDto.RepositoryId), issueDto.AssigneesIds, issueDto.LabelsIds,
             milestoneId));
         return Ok(new {Id = createdIssueId});
+    }
+
+    [HttpPost("close/{id}")]
+    [Authorize]
+    public async Task<IActionResult> Close(string id)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        var closedIssueId = await _sender.Send(new CloseIssueCommand(creatorId, Guid.Parse(id)));
+        return Ok(new { Id = closedIssueId });
+    }
+    
+    [HttpPost("reopen/{id}")]
+    [Authorize]
+    public async Task<IActionResult> Reopen(string id)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        var closedIssueId = await _sender.Send(new ReopenIssueCommand(creatorId, Guid.Parse(id)));
+        return Ok(new { Id = closedIssueId });
     }
 
     [HttpPost("assignee/update")]
