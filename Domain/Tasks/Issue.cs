@@ -49,6 +49,16 @@ public class Issue: Task
         UpdateMilestone(milestoneId, creatorId);
     }
 
+    public void Close()
+    {
+        State = TaskState.CLOSED;
+    }
+
+    public void Reopen()
+    {
+        State = TaskState.OPEN;
+    }
+
     private void CreateAddAssigneeEvents(List<RepositoryMember> assignees, Guid creatorId)
     {
         if (assignees is null) return;
