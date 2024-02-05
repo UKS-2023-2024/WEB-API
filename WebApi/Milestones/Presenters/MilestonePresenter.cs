@@ -10,6 +10,7 @@ public class MilestonePresenter
     public string Description { get;  set; }
     public Guid RepositoryId { get;  set; }
     public bool Closed { get; set; }
+    public double CompletionPercentage { get; set; }
 
     public MilestonePresenter(Milestone milestone)
     {
