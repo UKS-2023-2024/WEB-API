@@ -1,4 +1,5 @@
 ﻿using Application.Comments.Commands.Create;
+using Application.Comments.Commands.Delete;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,15 @@ public class CommentController: ControllerBase
     {
         Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
         var createdCommentId = await _sender.Send(new CreateCommentCommand(creatorId, Guid.Parse(commentDto.TaskId), commentDto.Content));
+        return Ok(new {Id = createdCommentId});
+    }
+    
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<IActionResult> Create(string id)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        var createdCommentId = await _sender.Send(new DeleteCommentCommand(Guid.Parse(id)));
         return Ok(new {Id = createdCommentId});
     }
 }
