@@ -20,7 +20,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="PullRequests\Queries" />
       <Folder Include="Repositories\Commands\StarringRepository" />
     </ItemGroup>
 

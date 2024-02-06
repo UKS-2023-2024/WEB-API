@@ -2,6 +2,7 @@
 using Domain.Branches;
 using Domain.Repositories;
 using Domain.Tasks.Enums;
+using Domain.Tasks.Exceptions;
 using Domain.Tasks.Interfaces;
 
 namespace Domain.Tasks;
@@ -85,5 +86,10 @@ public class PullRequest : Task
         {
             Events.Add(new UnnassignPullRequestEvent("Unassigned", creatorId, Id, assignee.Id));
         }
+    }
+
+    public static void ThrowIfDoesntExist(PullRequest? pullRequest)
+    {
+        if (pullRequest is null) throw new PullRequestNotFoundException();
     }
 }
