@@ -46,6 +46,7 @@ public class Issue: Task
     public void UnassignMilestone(Guid milestoneId, Guid creatorId, Guid currentMilestoneId)
     {
         Events.Add(new UnassignMilestoneEvent("Milestone Unassigned", creatorId, Id, currentMilestoneId));
+        if (milestoneId == Guid.Parse("00000000-0000-0000-0000-000000000000")) return;
         UpdateMilestone(milestoneId, creatorId);
     }
 
