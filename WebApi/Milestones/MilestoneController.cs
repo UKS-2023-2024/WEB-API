@@ -14,6 +14,9 @@ using WEB_API.Milestones.Dtos;
 using WEB_API.Milestones.Presenters;
 using WEB_API.Shared.TokenHandler;
 using WEB_API.Shared.UserIdentityService;
+using Application.Issues.Queries.FindIssueEventsQuery;
+using Domain.Tasks;
+using Application.Milestones.Queries.FindCompletionPercentageOfMilestone;
 
 namespace WEB_API.Milestones;
 
@@ -85,7 +88,12 @@ public class MilestoneController : ControllerBase
     {
         Guid userId = _userIdentityService.FindUserIdentity(HttpContext.User);
         List<Milestone> milestones = await _sender.Send(new FindRepositoryMilestonesQuery(userId, Guid.Parse(id)));
-        return Ok(MilestonePresenter.MapFromMilestonesToMilestonePresenters(milestones));
+        var presenters = MilestonePresenter.MapFromMilestonesToMilestonePresenters(milestones);
+        foreach (MilestonePresenter presenter in presenters)
+        {
+            presenter.CompletionPercentage = await _sender.Send(new FindCompletionPercentageOfMilestoneQuery(presenter.Id));
+        }
+        return Ok(presenters);
     }
     
     [HttpGet("{id}/closed")]
@@ -94,7 +102,19 @@ public class MilestoneController : ControllerBase
     {
         Guid userId = _userIdentityService.FindUserIdentity(HttpContext.User);
         List<Milestone> milestones = await _sender.Send(new FindRepositoryClosedMilestonesQuery(userId, Guid.Parse(id)));
-        return Ok(MilestonePresenter.MapFromMilestonesToMilestonePresenters(milestones));
+        var presenters = MilestonePresenter.MapFromMilestonesToMilestonePresenters(milestones);
+        foreach (MilestonePresenter presenter in presenters)
+        {
+            presenter.CompletionPercentage = await _sender.Send(new FindCompletionPercentageOfMilestoneQuery(presenter.Id));
+        }
+        return Ok(presenters);
     }
-    
+
+    [HttpGet("completion-percentage/{id}")]
+    [Authorize]
+    public async Task<IActionResult> FindCompletionPercentageOfMilestone(Guid id)
+    {
+        double percentage = await _sender.Send(new FindCompletionPercentageOfMilestoneQuery(id));
+        return Ok(percentage);
+    }
 }

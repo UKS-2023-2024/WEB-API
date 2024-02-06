@@ -55,4 +55,9 @@ public class IssueRepository: BaseRepository<Issue>, IIssueRepository
             .ToListAsync();
     }
     
+    public async Task<List<Issue>> FindMilestoneIssues(Guid milestoneId)
+    {
+        return await _context.Issues.Where(e => e.MilestoneId.Equals(milestoneId))
+               .ToListAsync();
+    }
 }

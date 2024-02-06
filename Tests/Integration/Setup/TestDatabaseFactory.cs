@@ -100,6 +100,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         repository5.AddToStarredBy(user1);
         repository5.AddToWatchedBy(user1, WatchingPreferences.AllActivity);
         var milestone1 = Milestone.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"), "title", "description", new DateOnly(), new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"));
+        var milestone2 = Milestone.Create(new Guid("9e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"), "title", "description", new DateOnly(), new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"));
 
         var branch1 = Branch.Create(new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b1"), "branch1", repository5.Id, true, user1.Id);
         var branch2 = Branch.Create(new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b2"), "branch2", repository5.Id, false, user1.Id);
@@ -109,15 +110,18 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         
         var issue1 = Issue.Create("first issue", "description", TaskState.OPEN, 1, repository1,
             user1, new List<RepositoryMember>(), new List<Label>() {label1}, null);
-
+        var issue2 = Issue.Create("first issue", "description", TaskState.CLOSED, 1, repository1,
+            user1, new List<RepositoryMember>(), new List<Label>() { label1 }, null);
+        issue1.UpdateMilestone(milestone1.Id, user1.Id);
+        issue2.UpdateMilestone(milestone1.Id, user1.Id);
         var notification1 = Notification.Create("test", "subject", user1, DateTime.UtcNow);
         
         context.Users.AddRange(user1, user2, user3, user4);
         context.Organizations.AddRange(organization1,organization2);
         context.Repositories.AddRange(repository1,repository2,repository3,repository4,repository5);
-        context.Milestones.AddRange(milestone1);
+        context.Milestones.AddRange(milestone1, milestone2);
         context.Branches.AddRange(branch1, branch2, branch3);
-        context.Issues.AddRange(issue1);
+        context.Issues.AddRange(issue1, issue2);
         context.Notifications.AddRange(notification1);
         context.SaveChanges();
     }
