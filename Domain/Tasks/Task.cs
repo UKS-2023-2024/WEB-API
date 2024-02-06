@@ -1,4 +1,5 @@
 ﻿using Domain.Auth;
+using Domain.Comments;
 using Domain.Milestones;
 using Domain.Repositories;
 using Domain.Tasks.Enums;
@@ -22,6 +23,7 @@ public abstract class Task
     public List<Event> Events { get; set; } = new();
     public Guid UserId { get; protected set; }
     public User? Creator { get; protected set; }
+    public List<Comment> Comments { get; protected set; } = new();
 
     protected Task()
     {
