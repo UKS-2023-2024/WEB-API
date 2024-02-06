@@ -13,6 +13,10 @@ public class PullRequest : Task
     public Guid ToBranchId { get; private set; }
     public Branch? ToBranch { get; private set; }
     public int? GitPullRequestId { get; private set; }
+    
+    private PullRequest(): base()
+    {
+    }
 
     public void SetGitPullRequestId(int gitPullRequestId)
     {

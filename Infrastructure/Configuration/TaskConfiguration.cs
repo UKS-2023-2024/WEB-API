@@ -25,7 +25,7 @@ public class TaskConfiguration: IEntityTypeConfiguration<Domain.Tasks.Task>
 
         builder.HasDiscriminator(t => t.Type)
             .HasValue<Issue>(TaskType.ISSUE)
-            .HasValue<Issue>(TaskType.PULL_REQUEST);
+            .HasValue<PullRequest>(TaskType.PULL_REQUEST);
 
         builder.HasMany(t => t.Events)
             .WithOne(e => e.Task)

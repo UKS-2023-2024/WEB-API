@@ -1,6 +1,7 @@
 ﻿using Application.Shared;
 using Domain.Auth;
 using Domain.Auth.Enums;
+using Domain.Auth.Interfaces;
 using Domain.Branches;
 using Domain.Branches.Exceptions;
 using Domain.Branches.Interfaces;
@@ -8,6 +9,7 @@ using Domain.Notifications.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
+using Domain.Shared.Interfaces;
 using Domain.Tasks;
 using Domain.Tasks.Enums;
 using Domain.Tasks.Interfaces;
@@ -23,10 +25,13 @@ public class CreatePullRequestCommandHandler: ICommandHandler<CreatePullRequestC
     private readonly ILabelRepository _labelRepository;
     private readonly INotificationService _notificationService;
     private readonly IBranchRepository _branchRepository;
+    private readonly IGitService _gitService;
+    private readonly IUserRepository _userRepository;
     
     public CreatePullRequestCommandHandler (IPullRequestRepository pullRequestRepository, ILabelRepository labelRepository,
         INotificationService notificationService, IRepositoryRepository repositoryRepository, ITaskRepository taskRepository,
-        IRepositoryMemberRepository repositoryMemberRepository, IBranchRepository branchRepository)
+        IRepositoryMemberRepository repositoryMemberRepository, IBranchRepository branchRepository, IGitService gitService,
+        IUserRepository userRepository)
     {
         _pullRequestRepository = pullRequestRepository;
         _labelRepository = labelRepository;
@@ -35,6 +40,8 @@ public class CreatePullRequestCommandHandler: ICommandHandler<CreatePullRequestC
         _taskRepository = taskRepository;
         _repositoryMemberRepository = repositoryMemberRepository;
         _branchRepository = branchRepository;
+        _gitService = gitService;
+        _userRepository = userRepository;
     }
 
     public async Task<Guid> Handle(CreatePullRequestCommand request, CancellationToken cancellationToken)
@@ -44,7 +51,6 @@ public class CreatePullRequestCommandHandler: ICommandHandler<CreatePullRequestC
         RepositoryMember.ThrowIfDoesntExist(member);
 
         var repository = _repositoryRepository.Find(request.RepositoryId);
-        Repository.ThrowIfDoesntExist(repository);
         
         var taskNumber = await _taskRepository.GetTaskNumber() + 1;
         
@@ -57,17 +63,21 @@ public class CreatePullRequestCommandHandler: ICommandHandler<CreatePullRequestC
         Branch.ThrowIfDoesntExist(toBranch);
         if (fromBranch!.Id.Equals(toBranch!.Id))
             throw new CantCreatePullRequestOnSameBranchException();
+
+        var creator = await _userRepository.FindUserById(request.UserId);
         
         var pullRequest = PullRequest.Create(request.Title, request.Description, TaskState.OPEN, taskNumber,
             repository, request.UserId, assignees, labels, request.MilestoneId,fromBranch.Id, toBranch.Id);
-        pullRequest = await _pullRequestRepository.Create(pullRequest);
 
         var message = $"A new Pull request has been opened in the repository {repository.Name}<br><br>" +
                       $"Title: {pullRequest.Title} <br>" +
                       $"Description: {pullRequest.Description}<br>" +
-                      $"Opened by: {pullRequest.Creator?.Username}";
+                      $"Opened by: {creator?.Username}";
         var subject = $"[Github] New Pull request opened in {repository.Name}";
         await _notificationService.SendNotification(repository, subject, message, NotificationType.PullRequests);
+        
+        pullRequest = await _pullRequestRepository.Create(pullRequest);
+        await _gitService.CreatePullRequest(repository, fromBranch.Name, toBranch.Name);
 
         return pullRequest.Id;
     }
