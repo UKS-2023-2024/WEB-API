@@ -15,7 +15,9 @@ public class EventConfiguration: IEntityTypeConfiguration<Event>
             .HasValue<UnassignEvent>(EventType.ISSUE_UNASSIGNED)
             .HasValue<Event>(EventType.OPENED)
             .HasValue<AssignMilestoneEvent>(EventType.MILESTONE_ASSIGNED)
-            .HasValue<UnassignMilestoneEvent>(EventType.MILESTONE_UNASSIGNED);
+            .HasValue<UnassignMilestoneEvent>(EventType.MILESTONE_UNASSIGNED)
+            .HasValue<AssignPullRequestEvent>(EventType.PULL_REQUEST_ASSIGNED)
+            .HasValue<UnnassignPullRequestEvent>(EventType.PULL_REQUEST_UNASSIGNED);
         
         builder.Navigation(e => e.Creator).AutoInclude();
     }

@@ -8,9 +8,11 @@ using Domain.Repositories;
 using Domain.Shared.Exceptions;
 using Domain.Shared.Git.Payloads;
 using Domain.Shared.Interfaces;
+using Domain.Tasks;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
+using Task = System.Threading.Tasks.Task;
 
 namespace Infrastructure.Shared.Git;
 
@@ -178,6 +180,20 @@ public class GiteaService: IGitService
         });
         var response = await _httpClient.PostAsync(url, body);
         await LogStatusAndResponseContent(response);
+    }
+
+    public async Task CreatePullRequest(Repository repository, string fromBranch, string toBranch)
+    {
+        SetAuthToken(_adminToken);
+        var url = $"repos/{FindRepositoryOwner(repository)}/{repository.Name}/pulls";
+        var body = Body(new
+        {
+            head = "username:" + fromBranch,
+            @base = toBranch,
+        });
+        var response = await _httpClient.PostAsync(url, body);
+        await LogStatusAndResponseContent(response);
+    
     }
 
     public async Task<int> CreateOrganization(User user, Organization organization)

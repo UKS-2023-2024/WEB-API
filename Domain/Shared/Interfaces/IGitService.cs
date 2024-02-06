@@ -22,6 +22,7 @@ public interface IGitService
     public Task SetPublicKey(User user, string pk);
     public Task DeleteBranch(User user, Branch branch);
     public Task CreateBranch(Repository repository, string branchName, string createdFromBranch);
+    public Task CreatePullRequest(Repository repository, string fromBranch, string toBranch);
     public Task<List<ContributionFile>> ListFolderContent(User user, Branch branch, string path);
     public Task<FileContent> ListFileContent(User user, Branch branch, string path);
 

@@ -52,6 +52,8 @@ public static class DependencyInjection
         services.AddScoped<IGitService, GiteaService>();
         services.AddScoped<ICommentRepository, CommentRepository>();
         services.AddScoped<IReactionRepository, ReactionRepository>();
+        services.AddScoped<IPullRequestRepository, PullRequestRepository>();
+        
         return services;
     }    
 }
