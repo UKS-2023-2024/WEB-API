@@ -16,6 +16,8 @@ namespace Domain.Branches
         public Guid OwnerId { get; private set; }
         public User Owner { get; private set; }
         public bool Deleted { get; private set; }
+        public string? CreatedFrom { get; set; }
+
         private Branch(string name, Guid repositoryId, bool isDefault, Guid ownerId)
         {
             Name = name;
@@ -31,18 +33,12 @@ namespace Domain.Branches
         }
 
 
-        public static Branch Create(Guid id, string name, Guid repositoryId, bool isDefault, Guid ownerId)
+        public static Branch Create(string name, Guid repositoryId, bool isDefault, Guid ownerId, string createdFrom)
         {
-            Branch branch = new Branch(name, repositoryId, isDefault, ownerId);
-            branch.Id = id;
-            return branch;
-        }
-
-        public static Branch Create(Guid id, string name, Guid repositoryId, bool isDefault, Guid ownerId, bool deleted)
-        {
-            Branch branch = new Branch(name, repositoryId, isDefault, ownerId);
-            branch.Id = id;
-            branch.Deleted = deleted;
+            var branch = new Branch(name, repositoryId, isDefault, ownerId)
+            {
+                CreatedFrom = createdFrom
+            };
             return branch;
         }
 
@@ -73,5 +69,5 @@ namespace Domain.Branches
             Deleted = false;
         }
 
-     }
+    }
 }

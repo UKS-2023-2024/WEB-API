@@ -36,13 +36,6 @@ public class DeleteRepositoryCommandHandler: ICommandHandler<DeleteRepositoryCom
             throw new RepositoryNotFoundException(); 
         _repositoryRepository.Delete(repository);
         
-        if (repository.Organization != null)
-        {
-            await _gitService.DeleteRepository(repository.Organization.Name, repository);
-            return;
-        }
-        var user = await _userRepository.FindUserById(request.userId);
-        User.ThrowIfDoesntExist(user);
-        await _gitService.DeleteRepository(user!.Username, repository);
+        await _gitService.DeleteRepository(repository);
     }
 }

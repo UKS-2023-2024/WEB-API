@@ -39,7 +39,7 @@ public class BranchController : ControllerBase
     public async Task<IActionResult> Create([FromBody] BranchDto dto)
     {
         var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        var createdBranchId = await _sender.Send(new CreateBranchCommand(dto.Name, dto.RepositoryId, false, userId));
+        var createdBranchId = await _sender.Send(new CreateBranchCommand(dto.Name, dto.RepositoryId, false, userId, dto.CreatedFrom));
         return Ok(createdBranchId);
     }
 

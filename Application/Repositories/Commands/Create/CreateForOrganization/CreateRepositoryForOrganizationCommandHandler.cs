@@ -43,7 +43,7 @@ public class CreateRepositoryForOrganizationCommandHandler : ICommandHandler<Cre
         repository.AddBranch(Branch.Create("main", Guid.Empty, true, creator.Id));
 
         repository = await _repositoryRepository.Create(repository);
-        await _gitService.CreateOrganizationRepository(creator, organization, repository);
+        await _gitService.CreateOrganizationRepository(organization, repository);
         return repository.Id;
     }
 }

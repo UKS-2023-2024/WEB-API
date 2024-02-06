@@ -43,8 +43,6 @@ public class AddRepositoryMemberCommandHandler : ICommandHandler<AddRepositoryMe
         _repositoryRepository.Update(repository);
         _repositoryInviteRepository.Delete(invite);
         
-        var repoOwner = repository!.Organization == null ? repository.Members.First(repoMember => 
-            repoMember.Role == RepositoryMemberRole.OWNER).Member.Username : repository.Organization.Name;
-        await _gitService.AddRepositoryMember(repoOwner, repository, user!,"read");
+        await _gitService.AddRepositoryMember(repository, user!,"read");
     }
 }
