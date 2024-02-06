@@ -1,5 +1,6 @@
 ﻿using Domain.Auth.Interfaces;
 using Domain.Branches.Interfaces;
+using Domain.Comments.Interfaces;
 using Domain.Milestones.Interfaces;
 using Domain.Notifications.Interfaces;
 using Domain.Organizations.Interfaces;
@@ -9,6 +10,7 @@ using Domain.Tasks.Interfaces;
 using Infrastructure.Auth.Repositories;
 using Infrastructure.Auth.Services;
 using Infrastructure.Branches;
+using Infrastructure.Comments;
 using Infrastructure.Events;
 using Infrastructure.Milestones;
 using Infrastructure.Notifications.Repositories;
@@ -46,6 +48,7 @@ public static class DependencyInjection
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IRepositoryWatcherRepository, RepositoryWatcherRepository>();
         services.AddScoped<IGitService, GiteaService>();
+        services.AddScoped<ICommentRepository, CommentRepository>();
         return services;
     }    
 }

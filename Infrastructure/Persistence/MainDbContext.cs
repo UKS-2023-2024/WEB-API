@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Domain.Auth;
 using Domain.Branches;
+using Domain.Comments;
 using Domain.Milestones;
 using Domain.Notifications;
 using Domain.Organizations;
@@ -36,6 +37,7 @@ public class MainDbContext: DbContext
     public DbSet<Issue> Issues { get; set; } = null!;
     public DbSet<Notification> Notifications { get; set; } = null!;
     public DbSet<RepositoryWatcher> RepositoryWatchers { get; set; } = null!;
+    public DbSet<Comment> Comments { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

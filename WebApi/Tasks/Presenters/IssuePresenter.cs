@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Domain.Comments;
 using Domain.Milestones;
 using Domain.Repositories;
 using Domain.Tasks;
@@ -19,6 +20,7 @@ public class IssuePresenter
     public TaskState State { get; set; }
 
     public List<Event> Events { get; set; }
+    public List<Comment> Comments { get; set; }
 
     public IssuePresenter(Issue issue)
     {
@@ -32,6 +34,7 @@ public class IssuePresenter
         Number = issue.Number;
         Events = issue.Events;
         State = issue.State;
+        Comments = issue.Comments;
     }
 
     public static List<IssuePresenter> MapIssueToIssuePresenter(List<Issue> issues)

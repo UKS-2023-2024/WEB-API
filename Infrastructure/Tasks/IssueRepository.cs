@@ -1,4 +1,5 @@
-﻿using Domain.Tasks;
+﻿using Domain.Comments.Interfaces;
+using Domain.Tasks;
 using Domain.Tasks.Enums;
 using Domain.Tasks.Interfaces;
 using Infrastructure.Persistence;
@@ -19,6 +20,7 @@ public class IssueRepository: BaseRepository<Issue>, IIssueRepository
     {
         return _context.Issues.Where(i => i.Id.Equals(id))
             .Include(i => i.Milestone)
+            .Include(i => i.Comments)
             .Include(i => i.Events)
             .ThenInclude(x => x.Creator)
             .Include(i => i.Assignees)
