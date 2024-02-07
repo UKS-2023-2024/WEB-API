@@ -1,4 +1,5 @@
 ﻿using Domain.Auth;
+using Domain.Reactions;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Task = Domain.Tasks.Task;
 
@@ -13,6 +14,7 @@ public class Comment
     public string Content { get; private set; }
     public Guid TaskId { get; private set; }
     public Task Task { get; private set; }
+    public List<Reaction> Reactions { get; private set; } = new();
 
     public Comment()
     {

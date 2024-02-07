@@ -5,6 +5,7 @@ using Domain.Comments;
 using Domain.Milestones;
 using Domain.Notifications;
 using Domain.Organizations;
+using Domain.Reactions;
 using Domain.Repositories;
 using Domain.Tasks;
 using Domain.Tasks.Interfaces;
@@ -38,7 +39,8 @@ public class MainDbContext: DbContext
     public DbSet<Notification> Notifications { get; set; } = null!;
     public DbSet<RepositoryWatcher> RepositoryWatchers { get; set; } = null!;
     public DbSet<Comment> Comments { get; set; } = null!;
-
+    public DbSet<Reaction> Reactions { get; set; } = null!;
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
