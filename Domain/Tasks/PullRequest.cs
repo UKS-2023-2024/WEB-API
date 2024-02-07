@@ -1,5 +1,6 @@
 ﻿using Domain.Auth;
 using Domain.Branches;
+using Domain.Milestones;
 using Domain.Repositories;
 using Domain.Tasks.Enums;
 using Domain.Tasks.Exceptions;
@@ -15,6 +16,8 @@ public class PullRequest : Task
     public Branch? ToBranch { get; private set; }
     public int? GitPullRequestId { get; private set; }
     
+    public List<Issue> Issues { get; protected set; } = new();
+
     private PullRequest(): base()
     {
     }
@@ -24,21 +27,23 @@ public class PullRequest : Task
         GitPullRequestId = gitPullRequestId;
     }
     
-    private PullRequest(string title, string description, TaskState state, int number, Guid userId, Guid repositoryId,
-        List<RepositoryMember> assignees, List<Label> labels, Guid? milestoneId, Guid fromBranchId, Guid toBranchId) : 
-        base(title, description, state, number, TaskType.ISSUE, userId, repositoryId, assignees, labels, milestoneId)
+    private PullRequest(string title, string description, int number, Guid userId, Guid repositoryId,
+        List<RepositoryMember> assignees, List<Label> labels, Guid? milestoneId, Guid fromBranchId, Guid toBranchId, List<Issue> issues) : 
+        base(title, description, TaskState.OPEN, number, TaskType.ISSUE, userId, repositoryId, assignees, labels, milestoneId)
     {
         FromBranchId = fromBranchId;
         ToBranchId = toBranchId;
         Events.Add(new Event("Opened pull request", EventType.OPENED, userId));
         UpdateAssignees(assignees, userId);
+        UpdateIssues(issues, userId);
     }
     
-    public static PullRequest Create(string title, string description, TaskState state, int number, Repository repository,
-        Guid creatorId, List<RepositoryMember> assignees, List<Label> labels, Guid? milestoneId, Guid fromBranchId, Guid toBranchId)
+    public static PullRequest Create(string title, string description, int number, Repository repository,
+        Guid creatorId, List<RepositoryMember> assignees, List<Label> labels, Guid? milestoneId, Guid fromBranchId, Guid toBranchId,
+        List<Issue> issues)
     {
-        return new PullRequest(title, description, state, number, creatorId, repository.Id, assignees, labels,
-            milestoneId, fromBranchId,  toBranchId);
+        return new PullRequest(title, description, number, creatorId, repository.Id, assignees, labels,
+            milestoneId, fromBranchId,  toBranchId, issues);
     }
     
     public void UpdateAssignees(List<RepositoryMember> assignees, Guid creatorId)
@@ -48,43 +53,86 @@ public class PullRequest : Task
         Assignees = assignees;
     }
     
-    public void UpdateMilestone(Guid milestoneId, Guid creatorId)
+    public void UpdateIssues(List<Issue> issues, Guid creatorId)
     {
-        MilestoneId = milestoneId;
-        Events.Add(new AssignMilestoneEvent("Milestone Assigned", creatorId, Id, milestoneId));
+        CreateAddIssueEvents(issues, creatorId);
+        CreateRemoveIssueEvents(issues, creatorId);
+        Issues = issues;
+    }
+    
+    public void UpdateMilestone(Milestone milestone, Guid creatorId)
+    {
+        if (Milestone is not null) UnassignMilestone(creatorId);
+        MilestoneId = milestone.Id;
+        Milestone = milestone;
+        Events.Add(new AssignMilestoneEvent($"Added this issue to {milestone.Title}", creatorId, Id, milestone.Id));
+    }
+    
+    public void UnassignMilestone(Guid creatorId)
+    {
+        if (Milestone is null) throw new PullRequestDoesNotHaveMilestoneException();
+        Events.Add(new UnassignMilestoneEvent($"Removed this issue from {Milestone.Title}", creatorId, Id, Milestone.Id));
+        MilestoneId = null;
+        Milestone = null;
     }
     
     public void ClosePullRequest(Guid creatorId)
     {
-        Events.Add(new Event("Closed pull request", EventType.OPENED, creatorId));
+        if (State == TaskState.CLOSED) throw new PullRequestClosedException("Pull request already closed!");
+        if (State == TaskState.MERGED) throw new PullRequestMergedException("Pull request merged!");
+        Events.Add(new Event("Closed pull request", EventType.CLOSED, creatorId));
+        State = TaskState.CLOSED;
     }
     
     public void ReopenPullRequest(Guid creatorId)
     {
+        if (State == TaskState.OPEN) throw new PullRequestAlreadyOpenedException();
+        if (State == TaskState.MERGED) throw new PullRequestMergedException("Pull request merged!");
         Events.Add(new Event("Reopened pull request", EventType.OPENED, creatorId));
+        State = TaskState.OPEN;
     }
     
     public void MergePullRequest(Guid creatorId)
     {
-        Events.Add(new Event($"Pull request merged from branch {FromBranch.Name} to {ToBranch.Name}",
-            EventType.PULL_REQUEST_MERGED, creatorId));
+        if (State == TaskState.CLOSED) throw new PullRequestClosedException("Pull request closed!");
+        if (State == TaskState.MERGED) throw new PullRequestMergedException("Pull request already merged!");
+        Events.Add(new Event($"Pull request merged from branch {FromBranch.Name} to {ToBranch.Name}", EventType.PULL_REQUEST_MERGED,creatorId));
+        State = TaskState.MERGED;
     }
     
     private void CreateAddAssigneeEvents(List<RepositoryMember> assignees, Guid creatorId)
     {
         if (assignees is null) return;
-        foreach (var assignee in assignees.Where(assignee => !Assignees.Contains(assignee)))
+        foreach (var assigneeToAdd in assignees.Where(assignee => !Assignees.Contains(assignee)))
         {
-            Events.Add(new AssignPullRequestEvent("Assigned", creatorId, Id, assignee.Id));
+            Events.Add(new AssignPullRequestEvent($"Assigned this pull request to {assigneeToAdd.Member.Username}", creatorId, Id, assigneeToAdd.Id));
         }
     }
 
     private void CreateRemoveAssigneeEvents(List<RepositoryMember> assignees, Guid creatorId)
     {
         if (assignees is null) return;
-        foreach (var assignee in Assignees.Where(assignee => !assignees.Contains(assignee)))
+        foreach (var assigneeToAdd in Assignees.Where(assignee => !assignees.Contains(assignee)))
         {
-            Events.Add(new UnnassignPullRequestEvent("Unassigned", creatorId, Id, assignee.Id));
+            Events.Add(new UnnassignPullRequestEvent($"Removed {assigneeToAdd.Member.Username} from this pull request", creatorId, Id, assigneeToAdd.Id));
+        }
+    }
+    
+    private void CreateAddIssueEvents(List<Issue> issues, Guid creatorId)
+    {
+        if (issues is null) return;
+        foreach (var issueToAdd in issues.Where(issue => !Issues.Contains(issue)))
+        {
+            Events.Add(new AddIssueToPullRequestEvent($"Added issue #{issueToAdd.Number} to pull request", creatorId, Id, issueToAdd.Id));
+        }
+    }
+
+    private void CreateRemoveIssueEvents(List<Issue> issues, Guid creatorId)
+    {
+        if (issues is null) return;
+        foreach (var issueToRemove in Issues.Where(issue => !issues.Contains(issue)))
+        {
+            Events.Add(new RemoveIssueFromPullRequestEvent($"Removed issue #{issueToRemove.Number} from pull request", creatorId, Id, issueToRemove.Id));
         }
     }
 

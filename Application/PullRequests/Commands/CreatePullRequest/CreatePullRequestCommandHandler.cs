@@ -27,11 +27,12 @@ public class CreatePullRequestCommandHandler: ICommandHandler<CreatePullRequestC
     private readonly IBranchRepository _branchRepository;
     private readonly IGitService _gitService;
     private readonly IUserRepository _userRepository;
+    private readonly IIssueRepository _issueRepository;
     
     public CreatePullRequestCommandHandler (IPullRequestRepository pullRequestRepository, ILabelRepository labelRepository,
         INotificationService notificationService, IRepositoryRepository repositoryRepository, ITaskRepository taskRepository,
         IRepositoryMemberRepository repositoryMemberRepository, IBranchRepository branchRepository, IGitService gitService,
-        IUserRepository userRepository)
+        IUserRepository userRepository, IIssueRepository issueRepository)
     {
         _pullRequestRepository = pullRequestRepository;
         _labelRepository = labelRepository;
@@ -42,6 +43,7 @@ public class CreatePullRequestCommandHandler: ICommandHandler<CreatePullRequestC
         _branchRepository = branchRepository;
         _gitService = gitService;
         _userRepository = userRepository;
+        _issueRepository = issueRepository;
     }
 
     public async Task<Guid> Handle(CreatePullRequestCommand request, CancellationToken cancellationToken)
@@ -56,6 +58,7 @@ public class CreatePullRequestCommandHandler: ICommandHandler<CreatePullRequestC
         
         var assignees = await _repositoryMemberRepository.FindAllByIds(repository!.Id, request.AssigneesIds);
         var labels = await _labelRepository.FindAllByIds(repository.Id, request.LabelsIds);
+        var issues = await _issueRepository.FindAllByIds(repository.Id, request.issueIds);
 
         var fromBranch = await _branchRepository.FindById(request.FromBranchId);
         Branch.ThrowIfDoesntExist(fromBranch);
@@ -66,8 +69,8 @@ public class CreatePullRequestCommandHandler: ICommandHandler<CreatePullRequestC
 
         var creator = await _userRepository.FindUserById(request.UserId);
         
-        var pullRequest = PullRequest.Create(request.Title, request.Description, TaskState.OPEN, taskNumber,
-            repository, request.UserId, assignees, labels, request.MilestoneId,fromBranch.Id, toBranch.Id);
+        var pullRequest = PullRequest.Create(request.Title, request.Description, taskNumber,
+            repository, request.UserId, assignees, labels, request.MilestoneId,fromBranch.Id, toBranch.Id, issues);
 
         var message = $"A new Pull request has been opened in the repository {repository.Name}<br><br>" +
                       $"Title: {pullRequest.Title} <br>" +

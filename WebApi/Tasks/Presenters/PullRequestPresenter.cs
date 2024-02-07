@@ -18,7 +18,6 @@ public class PullRequestPresenter
     public TaskState State { get; set; }
     public string fromBranch { get; set; }
     public string toBranch { get; set; }
-
     public List<Event> Events { get; set; }
 
     public PullRequestPresenter(PullRequest pullRequest)

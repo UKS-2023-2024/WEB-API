@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240207163111_AddedAdditionalPullRequestEvents")]
+    partial class AddedAdditionalPullRequestEvents
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -148,34 +151,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("Branches");
                 });
 
-            modelBuilder.Entity("Domain.Comments.Comment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("TaskId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatorId");
-
-                    b.HasIndex("TaskId");
-
-                    b.ToTable("Comments");
-                });
-
             modelBuilder.Entity("Domain.Milestones.Milestone", b =>
                 {
                     b.Property<Guid>("Id")
@@ -308,31 +283,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("MemberId");
 
                     b.ToTable("OrganizationMembers");
-                });
-
-            modelBuilder.Entity("Domain.Reactions.Reaction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CommentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("EmojiCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CommentId");
-
-                    b.HasIndex("CreatorId");
-
-                    b.ToTable("Reactions");
                 });
 
             modelBuilder.Entity("Domain.Repositories.Repository", b =>
@@ -801,25 +751,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Repository");
                 });
 
-            modelBuilder.Entity("Domain.Comments.Comment", b =>
-                {
-                    b.HasOne("Domain.Auth.User", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Tasks.Task", "Task")
-                        .WithMany("Comments")
-                        .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Creator");
-
-                    b.Navigation("Task");
-                });
-
             modelBuilder.Entity("Domain.Milestones.Milestone", b =>
                 {
                     b.HasOne("Domain.Repositories.Repository", "Repository")
@@ -878,25 +809,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Member");
 
                     b.Navigation("Organization");
-                });
-
-            modelBuilder.Entity("Domain.Reactions.Reaction", b =>
-                {
-                    b.HasOne("Domain.Comments.Comment", "Comment")
-                        .WithMany("Reactions")
-                        .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Auth.User", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Comment");
-
-                    b.Navigation("Creator");
                 });
 
             modelBuilder.Entity("Domain.Repositories.Repository", b =>
@@ -1191,11 +1103,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("SocialAccounts");
                 });
 
-            modelBuilder.Entity("Domain.Comments.Comment", b =>
-                {
-                    b.Navigation("Reactions");
-                });
-
             modelBuilder.Entity("Domain.Milestones.Milestone", b =>
                 {
                     b.Navigation("Tasks");
@@ -1240,8 +1147,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Tasks.Task", b =>
                 {
-                    b.Navigation("Comments");
-
                     b.Navigation("Events");
                 });
 

@@ -48,6 +48,10 @@ public static class ExceptionHandler
                 or CantChangeOwnerException
                 or GitException
                 or CantCreatePullRequestOnSameBranchException
+                or PullRequestClosedException
+                or PullRequestAlreadyOpenedException
+                or PullRequestMergedException
+                or PullRequestDoesNotHaveMilestoneException
                 or RepositoryNotStarredException => HttpStatusCode.BadRequest
         };
         return (int)code;

@@ -30,44 +30,6 @@ public class FindPullRequestEventsQueryHandler : IQueryHandler<FindPullRequestEv
         var pullRequest = await _pullRequestRepository.FindByIdAndRepositoryId(request.RepositoryId, request.PullRequestId);
         PullRequest.ThrowIfDoesntExist(pullRequest);
 
-        var events = pullRequest.Events;
-        
-        events = events.Select(e =>
-        {
-            if (e.EventType == EventType.PULL_REQUEST_ASSIGNED)
-            {
-                var ev = (AssignPullRequestEvent)e;
-                var assignee = _repositoryMemberRepository.Find(ev.AssigneeId);
-                ev.Assignee = assignee;
-                return ev;
-            }
-            
-            if (e.EventType == EventType.PULL_REQUEST_UNASSIGNED)
-            {
-                var ev = (UnnassignPullRequestEvent)e;
-                var assignee = _repositoryMemberRepository.Find(ev.AssigneeId);
-                ev.Assignee = assignee;
-                return ev;
-            }
-
-            if (e.EventType == EventType.MILESTONE_ASSIGNED)
-            {
-                var ev = (AssignMilestoneEvent)e;
-                var milestone = _milestoneRepository.Find(ev.MilestoneId);
-                ev.Milestone = milestone;
-                return ev;
-            }
-            
-            if (e.EventType == EventType.MILESTONE_UNASSIGNED)
-            {
-                var ev = (UnassignMilestoneEvent)e;
-                var milestone = _milestoneRepository.Find(ev.MilestoneId ?? new Guid());
-                ev.Milestone = milestone;
-                return ev;
-            }
-
-            return e;
-        }).ToList();
-        return events;
+        return pullRequest!.Events;
     }
 }

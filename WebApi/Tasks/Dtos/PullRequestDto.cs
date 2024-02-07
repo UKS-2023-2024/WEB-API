@@ -15,6 +15,7 @@ public class PullRequestDto
 
     public List<Guid>? AssigneesIds { get; set; } = new();
     public List<Guid>? LabelsIds { get; set; } = new();
+    public List<Guid>? IssueIds { get; set; } = new();
     public Guid? MilestoneId { get;  set; }
 
     public TaskState? State { get; set; }

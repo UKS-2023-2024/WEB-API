@@ -25,7 +25,7 @@ public class CreatePullRequestIntegrationTests: BaseIntegrationTest
         
         var command = new CreatePullRequestCommand(ownerId,"super title","super description",repository!.Id,
             new List<Guid>{repoMember!.Id},new List<Guid>(),null,
-            new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b2"), new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b1"));
+            new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b2"), new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b1"),new List<Guid>());
         
         //Act
         async Task<Guid> Handle() => await _sender.Send(command);
@@ -46,7 +46,7 @@ public class CreatePullRequestIntegrationTests: BaseIntegrationTest
         
         var command = new CreatePullRequestCommand(new Guid(),"super title","super description",repository!.Id,
             new List<Guid>{repoMember!.Id},new List<Guid>(),null,
-            new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b2"), new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b1"));
+            new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b2"), new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b1"),new List<Guid>());
         
         //Act
         async Task<Guid> Handle() => await _sender.Send(command);
@@ -67,7 +67,7 @@ public class CreatePullRequestIntegrationTests: BaseIntegrationTest
         
         var command = new CreatePullRequestCommand(ownerId,"super title","super description",repository!.Id,
             new List<Guid>{repoMember!.Id},new List<Guid>(),null,
-            new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b1"), new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b1"));
+            new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b1"), new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b1"),new List<Guid>());
         
         //Act
         async Task<Guid> Handle() => await _sender.Send(command);
@@ -88,7 +88,7 @@ public class CreatePullRequestIntegrationTests: BaseIntegrationTest
         
         var command = new CreatePullRequestCommand(ownerId,"super title","super description",repository!.Id,
             new List<Guid>{repoMember!.Id},new List<Guid>(),null,
-            new Guid(), new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b1"));
+            new Guid(), new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b1"),new List<Guid>());
         
         //Act
         async Task<Guid> Handle() => await _sender.Send(command);
