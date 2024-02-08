@@ -195,7 +195,6 @@ public class GiteaService: IGitService
         });
         var response = await _httpClient.PostAsync(url, body);
         await LogStatusAndResponseContent(response);
-    
     }
 
     public async Task<int> CreateOrganization(User user, Organization organization)

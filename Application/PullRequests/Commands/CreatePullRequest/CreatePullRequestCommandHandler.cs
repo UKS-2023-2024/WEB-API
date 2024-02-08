@@ -12,6 +12,7 @@ using Domain.Repositories.Interfaces;
 using Domain.Shared.Interfaces;
 using Domain.Tasks;
 using Domain.Tasks.Enums;
+using Domain.Tasks.Exceptions;
 using Domain.Tasks.Interfaces;
 
 namespace Application.PullRequests.Commands;
@@ -67,9 +68,11 @@ public class CreatePullRequestCommandHandler: ICommandHandler<CreatePullRequestC
         if (fromBranch!.Id.Equals(toBranch!.Id))
             throw new CantCreatePullRequestOnSameBranchException();
 
+        var pullRequest = await _pullRequestRepository.FindByBranchesAndRepository(request.RepositoryId,fromBranch.Id,toBranch.Id);
+        if (pullRequest is not null) throw new PullRequestWithSameBranchesExistsException();
         var creator = await _userRepository.FindUserById(request.UserId);
         
-        var pullRequest = PullRequest.Create(request.Title, request.Description, taskNumber,
+        pullRequest = PullRequest.Create(request.Title, request.Description, taskNumber,
             repository, request.UserId, assignees, labels, request.MilestoneId,fromBranch.Id, toBranch.Id, issues);
 
         var message = $"A new Pull request has been opened in the repository {repository.Name}<br><br>" +

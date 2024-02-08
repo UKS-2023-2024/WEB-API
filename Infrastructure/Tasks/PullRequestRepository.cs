@@ -32,4 +32,10 @@ public class PullRequestRepository: BaseRepository<PullRequest>, IPullRequestRep
             .Include(pr=> pr.ToBranch)
             .Where(pr => pr.RepositoryId.Equals(repositoryId)).ToList());
     }
+
+    public Task<PullRequest?> FindByBranchesAndRepository(Guid repositoryId, Guid fromBranchId, Guid toBranchId)
+    {
+        return _context.PullRequests
+            .FirstOrDefaultAsync(pr => pr.RepositoryId.Equals(repositoryId) && pr.FromBranchId.Equals(fromBranchId) && pr.ToBranchId.Equals(toBranchId) );
+    }
 }

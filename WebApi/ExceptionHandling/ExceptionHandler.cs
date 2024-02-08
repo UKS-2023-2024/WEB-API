@@ -34,6 +34,7 @@ public static class ExceptionHandler
                 or AlreadyOrganizationMemberException
                 or BranchWithThisNameExistsException 
                 or AlreadyRepositoryMemberException
+                or PullRequestWithSameBranchesExistsException
                 or BranchIsAlreadyDefaultException => HttpStatusCode.Conflict,
             PermissionDeniedException 
                 or MemberHasNoPrivilegeException
