@@ -45,7 +45,17 @@ public class PullRequest : Task
         return new PullRequest(title, description, number, creatorId, repository.Id, assignees, labels,
             milestoneId, fromBranchId,  toBranchId, issues);
     }
-    
+
+    public static PullRequest Create(Guid id, string title, string description, int number, Repository repository,
+       Guid creatorId, List<RepositoryMember> assignees, List<Label> labels, Guid? milestoneId, Guid fromBranchId, Guid toBranchId,
+       List<Issue> issues)
+    {
+        PullRequest pr = new PullRequest(title, description, number, creatorId, repository.Id, assignees, labels,
+            milestoneId, fromBranchId, toBranchId, issues);
+        pr.Id = id;
+        return pr;
+    }
+
     public void UpdateAssignees(List<RepositoryMember> assignees, Guid creatorId)
     {
         CreateAddAssigneeEvents(assignees, creatorId);
