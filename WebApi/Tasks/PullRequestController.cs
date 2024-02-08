@@ -2,8 +2,10 @@
 using Application.Issues.Queries.FindIssueQuery;
 using Application.Issues.Queries.FindRepositoryIssues;
 using Application.Milestones.Commands.Close;
+using Application.Milestones.Commands.Reopen;
 using Application.PullRequests.Commands;
 using Application.PullRequests.Commands.Close;
+using Application.PullRequests.Commands.Reopen;
 using Application.PullRequests.Queries;
 using Application.PullRequests.Queries.FindPullRequest;
 using Application.PullRequests.Queries.FindPullRequestEvents;
@@ -79,5 +81,15 @@ public class PullRequestController:ControllerBase
         Guid userId = _userIdentityService.FindUserIdentity(HttpContext.User);
         PullRequest pr = await _sender.Send(new ClosePullRequestCommand(userId, id));
         return Ok(new PullRequestPresenter(pr));
+    }
+
+
+    [HttpPut("{id}/reopen")]
+    [Authorize]
+    public async Task<IActionResult> Reopen(Guid id)
+    {
+        Guid userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        PullRequest reopenedPr = await _sender.Send(new ReopenPullRequestCommand(userId, id));
+        return Ok(new PullRequestPresenter(reopenedPr));
     }
 }
