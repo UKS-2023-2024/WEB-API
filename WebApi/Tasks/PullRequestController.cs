@@ -1,15 +1,19 @@
 ﻿using Application.Issues.Commands.Create;
 using Application.Issues.Queries.FindIssueQuery;
 using Application.Issues.Queries.FindRepositoryIssues;
+using Application.Milestones.Commands.Close;
 using Application.PullRequests.Commands;
+using Application.PullRequests.Commands.Close;
 using Application.PullRequests.Queries;
 using Application.PullRequests.Queries.FindPullRequest;
 using Application.PullRequests.Queries.FindPullRequestEvents;
 using Application.PullRequests.Queries.FindRepositoryPullRequests;
+using Domain.Milestones;
 using Domain.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WEB_API.Milestones.Presenters;
 using WEB_API.Shared.UserIdentityService;
 using WEB_API.Tasks.Dtos;
 using WEB_API.Tasks.Presenters;
@@ -66,5 +70,14 @@ public class PullRequestController:ControllerBase
         var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
         var events = await _sender.Send(new FindPullRequestEventsQuery(userId, pullRequestId, repositoryId));
         return Ok(events);
+    }
+
+    [HttpPut("{id}/close")]
+    [Authorize]
+    public async Task<IActionResult> Close(Guid id)
+    {
+        Guid userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        PullRequest pr = await _sender.Send(new ClosePullRequestCommand(userId, id));
+        return Ok(new PullRequestPresenter(pr));
     }
 }
