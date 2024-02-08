@@ -80,7 +80,7 @@ public class CreatePullRequestCommandHandler: ICommandHandler<CreatePullRequestC
         await _notificationService.SendNotification(repository, subject, message, NotificationType.PullRequests);
         
         pullRequest = await _pullRequestRepository.Create(pullRequest);
-        await _gitService.CreatePullRequest(repository, fromBranch.Name, toBranch.Name);
+        await _gitService.CreatePullRequest(repository, fromBranch.Name, toBranch.Name, pullRequest);
 
         return pullRequest.Id;
     }

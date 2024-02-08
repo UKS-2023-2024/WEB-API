@@ -3,7 +3,7 @@ using Domain.Tasks.Enums;
 
 namespace WEB_API.Tasks.Dtos;
 
-public class PullRequestDto
+public class CreatePullRequestDto
 {
     public string? Id { get; set; }
 
@@ -17,10 +17,6 @@ public class PullRequestDto
     public List<Guid>? LabelsIds { get; set; } = new();
     public List<Guid>? IssueIds { get; set; } = new();
     public Guid? MilestoneId { get;  set; }
-
-    public TaskState? State { get; set; }
-
-    public int? Number { get; set; }
     public Guid FromBranchId { get; set; }
     public Guid ToBranchId { get; set; }
 }

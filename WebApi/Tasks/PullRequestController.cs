@@ -32,12 +32,12 @@ public class PullRequestController:ControllerBase
     
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> Create([FromBody] PullRequestDto pullRequestDto)
+    public async Task<IActionResult> Create([FromBody] CreatePullRequestDto createPullRequestDto)
     {
         var creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        var createdPullRequestId = await _sender.Send(new CreatePullRequestCommand(creatorId, pullRequestDto.Title, 
-            pullRequestDto.Description, pullRequestDto.RepositoryId, pullRequestDto.AssigneesIds, pullRequestDto.LabelsIds,
-            pullRequestDto.MilestoneId,pullRequestDto.FromBranchId, pullRequestDto.ToBranchId, pullRequestDto.IssueIds));
+        var createdPullRequestId = await _sender.Send(new CreatePullRequestCommand(creatorId, createPullRequestDto.Title, 
+            createPullRequestDto.Description, createPullRequestDto.RepositoryId, createPullRequestDto.AssigneesIds, createPullRequestDto.LabelsIds,
+            createPullRequestDto.MilestoneId,createPullRequestDto.FromBranchId, createPullRequestDto.ToBranchId, createPullRequestDto.IssueIds));
         return Ok(new {Id = createdPullRequestId});
     }
     
@@ -50,7 +50,7 @@ public class PullRequestController:ControllerBase
         return Ok(new PullRequestPresenter(pullRequest));
     }
 
-    [HttpGet("{repositoryId:guid}/pullRequests")]
+    [HttpGet("{repositoryId:guid}")]
     [Authorize]
     public async Task<IActionResult> FindRepositoryPullRequests(Guid repositoryId)
     {

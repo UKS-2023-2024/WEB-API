@@ -44,6 +44,13 @@ namespace Infrastructure.Branches
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Branch>> FindAllRepositoryBranches(Guid repositoryId)
+        {
+            return await _context.Branches
+                .Where(b => b.RepositoryId == repositoryId && !b.Deleted)
+                .ToListAsync();
+        }
+
         public async Task<PagedResult<Branch>> FindAllByRepositoryIdAndDeletedAndIsDefault(Guid repositoryId, bool deleted, bool isDefault, int pageSize, int pageNumber)
         {
             var query = _context.Branches

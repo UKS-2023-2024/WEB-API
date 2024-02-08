@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240207235058_AddedConnectionWithIssueAndPullRequests")]
+    partial class AddedConnectionWithIssueAndPullRequests
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -308,31 +311,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("MemberId");
 
                     b.ToTable("OrganizationMembers");
-                });
-
-            modelBuilder.Entity("Domain.Reactions.Reaction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CommentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("EmojiCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CommentId");
-
-                    b.HasIndex("CreatorId");
-
-                    b.ToTable("Reactions");
                 });
 
             modelBuilder.Entity("Domain.Repositories.Repository", b =>
@@ -890,25 +868,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Organization");
                 });
 
-            modelBuilder.Entity("Domain.Reactions.Reaction", b =>
-                {
-                    b.HasOne("Domain.Comments.Comment", "Comment")
-                        .WithMany("Reactions")
-                        .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Auth.User", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Comment");
-
-                    b.Navigation("Creator");
-                });
-
             modelBuilder.Entity("Domain.Repositories.Repository", b =>
                 {
                     b.HasOne("Domain.Organizations.Organization", "Organization")
@@ -1208,11 +1167,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("SocialAccounts");
                 });
-            
-            modelBuilder.Entity("Domain.Comments.Comment", b =>
-                {
-                    b.Navigation("Reactions");
-                });
+
             modelBuilder.Entity("Domain.Branches.Branch", b =>
                 {
                     b.Navigation("FromPullRequests");

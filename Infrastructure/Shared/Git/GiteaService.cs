@@ -182,14 +182,16 @@ public class GiteaService: IGitService
         await LogStatusAndResponseContent(response);
     }
 
-    public async Task CreatePullRequest(Repository repository, string fromBranch, string toBranch)
+    public async Task CreatePullRequest(Repository repository, string fromBranch, string toBranch, PullRequest pullRequest)
     {
         SetAuthToken(_adminToken);
         var url = $"repos/{FindRepositoryOwner(repository)}/{repository.Name}/pulls";
         var body = Body(new
         {
-            head = "username:" + fromBranch,
+            head = fromBranch,
             @base = toBranch,
+            title = pullRequest.Title,
+            body = pullRequest.Description
         });
         var response = await _httpClient.PostAsync(url, body);
         await LogStatusAndResponseContent(response);

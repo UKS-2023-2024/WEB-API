@@ -19,6 +19,8 @@ public class PullRequestPresenter
     public string fromBranch { get; set; }
     public string toBranch { get; set; }
     public List<Event> Events { get; set; }
+    
+    public List<IssuePresenter> issues { get; set; }
 
     public PullRequestPresenter(PullRequest pullRequest)
     {
@@ -34,6 +36,7 @@ public class PullRequestPresenter
         State = pullRequest.State;
         fromBranch = pullRequest.FromBranch.Name;
         toBranch = pullRequest.ToBranch.Name;
+        issues = IssuePresenter.MapIssueToIssuePresenter(pullRequest.Issues);
     }
 
     public static List<PullRequestPresenter> MapPullRequestToPullRequestPresenter(List<PullRequest> pullRequests)

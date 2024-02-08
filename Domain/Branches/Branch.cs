@@ -3,6 +3,7 @@ using Domain.Repositories;
 using System.Data.Entity.Migrations.Model;
 using System.Security.Policy;
 using Domain.Branches.Exceptions;
+using Domain.Tasks;
 
 namespace Domain.Branches
 {
@@ -17,6 +18,9 @@ namespace Domain.Branches
         public User Owner { get; private set; }
         public bool Deleted { get; private set; }
         public string? CreatedFrom { get; set; }
+        
+        public List<PullRequest> FromPullRequests { get; private set; } = new();
+        public List<PullRequest> ToPullRequests { get; private set; } = new();
 
         private Branch(string name, Guid repositoryId, bool isDefault, Guid ownerId)
         {
