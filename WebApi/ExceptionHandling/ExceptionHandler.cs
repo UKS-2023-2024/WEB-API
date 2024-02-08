@@ -27,12 +27,14 @@ public static class ExceptionHandler
                 or RepositoryInviteNotFound
                 or IssueNotFoundException
                 or MilestoneNotFoundException
+                or PullRequestNotFoundException
                 or UserNotFoundException => HttpStatusCode.NotFound,
             UserWithThisEmailExistsException 
                 or RepositoryWithThisNameExistsException
                 or AlreadyOrganizationMemberException
                 or BranchWithThisNameExistsException 
                 or AlreadyRepositoryMemberException
+                or PullRequestWithSameBranchesExistsException
                 or BranchIsAlreadyDefaultException => HttpStatusCode.Conflict,
             PermissionDeniedException 
                 or MemberHasNoPrivilegeException
@@ -46,6 +48,11 @@ public static class ExceptionHandler
                 or CantRemoveOrganizationOwnerException
                 or CantChangeOwnerException
                 or GitException
+                or CantCreatePullRequestOnSameBranchException
+                or PullRequestClosedException
+                or PullRequestAlreadyOpenedException
+                or PullRequestMergedException
+                or PullRequestDoesNotHaveMilestoneException
                 or RepositoryNotStarredException => HttpStatusCode.BadRequest
         };
         return (int)code;

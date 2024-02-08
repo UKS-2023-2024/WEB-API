@@ -42,9 +42,6 @@ public class RemoveRepositoryMemberCommandHandler: ICommandHandler<RemoveReposit
 
         repository!.RemoveMember(member!);
         _repositoryRepository.Update(repository);
-        
-        var repoOwner = repository!.Organization == null ? repository.Members.First(repoMember => 
-            repoMember.Role == RepositoryMemberRole.OWNER).Member.Username : repository.Organization.Name;
-        await _gitService.RemoveRepositoryMember(repoOwner, repository, member.Member);
+        await _gitService.RemoveRepositoryMember(repository, member.Member);
     }
 }

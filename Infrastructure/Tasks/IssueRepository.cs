@@ -63,4 +63,16 @@ public class IssueRepository: BaseRepository<Issue>, IIssueRepository
         return await _context.Issues.Where(e => e.MilestoneId.Equals(milestoneId))
                .ToListAsync();
     }
+    
+    public Task<List<Issue>> FindAllByIds(Guid repositoryId, List<Guid> issueIds)
+    {
+        return _context.Issues
+            .Where(
+                issue => issueIds
+                             .Any(issueId => 
+                                 issueId.Equals(issue.Id)) && 
+                         issue.RepositoryId.Equals(repositoryId)
+            ).ToListAsync();
+    }
+    
 }

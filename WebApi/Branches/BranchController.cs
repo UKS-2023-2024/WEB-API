@@ -9,6 +9,7 @@ using Application.Branches.Commands.Create;
 using Application.Branches.Commands.Update;
 using Application.Branches.Commands.Delete;
 using Application.Branches.Commands.Restore;
+using Application.Branches.Queries.FindAllRepositoryBranches;
 using Application.Branches.Queries.ListBranchFiles;
 using Application.Branches.Queries.ListFileContent;
 using Application.Repositories.Queries.FindAllUserWithoutDefaultByRepositoryId;
@@ -39,7 +40,7 @@ public class BranchController : ControllerBase
     public async Task<IActionResult> Create([FromBody] BranchDto dto)
     {
         var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        var createdBranchId = await _sender.Send(new CreateBranchCommand(dto.Name, dto.RepositoryId, false, userId));
+        var createdBranchId = await _sender.Send(new CreateBranchCommand(dto.Name, dto.RepositoryId, false, userId, dto.CreatedFromBranch));
         return Ok(createdBranchId);
     }
 
@@ -77,9 +78,18 @@ public class BranchController : ControllerBase
 
     [HttpGet("without-default/{repositoryId}")]
     [Authorize]
-    public async Task<IActionResult> FindAllWithoutDefauly(Guid repositoryId)
+    public async Task<IActionResult> FindAllWithoutDefault(Guid repositoryId)
     {
         var branches = await _sender.Send(new FindAllBranchesWithoutDefaultByRepositoryIdQuery(repositoryId));
+        return Ok(branches);
+    }
+    
+    [HttpGet("all/{repositoryId:guid}")]
+    [Authorize]
+    public async Task<IActionResult> FindAllRepositoryBranches(Guid repositoryId)
+    {
+        var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        var branches = await _sender.Send(new FindAllRepositoryBranchesQuery(userId, repositoryId));
         return Ok(branches);
     }
 

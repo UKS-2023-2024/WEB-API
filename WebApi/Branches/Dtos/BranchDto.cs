@@ -5,5 +5,7 @@
         required public string Name { get; set; }
         required public Guid RepositoryId { get; set; }
 
+        required public string CreatedFromBranch { get; set; }
+
     }
 }

@@ -24,7 +24,8 @@ public class TaskConfiguration: IEntityTypeConfiguration<Domain.Tasks.Task>
             .HasForeignKey(t => t.MilestoneId);
 
         builder.HasDiscriminator(t => t.Type)
-            .HasValue<Issue>(TaskType.ISSUE);
+            .HasValue<Issue>(TaskType.ISSUE)
+            .HasValue<PullRequest>(TaskType.PULL_REQUEST);
 
         builder.HasMany(t => t.Events)
             .WithOne(e => e.Task)

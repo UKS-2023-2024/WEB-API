@@ -7,6 +7,10 @@ namespace Domain.Tasks;
 
 public class Issue: Task
 {
+    public List<AddIssueToPullRequestEvent> AddPullRequestEvents { get; private set; }
+    public List<RemoveIssueFromPullRequestEvent> RemovePullRequestEvents { get; private set; }
+    
+    public List<PullRequest> PullRequests { get; private set; }
     private Issue(): base()
     {
     }

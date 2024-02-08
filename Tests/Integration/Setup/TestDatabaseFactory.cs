@@ -102,10 +102,13 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         var milestone1 = Milestone.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"), "title", "description", new DateOnly(), new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"));
         var milestone2 = Milestone.Create(new Guid("9e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"), "title", "description", new DateOnly(), new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"));
 
-        var branch1 = Branch.Create(new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b1"), "branch1", repository5.Id, true, user1.Id);
-        var branch2 = Branch.Create(new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b2"), "branch2", repository5.Id, false, user1.Id);
-        var branch3 = Branch.Create(new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b3"), "branch3", repository5.Id, false, user1.Id, true);
-
+        var branch1 = Branch.Create( "branch1", repository5.Id, true, user1.Id);
+        branch1 = OverrideId(branch1,new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b1"));
+        var branch2 = Branch.Create( "branch2", repository5.Id, false, user1.Id);
+        branch2 = OverrideId(branch2,new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b2"));
+        var branch3 = Branch.Create("branch3", repository5.Id, false, user1.Id);
+        branch3.Delete();
+        branch3 = OverrideId(branch3,new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b3"));
         var label1 = new Label("label1", "123", "", Guid.Parse("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d94a5"));
         
         var issue1 = Issue.Create("first issue", "description", TaskState.OPEN, 1, repository1,
@@ -124,6 +127,14 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         context.Issues.AddRange(issue1, issue2);
         context.Notifications.AddRange(notification1);
         context.SaveChanges();
+    }
+    
+    private static T OverrideId<T>(T obj, Guid id)
+    {
+        var propertyInfo = typeof(T).GetProperty("Id");
+        if (propertyInfo == null) return obj;
+        propertyInfo.SetValue(obj, id);
+        return obj;
     }
 
 }

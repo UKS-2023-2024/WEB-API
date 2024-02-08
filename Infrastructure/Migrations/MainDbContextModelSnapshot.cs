@@ -117,6 +117,9 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("CreatedFrom")
+                        .HasColumnType("text");
+
                     b.Property<bool>("Deleted")
                         .HasColumnType("boolean");
 
@@ -471,7 +474,7 @@ namespace Infrastructure.Migrations
 
                     b.ToTable("Events");
 
-                    b.HasDiscriminator<int>("EventType").HasValue(0);
+                    b.HasDiscriminator<int>("EventType").HasValue(6);
 
                     b.UseTphMappingStrategy();
                 });
@@ -554,6 +557,21 @@ namespace Infrastructure.Migrations
                     b.UseTphMappingStrategy();
                 });
 
+            modelBuilder.Entity("IssuePullRequest", b =>
+                {
+                    b.Property<Guid>("IssuesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PullRequestsId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("IssuesId", "PullRequestsId");
+
+                    b.HasIndex("PullRequestsId");
+
+                    b.ToTable("IssuePullRequest");
+                });
+
             modelBuilder.Entity("LabelTask", b =>
                 {
                     b.Property<Guid>("LabelsId")
@@ -599,6 +617,18 @@ namespace Infrastructure.Migrations
                     b.ToTable("RepositoryUser");
                 });
 
+            modelBuilder.Entity("Domain.Tasks.AddIssueToPullRequestEvent", b =>
+                {
+                    b.HasBaseType("Domain.Tasks.Event");
+
+                    b.Property<Guid>("IssueId")
+                        .HasColumnType("uuid");
+
+                    b.HasIndex("IssueId");
+
+                    b.HasDiscriminator().HasValue(9);
+                });
+
             modelBuilder.Entity("Domain.Tasks.AssignEvent", b =>
                 {
                     b.HasBaseType("Domain.Tasks.Event");
@@ -608,7 +638,25 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("AssigneeId");
 
+                    b.ToTable("Events", t =>
+                        {
+                            t.Property("AssigneeId")
+                                .HasColumnName("AssignEvent_AssigneeId");
+                        });
+
                     b.HasDiscriminator().HasValue(2);
+                });
+
+            modelBuilder.Entity("Domain.Tasks.AssignPullRequestEvent", b =>
+                {
+                    b.HasBaseType("Domain.Tasks.Event");
+
+                    b.Property<Guid>("AssigneeId")
+                        .HasColumnType("uuid");
+
+                    b.HasIndex("AssigneeId");
+
+                    b.HasDiscriminator().HasValue(7);
                 });
 
             modelBuilder.Entity("Domain.Tasks.Interfaces.AssignMilestoneEvent", b =>
@@ -621,6 +669,24 @@ namespace Infrastructure.Migrations
                     b.HasIndex("MilestoneId");
 
                     b.HasDiscriminator().HasValue(4);
+                });
+
+            modelBuilder.Entity("Domain.Tasks.RemoveIssueFromPullRequestEvent", b =>
+                {
+                    b.HasBaseType("Domain.Tasks.Event");
+
+                    b.Property<Guid>("IssueId")
+                        .HasColumnType("uuid");
+
+                    b.HasIndex("IssueId");
+
+                    b.ToTable("Events", t =>
+                        {
+                            t.Property("IssueId")
+                                .HasColumnName("RemoveIssueFromPullRequestEvent_IssueId");
+                        });
+
+                    b.HasDiscriminator().HasValue(10);
                 });
 
             modelBuilder.Entity("Domain.Tasks.UnassignEvent", b =>
@@ -659,11 +725,49 @@ namespace Infrastructure.Migrations
                     b.HasDiscriminator().HasValue(5);
                 });
 
+            modelBuilder.Entity("Domain.Tasks.UnnassignPullRequestEvent", b =>
+                {
+                    b.HasBaseType("Domain.Tasks.Event");
+
+                    b.Property<Guid>("AssigneeId")
+                        .HasColumnType("uuid");
+
+                    b.HasIndex("AssigneeId");
+
+                    b.ToTable("Events", t =>
+                        {
+                            t.Property("AssigneeId")
+                                .HasColumnName("UnnassignPullRequestEvent_AssigneeId");
+                        });
+
+                    b.HasDiscriminator().HasValue(8);
+                });
+
             modelBuilder.Entity("Domain.Tasks.Issue", b =>
                 {
                     b.HasBaseType("Domain.Tasks.Task");
 
                     b.HasDiscriminator().HasValue(0);
+                });
+
+            modelBuilder.Entity("Domain.Tasks.PullRequest", b =>
+                {
+                    b.HasBaseType("Domain.Tasks.Task");
+
+                    b.Property<Guid>("FromBranchId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("GitPullRequestId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("ToBranchId")
+                        .HasColumnType("uuid");
+
+                    b.HasIndex("FromBranchId");
+
+                    b.HasIndex("ToBranchId");
+
+                    b.HasDiscriminator().HasValue(1);
                 });
 
             modelBuilder.Entity("Domain.Auth.Email", b =>
@@ -927,6 +1031,21 @@ namespace Infrastructure.Migrations
                     b.Navigation("Repository");
                 });
 
+            modelBuilder.Entity("IssuePullRequest", b =>
+                {
+                    b.HasOne("Domain.Tasks.Issue", null)
+                        .WithMany()
+                        .HasForeignKey("IssuesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Tasks.PullRequest", null)
+                        .WithMany()
+                        .HasForeignKey("PullRequestsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("LabelTask", b =>
                 {
                     b.HasOne("Domain.Tasks.Label", null)
@@ -972,10 +1091,32 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.Tasks.AddIssueToPullRequestEvent", b =>
+                {
+                    b.HasOne("Domain.Tasks.Issue", "Issue")
+                        .WithMany("AddPullRequestEvents")
+                        .HasForeignKey("IssueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Issue");
+                });
+
             modelBuilder.Entity("Domain.Tasks.AssignEvent", b =>
                 {
                     b.HasOne("Domain.Repositories.RepositoryMember", "Assignee")
                         .WithMany("AssignEvents")
+                        .HasForeignKey("AssigneeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Assignee");
+                });
+
+            modelBuilder.Entity("Domain.Tasks.AssignPullRequestEvent", b =>
+                {
+                    b.HasOne("Domain.Repositories.RepositoryMember", "Assignee")
+                        .WithMany("AssignPullRequestEvents")
                         .HasForeignKey("AssigneeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -992,6 +1133,17 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Milestone");
+                });
+
+            modelBuilder.Entity("Domain.Tasks.RemoveIssueFromPullRequestEvent", b =>
+                {
+                    b.HasOne("Domain.Tasks.Issue", "Issue")
+                        .WithMany("RemovePullRequestEvents")
+                        .HasForeignKey("IssueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Issue");
                 });
 
             modelBuilder.Entity("Domain.Tasks.UnassignEvent", b =>
@@ -1014,6 +1166,36 @@ namespace Infrastructure.Migrations
                     b.Navigation("Milestone");
                 });
 
+            modelBuilder.Entity("Domain.Tasks.UnnassignPullRequestEvent", b =>
+                {
+                    b.HasOne("Domain.Repositories.RepositoryMember", "Assignee")
+                        .WithMany("UnnassignPullRequestEvents")
+                        .HasForeignKey("AssigneeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Assignee");
+                });
+
+            modelBuilder.Entity("Domain.Tasks.PullRequest", b =>
+                {
+                    b.HasOne("Domain.Branches.Branch", "FromBranch")
+                        .WithMany("FromPullRequests")
+                        .HasForeignKey("FromBranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Branches.Branch", "ToBranch")
+                        .WithMany("ToPullRequests")
+                        .HasForeignKey("ToBranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FromBranch");
+
+                    b.Navigation("ToBranch");
+                });
+
             modelBuilder.Entity("Domain.Auth.User", b =>
                 {
                     b.Navigation("Members");
@@ -1026,10 +1208,16 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("SocialAccounts");
                 });
-
+            
             modelBuilder.Entity("Domain.Comments.Comment", b =>
                 {
                     b.Navigation("Reactions");
+                });
+            modelBuilder.Entity("Domain.Branches.Branch", b =>
+                {
+                    b.Navigation("FromPullRequests");
+
+                    b.Navigation("ToPullRequests");
                 });
 
             modelBuilder.Entity("Domain.Milestones.Milestone", b =>
@@ -1067,7 +1255,11 @@ namespace Infrastructure.Migrations
                 {
                     b.Navigation("AssignEvents");
 
+                    b.Navigation("AssignPullRequestEvents");
+
                     b.Navigation("UnassignEvents");
+
+                    b.Navigation("UnnassignPullRequestEvents");
                 });
 
             modelBuilder.Entity("Domain.Tasks.Task", b =>
@@ -1075,6 +1267,13 @@ namespace Infrastructure.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Events");
+                });
+
+            modelBuilder.Entity("Domain.Tasks.Issue", b =>
+                {
+                    b.Navigation("AddPullRequestEvents");
+
+                    b.Navigation("RemovePullRequestEvents");
                 });
 #pragma warning restore 612, 618
         }

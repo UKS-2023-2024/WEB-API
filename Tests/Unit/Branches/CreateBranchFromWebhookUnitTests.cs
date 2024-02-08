@@ -144,7 +144,8 @@ public class CreateBranchFromWebhookUnitTests
         var refName = "refs/heads/branch";
         var user = User.Create(new Guid(), "", "", "", "", UserRole.USER);
         var repository = Repository.Create("", "", false, null, user);
-        var branch = Branch.Create(new Guid(), "branch", repository.Id, false, user.Id);
+        var branch = Branch.Create("branch", repository.Id, false, user.Id);
+        branch = OverrideId<Branch>(branch, new Guid());
         var command = new CreateBranchFromWebhookCommand(username, repositoryName, refName);
         
         
@@ -169,5 +170,12 @@ public class CreateBranchFromWebhookUnitTests
 
         // Assert
         _branchRepositoryMock.Verify(b => b.Create(It.IsAny<Branch>()), Times.Never);
+    }
+    private T OverrideId<T>(T obj, Guid id)
+    {
+        var propertyInfo = typeof(T).GetProperty("Id");
+        if (propertyInfo == null) return obj;
+        propertyInfo.SetValue(obj, id);
+        return obj;
     }
 }

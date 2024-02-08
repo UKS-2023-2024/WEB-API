@@ -15,6 +15,8 @@ namespace Domain.Repositories
         public List<Domain.Tasks.Task> Tasks { get; private set; }
         public List<AssignEvent> AssignEvents { get; private set; }
         public List<UnassignEvent> UnassignEvents { get; private set; }
+        public List<AssignPullRequestEvent> AssignPullRequestEvents { get; private set; }
+        public List<UnnassignPullRequestEvent> UnnassignPullRequestEvents { get; private set; }
 
         public RepositoryMember()
         {

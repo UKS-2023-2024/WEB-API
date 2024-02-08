@@ -8,5 +8,6 @@ public interface IIssueRepository: IBaseRepository<Issue>
     Task<List<Issue>> FindRepositoryIssues(Guid repositoryId);
     Task<List<Event>> FindOpenedIssueEvents(Guid issueId);
     Task<List<Issue>> FindMilestoneIssues(Guid milestoneId);
+    Task<List<Issue>> FindAllByIds(Guid repositoryId, List<Guid> issuesIds);
 
 }
