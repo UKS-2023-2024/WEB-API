@@ -474,7 +474,7 @@ namespace Infrastructure.Migrations
 
                     b.ToTable("Events");
 
-                    b.HasDiscriminator<int>("EventType").HasValue(6);
+                    b.HasDiscriminator<int>("EventType").HasValue(0);
 
                     b.UseTphMappingStrategy();
                 });
@@ -659,6 +659,13 @@ namespace Infrastructure.Migrations
                     b.HasDiscriminator().HasValue(7);
                 });
 
+            modelBuilder.Entity("Domain.Tasks.CloseEvent", b =>
+                {
+                    b.HasBaseType("Domain.Tasks.Event");
+
+                    b.HasDiscriminator().HasValue(1);
+                });
+
             modelBuilder.Entity("Domain.Tasks.Interfaces.AssignMilestoneEvent", b =>
                 {
                     b.HasBaseType("Domain.Tasks.Event");
@@ -669,6 +676,13 @@ namespace Infrastructure.Migrations
                     b.HasIndex("MilestoneId");
 
                     b.HasDiscriminator().HasValue(4);
+                });
+
+            modelBuilder.Entity("Domain.Tasks.PullRequestMergedEvent", b =>
+                {
+                    b.HasBaseType("Domain.Tasks.Event");
+
+                    b.HasDiscriminator().HasValue(6);
                 });
 
             modelBuilder.Entity("Domain.Tasks.RemoveIssueFromPullRequestEvent", b =>
@@ -1208,16 +1222,17 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("SocialAccounts");
                 });
-            
-            modelBuilder.Entity("Domain.Comments.Comment", b =>
-                {
-                    b.Navigation("Reactions");
-                });
+
             modelBuilder.Entity("Domain.Branches.Branch", b =>
                 {
                     b.Navigation("FromPullRequests");
 
                     b.Navigation("ToPullRequests");
+                });
+
+            modelBuilder.Entity("Domain.Comments.Comment", b =>
+                {
+                    b.Navigation("Reactions");
                 });
 
             modelBuilder.Entity("Domain.Milestones.Milestone", b =>

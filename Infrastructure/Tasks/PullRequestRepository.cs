@@ -27,17 +27,11 @@ public class PullRequestRepository: BaseRepository<PullRequest>, IPullRequestRep
 
     public Task<List<PullRequest>> FindAllByRepositoryId(Guid repositoryId)
     {
-        try
-        {
-            return Task.FromResult(_context.PullRequests.Include(pr => pr.Events)
-                .Include(pr => pr.FromBranch)
-                .Include(pr => pr.ToBranch)
-                .Where(pr => pr.RepositoryId.Equals(repositoryId)).ToList());
-        } catch (Exception ex)
-        {
-            Console.WriteLine(ex.ToString());
-            return null;
-        }
+        return Task.FromResult(_context.PullRequests.Include(pr => pr.Events)
+            .Include(pr => pr.FromBranch)
+            .Include(pr => pr.ToBranch)
+            .Where(pr => pr.RepositoryId.Equals(repositoryId))
+            .ToList());
     }
 
     public Task<PullRequest?> FindByBranchesAndRepository(Guid repositoryId, Guid fromBranchId, Guid toBranchId)

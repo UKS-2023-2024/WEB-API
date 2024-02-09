@@ -90,7 +90,7 @@ public class PullRequest : Task
     {
         if (State == TaskState.CLOSED) throw new PullRequestClosedException("Pull request already closed!");
         if (State == TaskState.MERGED) throw new PullRequestMergedException("Pull request merged!");
-        Events.Add(new Event("Closed pull request", EventType.CLOSED, creatorId));
+        Events.Add(new CloseEvent("Closed pull request", creatorId, Id));
         State = TaskState.CLOSED;
     }
     
@@ -106,7 +106,7 @@ public class PullRequest : Task
     {
         if (State == TaskState.CLOSED) throw new PullRequestClosedException("Pull request closed!");
         if (State == TaskState.MERGED) throw new PullRequestMergedException("Pull request already merged!");
-        Events.Add(new Event($"Pull request merged from branch {FromBranch.Name} to {ToBranch.Name}", EventType.PULL_REQUEST_MERGED,creatorId));
+        Events.Add(new PullRequestMergedEvent($"Pull request merged from branch {FromBranch.Name} to {ToBranch.Name}", creatorId, Id));
         State = TaskState.MERGED;
     }
     

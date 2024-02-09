@@ -18,6 +18,7 @@ public class FindPullRequestEventsQueryHandler : IQueryHandler<FindPullRequestEv
     {
         var pullRequest = _pullRequestRepository.Find(request.PullRequestId);
         PullRequest.ThrowIfDoesntExist(pullRequest);
-        return pullRequest!.Events;
+        var sortedEvents = pullRequest!.Events.OrderBy(e => e.CreatedAt).ToList();
+        return sortedEvents;
     }
 }
