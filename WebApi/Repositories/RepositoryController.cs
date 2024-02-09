@@ -2,6 +2,7 @@
 using Application.Repositories.Commands.Create.CreateForOrganization;
 using Application.Repositories.Commands.Create.CreateForUser;
 using Application.Repositories.Commands.Delete;
+using Application.Repositories.Commands.Fork;
 using Application.Repositories.Commands.HandleRepositoryMembers.AddRepositoryMember;
 using Application.Repositories.Commands.HandleRepositoryMembers.ChangeRole;
 using Application.Repositories.Commands.HandleRepositoryMembers.RemoveRepositoryMember;
@@ -17,6 +18,7 @@ using Application.Repositories.Queries.FindAllRepositoriesUserBelongsTo;
 using Application.Repositories.Queries.FindAllRepositoryMembers;
 using Application.Repositories.Queries.FindAllUsersThatStarredRepository;
 using Application.Repositories.Queries.FindAllUsersWatchingRepository;
+using Application.Repositories.Queries.FindNumberOfForks;
 using Application.Repositories.Queries.FindRepositoryMemberRole;
 using Application.Repositories.Queries.IsUserWatchingRepository;
 using Domain.Repositories;
@@ -112,6 +114,15 @@ public class RepositoryController : ControllerBase
         return Ok(didUserStar);
     }
     
+    [HttpGet("forks/{repositoryId:guid}")]
+    [Authorize]
+    public async Task<IActionResult> GetNumberOfForks(Guid repositoryId)
+    {
+        var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        var numberOfForks = await _sender.Send(new FindNumberOfForksCommand(userId,repositoryId));
+        return Ok(numberOfForks);
+    }
+    
     [HttpGet("users-that-starred/{repositoryId:guid}")]
     [Authorize]
     public async Task<IActionResult> GetAllThatStarred(Guid repositoryId)
@@ -149,6 +160,15 @@ public class RepositoryController : ControllerBase
     {
         var ownerId = _userIdentityService.FindUserIdentity(HttpContext.User);
         await _sender.Send(new SendInviteCommand(ownerId, userId,repositoryId));
+        return Ok();
+    }
+    
+    [HttpPost("forks/{repositoryId:guid}")]
+    [Authorize]
+    public async Task<IActionResult> ForkRepository(Guid repositoryId)
+    {
+        var ownerId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        await _sender.Send(new ForkRepositoryCommand(ownerId,repositoryId));
         return Ok();
     }
     

@@ -154,6 +154,12 @@ namespace Domain.Repositories
         {
             Branches.Add(branch);
         }
+        
+        public string FindRepositoryOwner()
+        {
+            return Organization == null ?Members.First(repoMember => 
+                repoMember.Role == RepositoryMemberRole.OWNER).Member.Username : Organization.Name;
+        }
 
         public void AddToWatchedBy(User user, WatchingPreferences preferences)
         {
