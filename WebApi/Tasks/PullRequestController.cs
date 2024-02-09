@@ -1,6 +1,7 @@
 ﻿using Application.PullRequests.Commands;
 using Application.PullRequests.Commands.Close;
 using Application.PullRequests.Commands.Reopen;
+using Application.PullRequests.Commands.Update;
 using Application.PullRequests.Queries;
 using Application.PullRequests.Queries.FindPullRequest;
 using Application.PullRequests.Queries.FindPullRequestEvents;
@@ -86,4 +87,15 @@ public class PullRequestController:ControllerBase
         PullRequest reopenedPr = await _sender.Send(new ReopenPullRequestCommand(userId, id));
         return Ok(new PullRequestPresenter(reopenedPr));
     }
+
+    [HttpPut("issues/update")]
+    [Authorize]
+    public async Task<IActionResult> Update([FromBody] UpdatePullRequestDto dto)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Guid updatedIssueGuid = await _sender.Send(new AssignIssuesToPullRequestCommand(dto.Id, 
+            creatorId, dto.IssueIds));
+        return Ok(updatedIssueGuid);
+    }
+
 }

@@ -47,6 +47,7 @@ public class PullRequestRepository: BaseRepository<PullRequest>, IPullRequestRep
           .Include(pr => pr.ToBranch)
           .Include(pr => pr.Events)
           .ThenInclude(e => e.Creator)
+          .Include(pr => pr.Issues)
           .FirstOrDefault(pr => pr.Id.Equals(id));
     }
 }
