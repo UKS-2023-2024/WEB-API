@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240209132756_AddedForkingRepository")]
+    partial class AddedForkingRepository
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -477,7 +480,7 @@ namespace Infrastructure.Migrations
 
                     b.ToTable("Events");
 
-                    b.HasDiscriminator<int>("EventType").HasValue(0);
+                    b.HasDiscriminator<int>("EventType").HasValue(6);
 
                     b.UseTphMappingStrategy();
                 });
@@ -662,13 +665,6 @@ namespace Infrastructure.Migrations
                     b.HasDiscriminator().HasValue(7);
                 });
 
-            modelBuilder.Entity("Domain.Tasks.CloseEvent", b =>
-                {
-                    b.HasBaseType("Domain.Tasks.Event");
-
-                    b.HasDiscriminator().HasValue(1);
-                });
-
             modelBuilder.Entity("Domain.Tasks.Interfaces.AssignMilestoneEvent", b =>
                 {
                     b.HasBaseType("Domain.Tasks.Event");
@@ -679,13 +675,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("MilestoneId");
 
                     b.HasDiscriminator().HasValue(4);
-                });
-
-            modelBuilder.Entity("Domain.Tasks.PullRequestMergedEvent", b =>
-                {
-                    b.HasBaseType("Domain.Tasks.Event");
-
-                    b.HasDiscriminator().HasValue(6);
                 });
 
             modelBuilder.Entity("Domain.Tasks.RemoveIssueFromPullRequestEvent", b =>

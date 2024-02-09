@@ -25,6 +25,8 @@ namespace Domain.Repositories
         public List<Tasks.Task> Tasks { get; private set; } = new();
         public List<Label> Labels { get; private set; } = new();
         public List<RepositoryWatcher> WatchedBy { get; private set; } = new();
+        
+        public Guid? ForkedFromId { get; private set; }
         public string? HttpCloneUrl { get; private set; }
         public string? SshCloneUrl { get; private set; }
 
@@ -58,6 +60,11 @@ namespace Domain.Repositories
                  Id = id
              };
             return repository;
+        }
+        
+        public static Repository Fork(Repository repository, User creator)
+        {
+            return new Repository(repository.Name, repository.Description, repository.IsPrivate, null, new(),creator);
         }
 
         public RepositoryMember AddMember(User user)

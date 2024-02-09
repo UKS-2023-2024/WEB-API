@@ -33,7 +33,8 @@ public class GiteaService: IGitService
         "write:repository",
         "read:user",
         "write:user",
-        "write:admin"
+        "write:admin",
+        "read:admin"
     };
 
     public GiteaService(IConfiguration configuration)
@@ -246,6 +247,18 @@ public class GiteaService: IGitService
         SetAuthToken(_adminToken);
         var url = $"repos/{FindRepositoryOwner(repository)}/{repository.Name}";
         var response = await _httpClient.DeleteAsync(url);
+        await LogStatusAndResponseContent(response);
+    }
+
+    public async Task ForkRepository(Repository repository, User creator)
+    {
+        SetAuthToken(creator.GitToken!);
+        var url = $"repos/{FindRepositoryOwner(repository)}/{repository.Name}/forks";
+        var body = Body(new
+        {
+            name = repository.Name
+        });
+        var response = await _httpClient.PostAsync(url, body);
         await LogStatusAndResponseContent(response);
     }
 
