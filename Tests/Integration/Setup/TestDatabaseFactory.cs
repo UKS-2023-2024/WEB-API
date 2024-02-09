@@ -111,9 +111,9 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         branch3 = OverrideId(branch3,new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b3"));
         var label1 = new Label("label1", "123", "", Guid.Parse("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d94a5"));
         
-        var issue1 = Issue.Create("first issue", "description", TaskState.OPEN, 1, repository1,
+        var issue1 = Issue.Create(new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21c94b3"), "first issue", "description", TaskState.OPEN, 1, repository1,
             user1, new List<RepositoryMember>(), new List<Label>() {label1}, null);
-        var issue2 = Issue.Create("first issue", "description", TaskState.CLOSED, 1, repository1,
+        var issue2 = Issue.Create(new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21c94b5"), "first issue", "description", TaskState.CLOSED, 1, repository1,
             user1, new List<RepositoryMember>(), new List<Label>() { label1 }, null);
         issue1.UpdateMilestone(milestone1.Id, user1.Id);
         issue2.UpdateMilestone(milestone1.Id, user1.Id);
