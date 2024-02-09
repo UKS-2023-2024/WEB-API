@@ -1,9 +1,4 @@
-﻿using Application.Issues.Commands.Create;
-using Application.Issues.Queries.FindIssueQuery;
-using Application.Issues.Queries.FindRepositoryIssues;
-using Application.Milestones.Commands.Close;
-using Application.Milestones.Commands.Reopen;
-using Application.PullRequests.Commands;
+﻿using Application.PullRequests.Commands;
 using Application.PullRequests.Commands.Close;
 using Application.PullRequests.Commands.Reopen;
 using Application.PullRequests.Queries;
@@ -47,16 +42,16 @@ public class PullRequestController:ControllerBase
         return Ok(new {Id = createdPullRequestId});
     }
     
-    [HttpGet("{repositoryId:guid}/{pullRequestId:Guid}")]
+    [HttpGet("{id}")]
     [Authorize]
-    public async Task<IActionResult> FindPullRequestById(Guid pullRequestId, Guid repositoryId)
+    public async Task<IActionResult> FindPullRequestById(Guid id)
     {
         var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        var pullRequest = await _sender.Send(new FindPullRequestQuery(userId, pullRequestId, repositoryId));
+        var pullRequest = await _sender.Send(new FindPullRequestQuery(id));
         return Ok(new PullRequestPresenter(pullRequest));
     }
 
-    [HttpGet("{repositoryId:guid}")]
+    [HttpGet("{repositoryId}/pull-requests")]
     [Authorize]
     public async Task<IActionResult> FindRepositoryPullRequests(Guid repositoryId)
     {
@@ -65,16 +60,15 @@ public class PullRequestController:ControllerBase
         return Ok(PullRequestPresenter.MapPullRequestToPullRequestPresenter(pullRequests));
     }
     
-    [HttpGet("{repositoryId:guid}/{pullRequestId:Guid}/events")]
+    [HttpGet("{pullRequestId:Guid}/events")]
     [Authorize]
-    public async Task<IActionResult> FindPullRequestEvents(Guid pullRequestId, Guid repositoryId)
+    public async Task<IActionResult> FindPullRequestEvents(Guid pullRequestId)
     {
-        var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        var events = await _sender.Send(new FindPullRequestEventsQuery(userId, pullRequestId, repositoryId));
+        var events = await _sender.Send(new FindPullRequestEventsQuery(pullRequestId));
         return Ok(events);
     }
 
-    [HttpPut("{id}/close")]
+    [HttpPut("close/{id}")]
     [Authorize]
     public async Task<IActionResult> Close(Guid id)
     {
@@ -84,7 +78,7 @@ public class PullRequestController:ControllerBase
     }
 
 
-    [HttpPut("{id}/reopen")]
+    [HttpPut("reopen/{id}")]
     [Authorize]
     public async Task<IActionResult> Reopen(Guid id)
     {
