@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240209132756_AddedForkingRepository")]
+    partial class AddedForkingRepository
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -345,6 +348,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid?>("ForkedFromId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("HttpCloneUrl")
                         .HasColumnType("text");
 
@@ -366,22 +372,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("OrganizationId");
 
                     b.ToTable("Repositories");
-                });
-
-            modelBuilder.Entity("Domain.Repositories.RepositoryFork", b =>
-                {
-                    b.Property<Guid>("SourceRepoId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ForkedRepoId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("SourceRepoId", "ForkedRepoId");
-
-                    b.HasIndex("ForkedRepoId")
-                        .IsUnique();
-
-                    b.ToTable("RepositoryForks");
                 });
 
             modelBuilder.Entity("Domain.Repositories.RepositoryInvite", b =>
@@ -490,7 +480,7 @@ namespace Infrastructure.Migrations
 
                     b.ToTable("Events");
 
-                    b.HasDiscriminator<int>("EventType").HasValue(0);
+                    b.HasDiscriminator<int>("EventType").HasValue(6);
 
                     b.UseTphMappingStrategy();
                 });
@@ -675,13 +665,6 @@ namespace Infrastructure.Migrations
                     b.HasDiscriminator().HasValue(7);
                 });
 
-            modelBuilder.Entity("Domain.Tasks.CloseEvent", b =>
-                {
-                    b.HasBaseType("Domain.Tasks.Event");
-
-                    b.HasDiscriminator().HasValue(1);
-                });
-
             modelBuilder.Entity("Domain.Tasks.Interfaces.AssignMilestoneEvent", b =>
                 {
                     b.HasBaseType("Domain.Tasks.Event");
@@ -692,13 +675,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("MilestoneId");
 
                     b.HasDiscriminator().HasValue(4);
-                });
-
-            modelBuilder.Entity("Domain.Tasks.PullRequestMergedEvent", b =>
-                {
-                    b.HasBaseType("Domain.Tasks.Event");
-
-                    b.HasDiscriminator().HasValue(6);
                 });
 
             modelBuilder.Entity("Domain.Tasks.RemoveIssueFromPullRequestEvent", b =>
@@ -947,25 +923,6 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Organization");
-                });
-
-            modelBuilder.Entity("Domain.Repositories.RepositoryFork", b =>
-                {
-                    b.HasOne("Domain.Repositories.Repository", "ForkedRepo")
-                        .WithOne("ForkedFrom")
-                        .HasForeignKey("Domain.Repositories.RepositoryFork", "ForkedRepoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Repositories.Repository", "SourceRepo")
-                        .WithMany("RepositoryForks")
-                        .HasForeignKey("SourceRepoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ForkedRepo");
-
-                    b.Navigation("SourceRepo");
                 });
 
             modelBuilder.Entity("Domain.Repositories.RepositoryInvite", b =>
@@ -1288,8 +1245,6 @@ namespace Infrastructure.Migrations
                 {
                     b.Navigation("Branches");
 
-                    b.Navigation("ForkedFrom");
-
                     b.Navigation("Labels");
 
                     b.Navigation("Members");
@@ -1297,8 +1252,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Milestones");
 
                     b.Navigation("PendingInvites");
-
-                    b.Navigation("RepositoryForks");
 
                     b.Navigation("Tasks");
 

@@ -33,7 +33,8 @@ public class GiteaService: IGitService
         "write:repository",
         "read:user",
         "write:user",
-        "write:admin"
+        "write:admin",
+        "read:admin"
     };
 
     public GiteaService(IConfiguration configuration)
@@ -156,7 +157,7 @@ public class GiteaService: IGitService
     public async Task RemoveRepositoryMember(Repository repository, User user)
     {
         SetAuthToken(_adminToken);
-        var url = $"repos/{FindRepositoryOwner(repository)}/{repository.Name}/collaborators/{user.Username}";
+        var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}/collaborators/{user.Username}";
         var response = await _httpClient.DeleteAsync(url);
         await LogStatusAndResponseContent(response);
     }
@@ -171,7 +172,7 @@ public class GiteaService: IGitService
     public async Task CreateBranch(Repository repository, string branchName, string createdFromBranch)
     {
         SetAuthToken(_adminToken);
-        var url = $"repos/{FindRepositoryOwner(repository)}/{repository.Name}/branches/";
+        var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}/branches/";
         var body = Body(new
         {
             new_branch_name = branchName,
@@ -185,7 +186,7 @@ public class GiteaService: IGitService
     public async Task CreatePullRequest(Repository repository, string fromBranch, string toBranch, PullRequest pullRequest)
     {
         SetAuthToken(_adminToken);
-        var url = $"repos/{FindRepositoryOwner(repository)}/{repository.Name}/pulls";
+        var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}/pulls";
         var body = Body(new
         {
             head = fromBranch,
@@ -244,8 +245,20 @@ public class GiteaService: IGitService
     public async Task DeleteRepository(Repository repository)
     {
         SetAuthToken(_adminToken);
-        var url = $"repos/{FindRepositoryOwner(repository)}/{repository.Name}";
+        var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}";
         var response = await _httpClient.DeleteAsync(url);
+        await LogStatusAndResponseContent(response);
+    }
+
+    public async Task ForkRepository(Repository repository, User creator)
+    {
+        SetAuthToken(creator.GitToken!);
+        var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}/forks";
+        var body = Body(new
+        {
+            name = repository.Name
+        });
+        var response = await _httpClient.PostAsync(url, body);
         await LogStatusAndResponseContent(response);
     }
 
@@ -276,7 +289,7 @@ public class GiteaService: IGitService
     public async Task AddRepositoryMember(Repository repository, User user, string permission)
     {
         SetAuthToken(_adminToken);
-        var url = $"repos/{FindRepositoryOwner(repository)}/{repository.Name}/collaborators/{user.Username}";
+        var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}/collaborators/{user.Username}";
         var body = Body(new
         {
             permission,
@@ -330,12 +343,6 @@ public class GiteaService: IGitService
     {
         var jsonData = JsonSerializer.Serialize(data);
         return new StringContent(jsonData, Encoding.UTF8, "application/json");
-    }
-
-    private string FindRepositoryOwner(Repository repository)
-    {
-        return repository!.Organization == null ? repository.Members.First(repoMember => 
-            repoMember.Role == RepositoryMemberRole.OWNER).Member.Username : repository.Organization.Name;
     }
 
 }

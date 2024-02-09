@@ -27,6 +27,8 @@ namespace Domain.Repositories
         public List<RepositoryWatcher> WatchedBy { get; private set; } = new();
         public string? HttpCloneUrl { get; private set; }
         public string? SshCloneUrl { get; private set; }
+        public RepositoryFork? ForkedFrom { get; private set; }
+        public List<RepositoryFork> RepositoryForks { get; private set; } = new();
 
         private Repository() { }
 
@@ -58,6 +60,11 @@ namespace Domain.Repositories
                  Id = id
              };
             return repository;
+        }
+        
+        public static Repository Fork(Repository repository, User creator)
+        {
+            return new Repository(repository.Name, repository.Description, repository.IsPrivate, null, new(),creator);
         }
 
         public RepositoryMember AddMember(User user)
@@ -146,6 +153,12 @@ namespace Domain.Repositories
         public void AddBranch(Branch branch)
         {
             Branches.Add(branch);
+        }
+        
+        public string FindRepositoryOwner()
+        {
+            return Organization == null ?Members.First(repoMember => 
+                repoMember.Role == RepositoryMemberRole.OWNER).Member.Username : Organization.Name;
         }
 
         public void AddToWatchedBy(User user, WatchingPreferences preferences)

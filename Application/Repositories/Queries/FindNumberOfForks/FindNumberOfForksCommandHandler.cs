@@ -1,27 +1,25 @@
 ﻿using Application.Shared;
 using Domain.Repositories;
 using Domain.Repositories.Interfaces;
-using Domain.Tasks;
-using Domain.Tasks.Interfaces;
 
-namespace Application.PullRequests.Queries.FindRepositoryPullRequests;
+namespace Application.Repositories.Queries.FindNumberOfForks;
 
-public class FindRepositoryPullRequestsQueryHandler: IQueryHandler<FindRepositoryPullRequestsQuery,List<PullRequest>>
+public class FindNumberOfForksCommandHandler : ICommandHandler<FindNumberOfForksCommand, int>
 {
-    private readonly IPullRequestRepository _pullRequestRepository;
     private readonly IRepositoryMemberRepository _repositoryMemberRepository;
+    private readonly IRepositoryForkRepository _repositoryForkRepository;
     private readonly IRepositoryRepository _repositoryRepository;
 
-    public FindRepositoryPullRequestsQueryHandler(IPullRequestRepository pullRequestRepository,
-        IRepositoryMemberRepository repositoryMemberRepository,
+    public FindNumberOfForksCommandHandler(IRepositoryMemberRepository repositoryMemberRepository,
+        IRepositoryForkRepository repositoryForkRepository,
         IRepositoryRepository repositoryRepository)
     {
-        _pullRequestRepository = pullRequestRepository;
         _repositoryMemberRepository = repositoryMemberRepository;
+        _repositoryForkRepository = repositoryForkRepository;
         _repositoryRepository = repositoryRepository;
     }
 
-    public async Task<List<PullRequest>> Handle(FindRepositoryPullRequestsQuery request, CancellationToken cancellationToken)
+    public async Task<int> Handle(FindNumberOfForksCommand request, CancellationToken cancellationToken)
     {
         var repository = _repositoryRepository.Find(request.RepositoryId);
         Repository.ThrowIfDoesntExist(repository);
@@ -31,7 +29,6 @@ public class FindRepositoryPullRequestsQueryHandler: IQueryHandler<FindRepositor
                 await _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.UserId, request.RepositoryId);
             RepositoryMember.ThrowIfDoesntExist(repositoryMember);
         }
-        var pullRequests = await _pullRequestRepository.FindAllByRepositoryId(request.RepositoryId);
-        return pullRequests;
+        return await _repositoryForkRepository.FindNumberOfForksForRepository(request.RepositoryId);
     }
 }

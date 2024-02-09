@@ -22,7 +22,6 @@ public class RepositoryPresenter
         if (repository.Organization != null) 
             Organization = new OrganizationPresenter(repository.Organization);
         Members = RepositoryMemberPresenter.MapRepositoryMembersToPresenters(repository.Members);
-        
     }
     
     public static IEnumerable<RepositoryPresenter> MapRepositoriesToPresenters(IEnumerable<Repository> repositories)

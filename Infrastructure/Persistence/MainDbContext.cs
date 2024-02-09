@@ -41,6 +41,8 @@ public class MainDbContext: DbContext
     public DbSet<Comment> Comments { get; set; } = null!;
     public DbSet<Reaction> Reactions { get; set; } = null!;
     public DbSet<PullRequest> PullRequests { get; set; } = null!;
+    
+    public DbSet<RepositoryFork> RepositoryForks { get; set; } = null!;
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
