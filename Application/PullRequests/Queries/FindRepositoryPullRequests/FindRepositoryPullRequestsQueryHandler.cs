@@ -20,9 +20,9 @@ public class FindRepositoryPullRequestsQueryHandler: IQueryHandler<FindRepositor
 
     public async Task<List<PullRequest>> Handle(FindRepositoryPullRequestsQuery request, CancellationToken cancellationToken)
     {
-        //var repositoryMember =
-         //   await _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.UserId, request.RepositoryId);
-        //RepositoryMember.ThrowIfDoesntExist(repositoryMember);
+        var repositoryMember =
+            await _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.UserId, request.RepositoryId);
+        RepositoryMember.ThrowIfDoesntExist(repositoryMember);
         var pullRequests = await _pullRequestRepository.FindAllByRepositoryId(request.RepositoryId);
         var test = pullRequests;
         return pullRequests;
