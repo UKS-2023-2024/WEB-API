@@ -38,9 +38,8 @@ public class AssignIssuesToPullRequestCommandHandler : ICommandHandler<AssignIss
         var repository = _repositoryRepository.Find(pullRequest.RepositoryId);
         Repository.ThrowIfDoesntExist(repository);
         
-        var issueGuids = request.IssuesIds.Select(Guid.Parse).ToList();
         List<Issue> issues = new();
-        foreach (Guid issueId in issueGuids)
+        foreach (Guid issueId in request.IssuesIds)
         {
             var issue = _issueRepository.Find(issueId);
             if (issue == null) throw new IssueNotFoundException();

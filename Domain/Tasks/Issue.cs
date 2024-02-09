@@ -34,6 +34,7 @@ public class Issue: Task
         return new Issue(title, description, state, number, creator.Id, repository.Id, assignees, labels, milestoneId);
     }
 
+
     public void UpdateAssignees(List<RepositoryMember> assignees, Guid creatorId)
     {
         CreateAddAssigneeEvents(assignees, creatorId);
