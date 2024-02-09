@@ -25,10 +25,10 @@ namespace Domain.Repositories
         public List<Tasks.Task> Tasks { get; private set; } = new();
         public List<Label> Labels { get; private set; } = new();
         public List<RepositoryWatcher> WatchedBy { get; private set; } = new();
-        
-        public Guid? ForkedFromId { get; private set; }
         public string? HttpCloneUrl { get; private set; }
         public string? SshCloneUrl { get; private set; }
+        public RepositoryFork? ForkedFrom { get; private set; }
+        public List<RepositoryFork> RepositoryForks { get; private set; } = new();
 
         private Repository() { }
 

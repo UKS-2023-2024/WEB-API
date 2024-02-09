@@ -91,10 +91,11 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         var member3 = repository3.AddMember(user4);
         member1.Delete();
         member3.SetRole(RepositoryMemberRole.ADMIN);
-        
-        var repository4 = Repository.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"), "repo4", "test", true, null, user1);
         var member2 = repository3.AddMember(user2);
         member2.Delete(); 
+        
+        var repository4 = Repository.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"), "repo4", "test", true, null, user1);
+        repository4.AddMember(user4);
 
         var repository5 = Repository.Create(new Guid("8e9b1cc3-35d6-4bf2-9f2c-9e00a21d94a5"), "repo5", "test", true, organization1, user1);
         repository5.AddToStarredBy(user1);

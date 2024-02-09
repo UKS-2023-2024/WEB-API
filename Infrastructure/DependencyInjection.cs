@@ -53,6 +53,7 @@ public static class DependencyInjection
         services.AddScoped<ICommentRepository, CommentRepository>();
         services.AddScoped<IReactionRepository, ReactionRepository>();
         services.AddScoped<IPullRequestRepository, PullRequestRepository>();
+        services.AddScoped<IRepositoryForkRepository, RepositoryForkRepository>();
         
         return services;
     }    
