@@ -4,6 +4,7 @@ using Domain.Auth;
 using Domain.Auth.Enums;
 using Domain.Milestones;
 using Domain.Milestones.Exceptions;
+using Domain.Notifications.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
@@ -21,11 +22,15 @@ public class ClosePullRequestUnitTests
 {
     private readonly Mock<IPullRequestRepository> _pullRequestRepositoryMock;
     private readonly Mock<IRepositoryMemberRepository> _repositoryMemberRepositoryMock;
+    private readonly Mock<IRepositoryRepository> _repositoryRepositoryMock;
+    private readonly Mock<INotificationService> _notificationServiceMock;
 
     public ClosePullRequestUnitTests()
     {
         _pullRequestRepositoryMock = new();
         _repositoryMemberRepositoryMock = new();
+        _repositoryRepositoryMock = new();
+        _notificationServiceMock = new();
     }
 
     [Fact]
@@ -41,12 +46,13 @@ public class ClosePullRequestUnitTests
         RepositoryMember repositoryMember = RepositoryMember.Create(user, repository, RepositoryMemberRole.OWNER);
         _pullRequestRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>()))
             .Returns(pullRequest);
+        _repositoryRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>())).Returns(repository);
         _repositoryMemberRepositoryMock.Setup(x => x.FindByUserIdAndRepositoryId(It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(repositoryMember);
 
         
         var handler = new ClosePullRequestCommandHandler(_repositoryMemberRepositoryMock.Object,
-            _pullRequestRepositoryMock.Object);
+            _pullRequestRepositoryMock.Object, _repositoryRepositoryMock.Object, _notificationServiceMock.Object);
 
         //Act
         PullRequest closedPr = await handler.Handle(command, default);
@@ -68,12 +74,13 @@ public class ClosePullRequestUnitTests
         RepositoryMember repositoryMember = RepositoryMember.Create(user, repository, RepositoryMemberRole.OWNER);
         _pullRequestRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>()))
             .Returns(pullRequest);
+        _repositoryRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>())).Returns(repository);
         _repositoryMemberRepositoryMock.Setup(x => x.FindByUserIdAndRepositoryId(It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(repositoryMember);
 
 
         var handler = new ClosePullRequestCommandHandler(_repositoryMemberRepositoryMock.Object,
-            _pullRequestRepositoryMock.Object);
+            _pullRequestRepositoryMock.Object, _repositoryRepositoryMock.Object, _notificationServiceMock.Object);
 
         //Act
         Func<System.Threading.Tasks.Task> handle = async () =>
@@ -99,12 +106,13 @@ public class ClosePullRequestUnitTests
         RepositoryMember? repositoryMember = null;
         _pullRequestRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>()))
             .Returns(pullRequest);
+        _repositoryRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>())).Returns(repository);
         _repositoryMemberRepositoryMock.Setup(x => x.FindByUserIdAndRepositoryId(It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(repositoryMember);
 
 
         var handler = new ClosePullRequestCommandHandler(_repositoryMemberRepositoryMock.Object,
-            _pullRequestRepositoryMock.Object);
+            _pullRequestRepositoryMock.Object, _repositoryRepositoryMock.Object, _notificationServiceMock.Object);
 
         //Act
         Func<System.Threading.Tasks.Task> handle = async () =>
