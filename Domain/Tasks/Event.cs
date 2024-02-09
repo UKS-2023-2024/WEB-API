@@ -18,7 +18,7 @@ public class Event
     public Event()
     {
     }
-    public Event(string title,EventType type, Guid creatorId)
+    public Event(string title, EventType type, Guid creatorId)
     {
         Title = title;
         CreatedAt = DateTime.Now.ToUniversalTime();

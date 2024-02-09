@@ -118,7 +118,9 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         issue1.UpdateMilestone(milestone1.Id, user1.Id);
         issue2.UpdateMilestone(milestone1.Id, user1.Id);
         var notification1 = Notification.Create("test", "subject", user1, DateTime.UtcNow);
+        var pullRequest = PullRequest.Create(new Guid("8e9b1cc3-36d3-4bf2-9f4c-9e00a21d94b3"), "pr", "pr", 1, repository1, user1.Id, new List<RepositoryMember>(), new List<Label>(), null, branch2.Id, branch1.Id, new List<Issue>());
         
+
         context.Users.AddRange(user1, user2, user3, user4);
         context.Organizations.AddRange(organization1,organization2);
         context.Repositories.AddRange(repository1,repository2,repository3,repository4,repository5);
@@ -126,6 +128,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         context.Branches.AddRange(branch1, branch2, branch3);
         context.Issues.AddRange(issue1, issue2);
         context.Notifications.AddRange(notification1);
+        context.PullRequests.AddRange(pullRequest);
         context.SaveChanges();
     }
     

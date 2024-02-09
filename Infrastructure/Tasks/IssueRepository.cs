@@ -19,6 +19,8 @@ public class IssueRepository: BaseRepository<Issue>, IIssueRepository
     public async Task<Issue> FindById(Guid id)
     {
         return _context.Issues.Where(i => i.Id.Equals(id))
+            .Include(i => i.Repository)
+            .ThenInclude(r => r.WatchedBy)
             .Include(i => i.Milestone)
             .Include(i => i.Comments)
             .ThenInclude(c => c.Reactions)

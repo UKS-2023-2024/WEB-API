@@ -1,15 +1,16 @@
-﻿using Application.Issues.Commands.Create;
-using Application.Issues.Queries.FindIssueQuery;
-using Application.Issues.Queries.FindRepositoryIssues;
-using Application.PullRequests.Commands;
+﻿using Application.PullRequests.Commands;
+using Application.PullRequests.Commands.Close;
+using Application.PullRequests.Commands.Reopen;
 using Application.PullRequests.Queries;
 using Application.PullRequests.Queries.FindPullRequest;
 using Application.PullRequests.Queries.FindPullRequestEvents;
 using Application.PullRequests.Queries.FindRepositoryPullRequests;
+using Domain.Milestones;
 using Domain.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WEB_API.Milestones.Presenters;
 using WEB_API.Shared.UserIdentityService;
 using WEB_API.Tasks.Dtos;
 using WEB_API.Tasks.Presenters;
@@ -41,16 +42,16 @@ public class PullRequestController:ControllerBase
         return Ok(new {Id = createdPullRequestId});
     }
     
-    [HttpGet("{repositoryId:guid}/{pullRequestId:Guid}")]
+    [HttpGet("{id}")]
     [Authorize]
-    public async Task<IActionResult> FindPullRequestById(Guid pullRequestId, Guid repositoryId)
+    public async Task<IActionResult> FindPullRequestById(Guid id)
     {
         var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        var pullRequest = await _sender.Send(new FindPullRequestQuery(userId, pullRequestId, repositoryId));
+        var pullRequest = await _sender.Send(new FindPullRequestQuery(id));
         return Ok(new PullRequestPresenter(pullRequest));
     }
 
-    [HttpGet("{repositoryId:guid}")]
+    [HttpGet("{repositoryId}/pull-requests")]
     [Authorize]
     public async Task<IActionResult> FindRepositoryPullRequests(Guid repositoryId)
     {
@@ -59,12 +60,30 @@ public class PullRequestController:ControllerBase
         return Ok(PullRequestPresenter.MapPullRequestToPullRequestPresenter(pullRequests));
     }
     
-    [HttpGet("{repositoryId:guid}/{pullRequestId:Guid}/events")]
+    [HttpGet("{pullRequestId:Guid}/events")]
     [Authorize]
-    public async Task<IActionResult> FindPullRequestEvents(Guid pullRequestId, Guid repositoryId)
+    public async Task<IActionResult> FindPullRequestEvents(Guid pullRequestId)
     {
-        var userId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        var events = await _sender.Send(new FindPullRequestEventsQuery(userId, pullRequestId, repositoryId));
+        var events = await _sender.Send(new FindPullRequestEventsQuery(pullRequestId));
         return Ok(events);
+    }
+
+    [HttpPut("close/{id}")]
+    [Authorize]
+    public async Task<IActionResult> Close(Guid id)
+    {
+        Guid userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        PullRequest pr = await _sender.Send(new ClosePullRequestCommand(userId, id));
+        return Ok(new PullRequestPresenter(pr));
+    }
+
+
+    [HttpPut("reopen/{id}")]
+    [Authorize]
+    public async Task<IActionResult> Reopen(Guid id)
+    {
+        Guid userId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        PullRequest reopenedPr = await _sender.Send(new ReopenPullRequestCommand(userId, id));
+        return Ok(new PullRequestPresenter(reopenedPr));
     }
 }

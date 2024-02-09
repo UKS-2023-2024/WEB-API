@@ -28,14 +28,25 @@ public class PullRequestRepository: BaseRepository<PullRequest>, IPullRequestRep
     public Task<List<PullRequest>> FindAllByRepositoryId(Guid repositoryId)
     {
         return Task.FromResult(_context.PullRequests.Include(pr => pr.Events)
-            .Include(pr=> pr.FromBranch)
-            .Include(pr=> pr.ToBranch)
-            .Where(pr => pr.RepositoryId.Equals(repositoryId)).ToList());
+            .Include(pr => pr.FromBranch)
+            .Include(pr => pr.ToBranch)
+            .Where(pr => pr.RepositoryId.Equals(repositoryId))
+            .ToList());
     }
 
     public Task<PullRequest?> FindByBranchesAndRepository(Guid repositoryId, Guid fromBranchId, Guid toBranchId)
     {
         return _context.PullRequests
             .FirstOrDefaultAsync(pr => pr.RepositoryId.Equals(repositoryId) && pr.FromBranchId.Equals(fromBranchId) && pr.ToBranchId.Equals(toBranchId) );
+    }
+
+    public override PullRequest? Find(Guid id)
+    {
+        return _context.PullRequests.Include(pr => pr.Events)
+          .Include(pr => pr.FromBranch)
+          .Include(pr => pr.ToBranch)
+          .Include(pr => pr.Events)
+          .ThenInclude(e => e.Creator)
+          .FirstOrDefault(pr => pr.Id.Equals(id));
     }
 }
