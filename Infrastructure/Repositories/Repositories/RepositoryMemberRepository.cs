@@ -26,6 +26,7 @@ public class RepositoryMemberRepository: BaseRepository<RepositoryMember>, IRepo
     {
         return _context.RepositoryMembers
             .Where(r => r.Member.Id.Equals(userId) && r.RepositoryId.Equals(repositoryId))
+            .Include(r => r.Member)
             .FirstOrDefaultAsync();
     }
 

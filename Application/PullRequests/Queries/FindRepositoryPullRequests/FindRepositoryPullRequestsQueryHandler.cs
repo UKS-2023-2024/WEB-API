@@ -24,7 +24,6 @@ public class FindRepositoryPullRequestsQueryHandler: IQueryHandler<FindRepositor
             await _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.UserId, request.RepositoryId);
         RepositoryMember.ThrowIfDoesntExist(repositoryMember);
         var pullRequests = await _pullRequestRepository.FindAllByRepositoryId(request.RepositoryId);
-        var test = pullRequests;
         return pullRequests;
     }
 }

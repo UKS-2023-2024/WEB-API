@@ -20,7 +20,6 @@ namespace Infrastructure.Notifications.Services
         {
             foreach (RepositoryWatcher watcher in repository.WatchedBy)
             {
-                if (watcher.WatchingPreferences == WatchingPreferences.Ignore) return;
                 if (ShouldUserBeNotified(watcher, notificationType)) 
                 {
                     await _mediator.Publish(Notification.Create(message, subject, watcher.User, DateTime.UtcNow));
@@ -31,6 +30,7 @@ namespace Infrastructure.Notifications.Services
         private bool ShouldUserBeNotified(RepositoryWatcher watcher, NotificationType notificationType)
         {
             WatchingPreferences pref = watcher.WatchingPreferences;
+            if (pref == WatchingPreferences.Ignore) return false;
             if (pref == WatchingPreferences.AllActivity || pref == WatchingPreferences.IssuesAndPullRequests) return true;
             return pref.ToString() == notificationType.ToString();
         }
