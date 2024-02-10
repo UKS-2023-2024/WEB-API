@@ -4,4 +4,4 @@ using Application.Shared;
 
 namespace Application.PullRequests.Commands.MilestoneUnassignment;
 
-public record UnassignMilestoneToPullRequestCommand(Guid Id, Guid UserId): ICommand<Guid>;
+public record UnassignMilestoneFromPullRequestCommand(Guid Id, Guid UserId): ICommand<Guid>;

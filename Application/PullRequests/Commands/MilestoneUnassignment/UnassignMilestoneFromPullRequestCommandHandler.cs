@@ -6,13 +6,13 @@ using Domain.Tasks.Interfaces;
 
 namespace Application.PullRequests.Commands.MilestoneUnassignment;
 
-public class UnassignMilestoneToPullRequestCommandHandler : ICommandHandler<UnassignMilestoneToPullRequestCommand, Guid>
+public class UnassignMilestoneFromPullRequestCommandHandler : ICommandHandler<UnassignMilestoneFromPullRequestCommand, Guid>
 {
     private readonly IPullRequestRepository _pullRequestRepository;
     private readonly IRepositoryMemberRepository _repositoryMemberRepository;
     private readonly IRepositoryRepository _repositoryRepository;
 
-    public UnassignMilestoneToPullRequestCommandHandler(IPullRequestRepository pullRequestRepository, IRepositoryMemberRepository repositoryMemberRepository,
+    public UnassignMilestoneFromPullRequestCommandHandler(IPullRequestRepository pullRequestRepository, IRepositoryMemberRepository repositoryMemberRepository,
         IRepositoryRepository repositoryRepository)
     {
         _pullRequestRepository = pullRequestRepository;
@@ -20,7 +20,7 @@ public class UnassignMilestoneToPullRequestCommandHandler : ICommandHandler<Unas
         _repositoryRepository = repositoryRepository;
     }
 
-    public async Task<Guid> Handle(UnassignMilestoneToPullRequestCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(UnassignMilestoneFromPullRequestCommand request, CancellationToken cancellationToken)
     {
 
         PullRequest? pullRequest = _pullRequestRepository.Find(request.Id);

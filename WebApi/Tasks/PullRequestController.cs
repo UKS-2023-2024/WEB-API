@@ -117,7 +117,7 @@ public class PullRequestController:ControllerBase
     public async Task<IActionResult> UnassignMilestone([FromBody] UpdatePullRequestDto dto)
     {
         Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        Guid updatedPrGuid = await _sender.Send(new UnassignMilestoneToPullRequestCommand(dto.Id,
+        Guid updatedPrGuid = await _sender.Send(new UnassignMilestoneFromPullRequestCommand(dto.Id,
             creatorId));
         return Ok(updatedPrGuid);
     }
