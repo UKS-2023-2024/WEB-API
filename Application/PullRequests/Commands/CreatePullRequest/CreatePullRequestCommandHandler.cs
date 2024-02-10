@@ -1,5 +1,4 @@
 ﻿using Application.Shared;
-using Domain.Auth;
 using Domain.Auth.Enums;
 using Domain.Auth.Interfaces;
 using Domain.Branches;
@@ -7,15 +6,13 @@ using Domain.Branches.Exceptions;
 using Domain.Branches.Interfaces;
 using Domain.Notifications.Interfaces;
 using Domain.Repositories;
-using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
 using Domain.Shared.Interfaces;
 using Domain.Tasks;
-using Domain.Tasks.Enums;
 using Domain.Tasks.Exceptions;
 using Domain.Tasks.Interfaces;
 
-namespace Application.PullRequests.Commands;
+namespace Application.PullRequests.Commands.CreatePullRequest;
 
 public class CreatePullRequestCommandHandler: ICommandHandler<CreatePullRequestCommand, Guid>
 {
@@ -52,10 +49,10 @@ public class CreatePullRequestCommandHandler: ICommandHandler<CreatePullRequestC
         var member =
             await _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.UserId, request.RepositoryId);
         RepositoryMember.ThrowIfDoesntExist(member);
-
+        
         var repository = _repositoryRepository.Find(request.RepositoryId);
         
-        var taskNumber = await _taskRepository.GetTaskNumber() + 1;
+        var taskNumber = await _taskRepository.GetTaskNumber(request.RepositoryId) + 1;
         
         var assignees = await _repositoryMemberRepository.FindAllByIds(repository!.Id, request.AssigneesIds);
         var labels = await _labelRepository.FindAllByIds(repository.Id, request.LabelsIds);
@@ -75,6 +72,9 @@ public class CreatePullRequestCommandHandler: ICommandHandler<CreatePullRequestC
         pullRequest = PullRequest.Create(request.Title, request.Description, taskNumber,
             repository, request.UserId, assignees, labels, request.MilestoneId,fromBranch.Id, toBranch.Id, issues);
 
+        await _gitService.CreatePullRequest(repository, fromBranch.Name, toBranch.Name, pullRequest);
+        pullRequest = await _pullRequestRepository.Create(pullRequest);
+        
         var message = $"A new Pull request has been opened in the repository {repository.Name}<br><br>" +
                       $"Title: {pullRequest.Title} <br>" +
                       $"Description: {pullRequest.Description}<br>" +
@@ -82,9 +82,6 @@ public class CreatePullRequestCommandHandler: ICommandHandler<CreatePullRequestC
         var subject = $"[Github] New Pull request opened in {repository.Name}";
         await _notificationService.SendNotification(repository, subject, message, NotificationType.PullRequests);
         
-        pullRequest = await _pullRequestRepository.Create(pullRequest);
-        await _gitService.CreatePullRequest(repository, fromBranch.Name, toBranch.Name, pullRequest);
-
         return pullRequest.Id;
     }
 }

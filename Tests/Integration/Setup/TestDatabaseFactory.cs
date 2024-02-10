@@ -120,8 +120,15 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         issue1.UpdateMilestone(milestone1.Id, user1.Id);
         issue2.UpdateMilestone(milestone1.Id, user1.Id);
         var notification1 = Notification.Create("test", "subject", user1, DateTime.UtcNow);
-        var pullRequest = PullRequest.Create(new Guid("8e9b1cc3-36d3-4bf2-9f4c-9e00a21d94b3"), "pr", "pr", 1, repository1, user1.Id, new List<RepositoryMember>(), new List<Label>(), null, branch2.Id, branch1.Id, new List<Issue>());
-        var pullRequest2 = PullRequest.Create(new Guid("8e9b1cc3-36d3-4bf2-9f4c-9e00a21d94b4"), "pr", "pr", 1, repository1, user1.Id, new List<RepositoryMember>(), new List<Label>(), milestone3.Id, branch3.Id, branch1.Id, new List<Issue>());
+        var pullRequest1 = PullRequest.Create(new Guid("8e9b1cc3-36d3-4bf2-9f4c-9e00a21d94b3"), "pr", "pr", 1, repository1, user1.Id, new List<RepositoryMember>(), new List<Label>(), null, branch2.Id, branch1.Id, new List<Issue>());
+        var pullRequest2 = PullRequest.Create(new Guid("8e9b1cc3-36d3-4bf2-9f4c-9e00a21d94b4"), "pr2", "pr2", 1, repository1, user1.Id, new List<RepositoryMember>(), new List<Label>(), milestone3.Id, branch3.Id, branch1.Id, new List<Issue>());
+        pullRequest2 = OverrideFromBranch(pullRequest2,branch2);
+        pullRequest2 = OverrideToBranch(pullRequest2,branch1);
+        pullRequest2.ClosePullRequest(user1.Id);
+        var pullRequest3 = PullRequest.Create(new Guid("8e9b1cc3-36d3-4bf2-9f4c-9e00a21d94b5"), "pr3", "pr3", 1, repository1, user1.Id, new List<RepositoryMember>(), new List<Label>(), null, branch2.Id, branch1.Id, new List<Issue>());
+        pullRequest3 = OverrideFromBranch(pullRequest3,branch2);
+        pullRequest3 = OverrideToBranch(pullRequest3,branch1);
+        pullRequest3.MergePullRequest(user1.Id);
         
         context.Users.AddRange(user1, user2, user3, user4);
         context.Organizations.AddRange(organization1,organization2);
@@ -130,7 +137,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         context.Branches.AddRange(branch1, branch2, branch3);
         context.Issues.AddRange(issue1, issue2);
         context.Notifications.AddRange(notification1);
-        context.PullRequests.AddRange(pullRequest, pullRequest2);
+        context.PullRequests.AddRange(pullRequest1,pullRequest2,pullRequest3);
         context.SaveChanges();
     }
     
@@ -139,6 +146,21 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         var propertyInfo = typeof(T).GetProperty("Id");
         if (propertyInfo == null) return obj;
         propertyInfo.SetValue(obj, id);
+        return obj;
+    }
+    
+    private static PullRequest OverrideFromBranch(PullRequest obj, Branch branch)
+    {
+        var propertyInfo = typeof(PullRequest).GetProperty("FromBranch");
+        if (propertyInfo == null) return obj;
+        propertyInfo.SetValue(obj, branch);
+        return obj;
+    }
+    private static PullRequest OverrideToBranch(PullRequest obj, Branch branch)
+    {
+        var propertyInfo = typeof(PullRequest).GetProperty("ToBranch");
+        if (propertyInfo == null) return obj;
+        propertyInfo.SetValue(obj, branch);
         return obj;
     }
 
