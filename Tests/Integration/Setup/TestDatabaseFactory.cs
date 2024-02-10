@@ -101,6 +101,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         repository5.AddToWatchedBy(user1, WatchingPreferences.AllActivity);
         var milestone1 = Milestone.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"), "title", "description", new DateOnly(), new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"));
         var milestone2 = Milestone.Create(new Guid("9e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b3"), "title", "description", new DateOnly(), new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94a5"));
+        var milestone3 = Milestone.Create(new Guid("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b4"), "title", "description", new DateOnly(), new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d94a5"));
 
         var branch1 = Branch.Create( "branch1", repository5.Id, true, user1.Id);
         branch1 = OverrideId(branch1,new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b1"));
@@ -124,7 +125,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         context.Users.AddRange(user1, user2, user3, user4);
         context.Organizations.AddRange(organization1,organization2);
         context.Repositories.AddRange(repository1,repository2,repository3,repository4,repository5);
-        context.Milestones.AddRange(milestone1, milestone2);
+        context.Milestones.AddRange(milestone1, milestone2, milestone3);
         context.Branches.AddRange(branch1, branch2, branch3);
         context.Issues.AddRange(issue1, issue2);
         context.Notifications.AddRange(notification1);
