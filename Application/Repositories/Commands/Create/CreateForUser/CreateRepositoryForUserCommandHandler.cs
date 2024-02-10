@@ -9,6 +9,7 @@ using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
 using Domain.Shared.Interfaces;
+using Domain.Tasks;
 
 namespace Application.Repositories.Commands.Create.CreateForUser;
 
@@ -40,7 +41,8 @@ public class CreateRepositoryForUserCommandHandler : ICommandHandler<CreateRepos
         repository.AddBranch(Branch.Create("main", Guid.Empty, true, creator.Id));
 
         repository = await _repositoryRepository.Create(repository);
-        
+        repository.Labels.Add(new Label("enhancement", "New feature or request", "#a2eeef", repository.Id, true));
+        _repositoryRepository.Update(repository);
         
         // Git related updates
         var gitRepoData = await _gitService.CreatePersonalRepository(creator, repository);

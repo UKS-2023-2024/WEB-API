@@ -54,6 +54,12 @@ public class Issue: Task
         UpdateMilestone(milestoneId, creatorId);
     }
 
+    public void AssignLabel(Label label, Guid creatorId)
+    {
+        Labels.Add(label);
+        Events.Add(new AssignLabelEvent("Label Assigned", creatorId, Id, label.Id));
+    }
+
     public void Close()
     {
         State = TaskState.CLOSED;
