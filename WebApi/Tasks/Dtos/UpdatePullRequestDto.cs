@@ -7,4 +7,5 @@ public class UpdatePullRequestDto
     public Guid Id { get; set; }
     public List<Guid>? IssueIds { get;  set; }
     public Guid? MilestoneId { get; set; }
+    public List<Guid>? AssigneeIds { get; set; }
 }

@@ -1,6 +1,7 @@
 ﻿using Application.PullRequests.Commands.IssueAssignment;
 using Domain.Auth;
 using Domain.Auth.Enums;
+using Domain.Notifications.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
@@ -20,6 +21,7 @@ public class AssignIssuesToPullRequestsUnitTests
     private readonly Mock<IRepositoryMemberRepository> _repositoryMemberRepositoryMock;
     private readonly Mock<IIssueRepository> _issueRepositoryMock;
     private readonly Mock<IRepositoryRepository> _repositoryRepositoryMock;
+    private readonly Mock<INotificationService> _notificationServiceMock;
     
     public AssignIssuesToPullRequestsUnitTests()
     {
@@ -27,6 +29,7 @@ public class AssignIssuesToPullRequestsUnitTests
         _repositoryMemberRepositoryMock = new();
         _issueRepositoryMock = new();
         _repositoryRepositoryMock = new();
+        _notificationServiceMock = new();
     }
 
     [Fact]
@@ -50,7 +53,7 @@ public class AssignIssuesToPullRequestsUnitTests
         _issueRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>())).Returns(issue);
 
         var handler = new AssignIssuesToPullRequestCommandHandler(_pullRequestRepositoryMock.Object, _repositoryMemberRepositoryMock.Object,
-            _repositoryRepositoryMock.Object, _issueRepositoryMock.Object);
+            _repositoryRepositoryMock.Object, _issueRepositoryMock.Object, _notificationServiceMock.Object);
         
         //Act
         Guid prId = await handler.Handle(command, default);
@@ -81,7 +84,7 @@ public class AssignIssuesToPullRequestsUnitTests
         _issueRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>())).Returns(issue);
 
         var handler = new AssignIssuesToPullRequestCommandHandler(_pullRequestRepositoryMock.Object, _repositoryMemberRepositoryMock.Object,
-            _repositoryRepositoryMock.Object, _issueRepositoryMock.Object);
+            _repositoryRepositoryMock.Object, _issueRepositoryMock.Object, _notificationServiceMock.Object);
 
         //Act
         Func<Task> handle = async () =>
@@ -114,7 +117,7 @@ public class AssignIssuesToPullRequestsUnitTests
         _issueRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>())).Returns(issue);
 
         var handler = new AssignIssuesToPullRequestCommandHandler(_pullRequestRepositoryMock.Object, _repositoryMemberRepositoryMock.Object,
-            _repositoryRepositoryMock.Object, _issueRepositoryMock.Object);
+            _repositoryRepositoryMock.Object, _issueRepositoryMock.Object, _notificationServiceMock.Object);
 
         //Act
         Func<Task> handle = async () =>

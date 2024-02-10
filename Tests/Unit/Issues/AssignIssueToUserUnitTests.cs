@@ -4,6 +4,7 @@ using Domain.Auth;
 using Domain.Auth.Enums;
 using Domain.Auth.Exceptions;
 using Domain.Auth.Interfaces;
+using Domain.Notifications.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
@@ -24,6 +25,7 @@ public class AssignIssueToUserUnitTests
     private readonly Mock<IRepositoryRepository> _repositoryRepositoryMock;
     private readonly Mock<IUserRepository> _userRepositoryMock;
     private readonly Mock<ILabelRepository> _labelRepositoryMock;
+    private readonly Mock<INotificationService> _notificationServiceMock;
     
     public AssignIssueToUserUnitTests()
     {
@@ -33,6 +35,7 @@ public class AssignIssueToUserUnitTests
         _repositoryRepositoryMock = new();
         _userRepositoryMock = new();
         _labelRepositoryMock = new();
+        _notificationServiceMock = new();
     }
 
     [Fact]
@@ -60,7 +63,7 @@ public class AssignIssueToUserUnitTests
             .ReturnsAsync(new List<RepositoryMember>());
         var handler = new UpdateIssueCommandHandler(_repositoryMemberRepositoryMock.Object, _taskRepositoryMock.Object,
             _repositoryRepositoryMock.Object, _issueRepositoryMock.Object,
-            _userRepositoryMock.Object, _labelRepositoryMock.Object);
+            _userRepositoryMock.Object, _labelRepositoryMock.Object, _notificationServiceMock.Object);
         
         //Act
         Guid issueId = await handler.Handle(command, default);
@@ -93,7 +96,7 @@ public class AssignIssueToUserUnitTests
             .ReturnsAsync(new List<RepositoryMember>());
         var handler = new UpdateIssueCommandHandler(_repositoryMemberRepositoryMock.Object, _taskRepositoryMock.Object,
             _repositoryRepositoryMock.Object, _issueRepositoryMock.Object,
-            _userRepositoryMock.Object, _labelRepositoryMock.Object);
+            _userRepositoryMock.Object, _labelRepositoryMock.Object, _notificationServiceMock.Object);
         
         //Act
         Func<Task> handle = async () =>
@@ -132,7 +135,7 @@ public class AssignIssueToUserUnitTests
             .ReturnsAsync(new List<RepositoryMember>());
         var handler = new UpdateIssueCommandHandler(_repositoryMemberRepositoryMock.Object, _taskRepositoryMock.Object,
             _repositoryRepositoryMock.Object, _issueRepositoryMock.Object,
-            _userRepositoryMock.Object, _labelRepositoryMock.Object);
+            _userRepositoryMock.Object, _labelRepositoryMock.Object, _notificationServiceMock.Object);
         
         //Act
         Func<Task> handle = async () =>

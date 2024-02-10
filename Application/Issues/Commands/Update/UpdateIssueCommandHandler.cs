@@ -1,7 +1,10 @@
 ﻿using Application.Issues.Commands.Enums;
 using Application.Shared;
 using Domain.Auth;
+using Domain.Auth.Enums;
 using Domain.Auth.Interfaces;
+using Domain.Milestones;
+using Domain.Notifications.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
@@ -18,10 +21,11 @@ public class UpdateIssueCommandHandler: ICommandHandler<UpdateIssueCommand, Guid
     private readonly IRepositoryRepository _repositoryRepository;
     private readonly IUserRepository _userRepository;
     private readonly ILabelRepository _labelRepository;
+    private readonly INotificationService _notificationService;
 
     public UpdateIssueCommandHandler(IRepositoryMemberRepository repositoryMemberRepository, ITaskRepository taskRepository,
         IRepositoryRepository repositoryRepository, IIssueRepository issueRepository,
-        IUserRepository userRepository, ILabelRepository labelRepository)
+        IUserRepository userRepository, ILabelRepository labelRepository, INotificationService notificationService)
     {
         _repositoryMemberRepository = repositoryMemberRepository;
         _taskRepository = taskRepository;
@@ -29,6 +33,7 @@ public class UpdateIssueCommandHandler: ICommandHandler<UpdateIssueCommand, Guid
         _issueRepository = issueRepository;
         _userRepository = userRepository;
         _labelRepository = labelRepository;
+        _notificationService = notificationService;
     }
 
     public async Task<Guid> Handle(UpdateIssueCommand request, CancellationToken cancellationToken)
@@ -55,11 +60,22 @@ public class UpdateIssueCommandHandler: ICommandHandler<UpdateIssueCommand, Guid
         if (request.Flag == UpdateIssueFlag.MILESTONE_ASSIGNED)
         {
             issue.UpdateMilestone(request.MilestoneId.GetValueOrDefault(), user.Id);
+
+            var message = $"Milestone has been assigned to issue #{issue.Number} in the repository {repository.Name}<br>" +
+                     $"Assigned by: {member.Member.Username}";
+            var subject = $"[Github] Milestone assigned to issue #{issue.Number} in {repository.Name}";
+            await _notificationService.SendNotification(repository, subject, message, NotificationType.Issues);
+
         }
 
         if (request.Flag == UpdateIssueFlag.MILESTONE_UNASSIGNED)
         {
             issue.UnassignMilestone(request.MilestoneId.GetValueOrDefault(), user.Id, issue.MilestoneId.GetValueOrDefault());
+
+            var message = $"Milestone has been unassigned from issue #{issue.Number} in the repository {repository.Name}<br>" +
+                      $"Unassigned by: {member.Member.Username}";
+            var subject = $"[Github] Milestone unassigned from issue #{issue.Number} in {repository.Name}";
+            await _notificationService.SendNotification(repository, subject, message, NotificationType.Issues);
         }
 
         //var labelGuids = request.LabelsIds.Select(l => Guid.Parse(l));
