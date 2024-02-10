@@ -103,7 +103,7 @@ public class GiteaService: IGitService
     public async Task MergePullRequest(Repository repository, string mergeType,int gitPullRequestId)
     {
         SetAuthToken(_adminToken);
-        var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}/pulls/{gitPullRequestId}.merge";
+        var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}/pulls/{gitPullRequestId}/merge";
         var body = Body(new
         {
             Do = mergeType

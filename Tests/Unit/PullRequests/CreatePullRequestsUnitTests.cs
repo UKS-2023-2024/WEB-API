@@ -81,7 +81,7 @@ public class CreatePullRequestsUnitTests
             new List<RepositoryMember>(), new List<Label>(), new Guid(), new Guid(), new Guid(),new List<Issue>());
         _pullRequestRepository.Setup(x => x.Create(It.IsAny<PullRequest>())).ReturnsAsync(dummyPullRequest);
         
-        _pullRequestRepository.Setup(x => x.FindByBranchesAndRepository(_repository1.Id, _branch1.Id, _branch3.Id))
+        _pullRequestRepository.Setup(x => x.FindOpenByBranchesAndRepository(_repository1.Id, _branch1.Id, _branch3.Id))
             .ReturnsAsync(dummyPullRequest);
 
     }
