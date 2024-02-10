@@ -3,6 +3,7 @@ using Domain.Auth;
 using Domain.Auth.Enums;
 using Domain.Milestones;
 using Domain.Milestones.Interfaces;
+using Domain.Notifications.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
@@ -21,13 +22,15 @@ public class AssignMilestoneToPullRequestsUnitTests
     private readonly Mock<IRepositoryMemberRepository> _repositoryMemberRepositoryMock;
     private readonly Mock<IMilestoneRepository> _milestoneRepositoryMock;
     private readonly Mock<IRepositoryRepository> _repositoryRepositoryMock;
-    
+    private readonly Mock<INotificationService> _notificationServiceMock;
+
     public AssignMilestoneToPullRequestsUnitTests()
     {
         _pullRequestRepositoryMock = new();
         _repositoryMemberRepositoryMock = new();
         _milestoneRepositoryMock = new();
         _repositoryRepositoryMock = new();
+        _notificationServiceMock = new();
     }
 
     [Fact]
@@ -50,7 +53,7 @@ public class AssignMilestoneToPullRequestsUnitTests
         _milestoneRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>())).Returns(milestone);
 
         var handler = new AssignMilestoneToPullRequestCommandHandler(_pullRequestRepositoryMock.Object, _repositoryMemberRepositoryMock.Object,
-            _repositoryRepositoryMock.Object, _milestoneRepositoryMock.Object);
+            _repositoryRepositoryMock.Object, _milestoneRepositoryMock.Object, _notificationServiceMock.Object);
         
         //Act
         Guid prId = await handler.Handle(command, default);
@@ -80,7 +83,7 @@ public class AssignMilestoneToPullRequestsUnitTests
         _milestoneRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>())).Returns(milestone);
 
         var handler = new AssignMilestoneToPullRequestCommandHandler(_pullRequestRepositoryMock.Object, _repositoryMemberRepositoryMock.Object,
-            _repositoryRepositoryMock.Object, _milestoneRepositoryMock.Object);
+            _repositoryRepositoryMock.Object, _milestoneRepositoryMock.Object, _notificationServiceMock.Object);
 
         //Act
         Func<Task> handle = async () =>
@@ -112,7 +115,7 @@ public class AssignMilestoneToPullRequestsUnitTests
         _milestoneRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>())).Returns(milestone);
 
         var handler = new AssignMilestoneToPullRequestCommandHandler(_pullRequestRepositoryMock.Object, _repositoryMemberRepositoryMock.Object,
-            _repositoryRepositoryMock.Object, _milestoneRepositoryMock.Object);
+            _repositoryRepositoryMock.Object, _milestoneRepositoryMock.Object, _notificationServiceMock.Object);
 
         //Act
         Func<Task> handle = async () =>

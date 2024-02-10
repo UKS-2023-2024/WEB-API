@@ -20,7 +20,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="PullRequests\Commands\Enums\" />
       <Folder Include="Repositories\Commands\StarringRepository" />
     </ItemGroup>
 

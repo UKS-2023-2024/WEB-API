@@ -4,6 +4,7 @@ using Domain.Auth;
 using Domain.Auth.Enums;
 using Domain.Milestones;
 using Domain.Milestones.Interfaces;
+using Domain.Notifications.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
@@ -21,12 +22,14 @@ public class UnassignMilestoneFromPullRequestsUnitTests
     private readonly Mock<IPullRequestRepository> _pullRequestRepositoryMock;
     private readonly Mock<IRepositoryMemberRepository> _repositoryMemberRepositoryMock;
     private readonly Mock<IRepositoryRepository> _repositoryRepositoryMock;
+    private readonly Mock<INotificationService> _notificationServiceMock;
     
     public UnassignMilestoneFromPullRequestsUnitTests()
     {
         _pullRequestRepositoryMock = new();
         _repositoryMemberRepositoryMock = new();
         _repositoryRepositoryMock = new();
+        _notificationServiceMock = new();
     }
 
     [Fact]
@@ -49,7 +52,7 @@ public class UnassignMilestoneFromPullRequestsUnitTests
             .Returns(repository);
        
         var handler = new UnassignMilestoneFromPullRequestCommandHandler(_pullRequestRepositoryMock.Object, _repositoryMemberRepositoryMock.Object,
-            _repositoryRepositoryMock.Object);
+            _repositoryRepositoryMock.Object, _notificationServiceMock.Object);
         
         //Act
         Guid prId = await handler.Handle(command, default);
@@ -78,7 +81,7 @@ public class UnassignMilestoneFromPullRequestsUnitTests
             .Returns(repository);
       
         var handler = new UnassignMilestoneFromPullRequestCommandHandler(_pullRequestRepositoryMock.Object, _repositoryMemberRepositoryMock.Object,
-            _repositoryRepositoryMock.Object);
+            _repositoryRepositoryMock.Object, _notificationServiceMock.Object);
 
         //Act
         Func<Task> handle = async () =>
@@ -109,7 +112,7 @@ public class UnassignMilestoneFromPullRequestsUnitTests
             .Returns(repository);
       
         var handler = new UnassignMilestoneFromPullRequestCommandHandler(_pullRequestRepositoryMock.Object, _repositoryMemberRepositoryMock.Object,
-            _repositoryRepositoryMock.Object);
+            _repositoryRepositoryMock.Object, _notificationServiceMock.Object);
 
         //Act
         Func<Task> handle = async () =>

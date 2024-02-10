@@ -1,4 +1,6 @@
 ﻿using Application.Shared;
+using Domain.Auth.Enums;
+using Domain.Notifications.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
@@ -12,13 +14,15 @@ public class AssignUsersToPullRequestCommandHandler : ICommandHandler<AssignUser
     private readonly IPullRequestRepository _pullRequestRepository;
     private readonly IRepositoryMemberRepository _repositoryMemberRepository;
     private readonly IRepositoryRepository _repositoryRepository;
+    private readonly INotificationService _notificationService;
 
     public AssignUsersToPullRequestCommandHandler(IPullRequestRepository pullRequestRepository, IRepositoryMemberRepository repositoryMemberRepository,
-        IRepositoryRepository repositoryRepository)
+        IRepositoryRepository repositoryRepository, INotificationService notificationService)
     {
         _pullRequestRepository = pullRequestRepository;
         _repositoryMemberRepository = repositoryMemberRepository;
         _repositoryRepository = repositoryRepository;
+        _notificationService = notificationService;
     }
 
     public async Task<Guid> Handle(AssignUsersToPullRequestCommand request, CancellationToken cancellationToken)
@@ -40,9 +44,37 @@ public class AssignUsersToPullRequestCommandHandler : ICommandHandler<AssignUser
             if (user == null) throw new RepositoryMemberNotFoundException();
             members.Add(user);
         }
+
+        var addedUsers = members.Except(pullRequest.Assignees).ToList();
+        var removedUsers = pullRequest.Assignees.Except(members).ToList();
+
         pullRequest.UpdateAssignees(members, member.Member.Id);
-        
         _pullRequestRepository.Update(pullRequest);
+
+        string message = "";
+        string subject = "";
+        if (addedUsers.Any())
+        {
+            subject += $"[Github] Users assigned to pull request #{pullRequest.Number} in {repository.Name}";
+            message += $"The following users have been assigned to pull request #{pullRequest.Number} in the repository {repository.Name}:<br>";
+            foreach (var user in addedUsers)
+            {
+                message += $"{user.Member.Username}<br>";
+            }
+        }
+
+        if (removedUsers.Any())
+        {
+            subject += $"[Github] Users unassigned from pull request #{pullRequest.Number} in {repository.Name}";
+            message += $"The following users have been unassigned from pull request #{pullRequest.Number} in the repository {repository.Name}:<br>";
+            foreach (var user in removedUsers)
+            {
+                message += $"#{user.Member.Username}<br>";
+            }
+        }
+        message += $"<br>By: {member.Member.Username}";
+        await _notificationService.SendNotification(repository, subject, message, NotificationType.PullRequests);
+
         return pullRequest.Id;
     }
 }
