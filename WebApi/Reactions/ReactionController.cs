@@ -1,4 +1,5 @@
 ﻿using Application.Reactions.Create;
+using Application.Reactions.Delete;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,5 +31,14 @@ public class ReactionController: ControllerBase
         Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
         var createdReactionId = await _sender.Send(new CreateReactionCommand(creatorId, Guid.Parse(reactionDto.CommentId), reactionDto.EmojiCode));
         return Ok(new {Id = createdReactionId});
+    }
+    
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<IActionResult> Delete(string id)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        var deletedReactionId = await _sender.Send(new DeleteReactionCommand(Guid.Parse(id)));
+        return Ok(new {Id = deletedReactionId});
     }
 }
