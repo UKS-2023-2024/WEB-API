@@ -1,5 +1,4 @@
-﻿using Application.PullRequests.Commands.IssueAssignment;
-using Application.PullRequests.Commands.UserAssignment;
+﻿using Application.PullRequests.Commands.UserAssignment;
 using Domain.Repositories.Exceptions;
 using Domain.Tasks.Exceptions;
 using Shouldly;
