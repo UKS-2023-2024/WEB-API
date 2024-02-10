@@ -1,4 +1,5 @@
 ﻿using Domain.Tasks;
+using Domain.Tasks.Enums;
 using Domain.Tasks.Interfaces;
 using Infrastructure.Persistence;
 using Infrastructure.Shared.Repositories;
@@ -34,10 +35,13 @@ public class PullRequestRepository: BaseRepository<PullRequest>, IPullRequestRep
             .ToList());
     }
 
-    public Task<PullRequest?> FindByBranchesAndRepository(Guid repositoryId, Guid fromBranchId, Guid toBranchId)
+    public Task<PullRequest?> FindOpenByBranchesAndRepository(Guid repositoryId, Guid fromBranchId, Guid toBranchId)
     {
         return _context.PullRequests
-            .FirstOrDefaultAsync(pr => pr.RepositoryId.Equals(repositoryId) && pr.FromBranchId.Equals(fromBranchId) && pr.ToBranchId.Equals(toBranchId) );
+            .FirstOrDefaultAsync(pr => pr.RepositoryId.Equals(repositoryId) 
+                                       && pr.FromBranchId.Equals(fromBranchId) 
+                                       && pr.ToBranchId.Equals(toBranchId)
+                                       && pr.State == TaskState.OPEN);
     }
 
     public override PullRequest? Find(Guid id)
@@ -47,6 +51,8 @@ public class PullRequestRepository: BaseRepository<PullRequest>, IPullRequestRep
           .Include(pr => pr.ToBranch)
           .Include(pr => pr.Events)
           .ThenInclude(e => e.Creator)
+          .Include(pr => pr.Issues)
+          .Include(pr => pr.Milestone)
           .FirstOrDefault(pr => pr.Id.Equals(id));
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Application.PullRequests.Commands;
+using Application.PullRequests.Commands.CreatePullRequest;
 using Domain.Auth;
 using Domain.Auth.Enums;
 using Domain.Auth.Interfaces;
@@ -66,7 +67,7 @@ public class CreatePullRequestsUnitTests
         
         _repositoryRepository.Setup(x => x.Find(_repository1.Id)).Returns(_repository1);
 
-        _taskRepository.Setup(x => x.GetTaskNumber()).ReturnsAsync(1);
+        _taskRepository.Setup(x => x.GetTaskNumber(It.IsAny<Guid>())).ReturnsAsync(1);
 
         _branchRepository.Setup(x=> x.FindById(_branch1.Id)).ReturnsAsync(_branch1);
         _branchRepository.Setup(x=> x.FindById(_branch2.Id)).ReturnsAsync(_branch2);
@@ -80,7 +81,7 @@ public class CreatePullRequestsUnitTests
             new List<RepositoryMember>(), new List<Label>(), new Guid(), new Guid(), new Guid(),new List<Issue>());
         _pullRequestRepository.Setup(x => x.Create(It.IsAny<PullRequest>())).ReturnsAsync(dummyPullRequest);
         
-        _pullRequestRepository.Setup(x => x.FindByBranchesAndRepository(_repository1.Id, _branch1.Id, _branch3.Id))
+        _pullRequestRepository.Setup(x => x.FindOpenByBranchesAndRepository(_repository1.Id, _branch1.Id, _branch3.Id))
             .ReturnsAsync(dummyPullRequest);
 
     }

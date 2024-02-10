@@ -1,7 +1,5 @@
 ﻿using Domain.Auth;
 using Domain.Repositories;
-using System.Data.Entity.Migrations.Model;
-using System.Security.Policy;
 using Domain.Branches.Exceptions;
 using Domain.Tasks;
 

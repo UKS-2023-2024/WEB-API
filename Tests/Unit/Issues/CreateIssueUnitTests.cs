@@ -53,7 +53,7 @@ public class CreateIssueUnitTests
         _repositoryMemberRepositoryMock
             .Setup(x => x.FindByUserIdAndRepositoryId(It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(member);
-        _taskRepositoryMock.Setup(x => x.GetTaskNumber())
+        _taskRepositoryMock.Setup(x => x.GetTaskNumber(It.IsAny<Guid>()))
             .ReturnsAsync(1);
         _repositoryRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>()))
             .Returns(repository);
@@ -87,7 +87,7 @@ public class CreateIssueUnitTests
         _repositoryMemberRepositoryMock
             .Setup(x => x.FindByUserIdAndRepositoryId(It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(member);
-        _taskRepositoryMock.Setup(x => x.GetTaskNumber())
+        _taskRepositoryMock.Setup(x => x.GetTaskNumber(It.IsAny<Guid>()))
             .ReturnsAsync(1);
         _repositoryRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>()))
             .Returns(repository);

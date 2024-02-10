@@ -1,12 +1,18 @@
-﻿using Application.PullRequests.Commands;
+﻿using Application.Issues.Commands.Enums;
+using Application.Issues.Commands.Update;
+using Application.PullRequests.Commands;
 using Application.PullRequests.Commands.Close;
+using Application.PullRequests.Commands.IssueAssignment;
+using Application.PullRequests.Commands.MilestoneAssignment;
+using Application.PullRequests.Commands.MilestoneUnassignment;
+using Application.PullRequests.Commands.Merge;
 using Application.PullRequests.Commands.Reopen;
-using Application.PullRequests.Queries;
 using Application.PullRequests.Queries.FindPullRequest;
 using Application.PullRequests.Queries.FindPullRequestEvents;
 using Application.PullRequests.Queries.FindRepositoryPullRequests;
 using Domain.Milestones;
 using Domain.Tasks;
+using Domain.Tasks.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -67,6 +73,15 @@ public class PullRequestController:ControllerBase
         var events = await _sender.Send(new FindPullRequestEventsQuery(pullRequestId));
         return Ok(events);
     }
+    
+    [HttpPatch("merge/{repositoryId:Guid}/{pullRequestId:Guid}/{mergeType}")]
+    [Authorize]
+    public async Task<IActionResult> MergePullRequest(Guid repositoryId,Guid pullRequestId, MergeType mergeType)
+    {
+        var creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        await _sender.Send(new MergePullRequestCommand(pullRequestId, repositoryId,creatorId,mergeType));
+        return Ok();
+    }
 
     [HttpPut("close/{id}")]
     [Authorize]
@@ -86,4 +101,36 @@ public class PullRequestController:ControllerBase
         PullRequest reopenedPr = await _sender.Send(new ReopenPullRequestCommand(userId, id));
         return Ok(new PullRequestPresenter(reopenedPr));
     }
+
+    [HttpPut("issues/update")]
+    [Authorize]
+    public async Task<IActionResult> Update([FromBody] UpdatePullRequestDto dto)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Guid updatedPrGuid = await _sender.Send(new AssignIssuesToPullRequestCommand(dto.Id, 
+            creatorId, dto.IssueIds));
+        return Ok(updatedPrGuid);
+    }
+
+    [HttpPut("milestone/update")]
+    [Authorize]
+    public async Task<IActionResult> UpdateMilestone([FromBody] UpdatePullRequestDto dto)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Guid updatedPrGuid = await _sender.Send(new AssignMilestoneToPullRequestCommand(dto.Id,
+            creatorId, dto.MilestoneId));
+        return Ok(updatedPrGuid);
+    }
+
+
+    [HttpPut("unassign/milestone")]
+    [Authorize]
+    public async Task<IActionResult> UnassignMilestone([FromBody] UpdatePullRequestDto dto)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Guid updatedPrGuid = await _sender.Send(new UnassignMilestoneFromPullRequestCommand(dto.Id,
+            creatorId));
+        return Ok(updatedPrGuid);
+    }
+
 }

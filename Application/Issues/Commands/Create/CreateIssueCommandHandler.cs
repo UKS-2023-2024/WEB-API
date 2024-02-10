@@ -43,7 +43,7 @@ public class CreateIssueCommandHandler : ICommandHandler<CreateIssueCommand, Gui
             await _repositoryMemberRepository.FindByUserIdAndRepositoryId(request.UserId, request.RepositoryId);
         if (member is null)
             throw new RepositoryMemberNotFoundException();
-        int taskNumber = await _taskRepository.GetTaskNumber() + 1;
+        int taskNumber = await _taskRepository.GetTaskNumber(request.RepositoryId) + 1;
         Repository repository = _repositoryRepository.Find(request.RepositoryId);
         User creator = _userRepository.Find(request.UserId);
         var assigneeGuids = request.AssigneesIds.Select(s => Guid.Parse(s));

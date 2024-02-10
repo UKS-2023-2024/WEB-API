@@ -100,6 +100,18 @@ public class GiteaService: IGitService
 
     }
 
+    public async Task MergePullRequest(Repository repository, string mergeType,int gitPullRequestId)
+    {
+        SetAuthToken(_adminToken);
+        var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}/pulls/{gitPullRequestId}/merge";
+        var body = Body(new
+        {
+            Do = mergeType
+        });
+        var response = await _httpClient.PostAsync(url, body);
+        await LogStatusAndResponseContent(response);
+    }
+
     public async Task DeleteUser(User user)
     {
         SetAuthToken(_adminToken);
@@ -183,7 +195,7 @@ public class GiteaService: IGitService
         await LogStatusAndResponseContent(response);
     }
 
-    public async Task CreatePullRequest(Repository repository, string fromBranch, string toBranch, PullRequest pullRequest)
+    public async Task<int> CreatePullRequest(Repository repository, string fromBranch, string toBranch, PullRequest pullRequest)
     {
         SetAuthToken(_adminToken);
         var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}/pulls";
@@ -195,7 +207,36 @@ public class GiteaService: IGitService
             body = pullRequest.Description
         });
         var response = await _httpClient.PostAsync(url, body);
+        var createdPullRequest = await DeserializeBody<CreateTeamOption>(response);
         await LogStatusAndResponseContent(response);
+        if (createdPullRequest is null)
+            throw new GitException("Problem creating pull request!");
+        return createdPullRequest.id;
+    }
+
+    public async Task<List<CommitContent>> ListBranchCommits(User user, Branch branch)
+    {
+        SetAuthToken(_adminToken);
+        var url = $"repos/{user.Username}/{branch.Repository.Name}/commits";
+        var query = HttpUtility.ParseQueryString(string.Empty);
+        query["sha"] = branch.Name;
+        query["stat"] = "true";
+        query["verification"] = "false";
+        query["files"] = "true";
+        var fullUrl = $"{url}?{query}";
+        var response = await _httpClient.GetAsync(fullUrl);
+
+        var commits = await DeserializeBody<List<GitCommitContent>>(response);
+        if (commits is null) commits = new List<GitCommitContent>();
+        return commits.Select(c => new CommitContent()
+        {
+            Additions = c.stats.additions,
+            Deletions = c.stats.deletions,
+            Message = c.commit.message,
+            Sha = c.sha,
+            CreatedAt = c.created,
+            Committer = c.commit.committer?.name
+        }).ToList();
     }
 
     public async Task<int> CreateOrganization(User user, Organization organization)

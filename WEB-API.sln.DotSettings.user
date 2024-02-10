@@ -1,5 +1,6 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=268f3f30_002Defc7_002D402a_002D8148_002D6cc014c13507/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/CodeInspection/Highlighting/AnalysisEnabled/@EntryValue">VISIBLE_FILES</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=268f3f30_002Defc7_002D402a_002D8148_002D6cc014c13507/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Or&gt;&#xD;
     &lt;TestAncestor&gt;&#xD;
       &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Integration.Issues.AssignUserToUserIntegrationTests.AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid&lt;/TestId&gt;&#xD;
