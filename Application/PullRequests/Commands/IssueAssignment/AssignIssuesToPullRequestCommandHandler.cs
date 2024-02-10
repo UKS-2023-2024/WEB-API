@@ -7,7 +7,7 @@ using Domain.Tasks;
 using Domain.Tasks.Exceptions;
 using Domain.Tasks.Interfaces;
 
-namespace Application.PullRequests.Commands.Update;
+namespace Application.PullRequests.Commands.IssueAssignment;
 
 public class AssignIssuesToPullRequestCommandHandler : ICommandHandler<AssignIssuesToPullRequestCommand, Guid>
 {

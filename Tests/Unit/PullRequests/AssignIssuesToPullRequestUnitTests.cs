@@ -1,10 +1,6 @@
-﻿using Application.Issues.Commands.Enums;
-using Application.Issues.Commands.Update;
-using Application.PullRequests.Commands.Update;
+﻿using Application.PullRequests.Commands.IssueAssignment;
 using Domain.Auth;
 using Domain.Auth.Enums;
-using Domain.Auth.Exceptions;
-using Domain.Auth.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
