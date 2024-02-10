@@ -20,6 +20,7 @@ using WEB_API.Milestones.Presenters;
 using WEB_API.Shared.UserIdentityService;
 using WEB_API.Tasks.Dtos;
 using WEB_API.Tasks.Presenters;
+using Application.PullRequests.Commands.UserAssignment;
 
 namespace WEB_API.Tasks;
 
@@ -104,7 +105,7 @@ public class PullRequestController:ControllerBase
 
     [HttpPut("issues/update")]
     [Authorize]
-    public async Task<IActionResult> Update([FromBody] UpdatePullRequestDto dto)
+    public async Task<IActionResult> UpdateIssues([FromBody] UpdatePullRequestDto dto)
     {
         Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
         Guid updatedPrGuid = await _sender.Send(new AssignIssuesToPullRequestCommand(dto.Id, 
@@ -133,4 +134,13 @@ public class PullRequestController:ControllerBase
         return Ok(updatedPrGuid);
     }
 
+    [HttpPut("assignees/update")]
+    [Authorize]
+    public async Task<IActionResult> UpdateAssignees([FromBody] UpdatePullRequestDto dto)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Guid updatedPrGuid = await _sender.Send(new AssignUsersToPullRequestCommand(dto.Id,
+            creatorId, dto.AssigneeIds));
+        return Ok(updatedPrGuid);
+    }
 }
