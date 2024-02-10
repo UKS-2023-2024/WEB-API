@@ -4,6 +4,7 @@ using Application.PullRequests.Commands;
 using Application.PullRequests.Commands.Close;
 using Application.PullRequests.Commands.IssueAssignment;
 using Application.PullRequests.Commands.MilestoneAssignment;
+using Application.PullRequests.Commands.MilestoneUnassignment;
 using Application.PullRequests.Commands.Reopen;
 using Application.PullRequests.Queries.FindPullRequest;
 using Application.PullRequests.Queries.FindPullRequestEvents;
@@ -107,6 +108,17 @@ public class PullRequestController:ControllerBase
         Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
         Guid updatedPrGuid = await _sender.Send(new AssignMilestoneToPullRequestCommand(dto.Id,
             creatorId, dto.MilestoneId));
+        return Ok(updatedPrGuid);
+    }
+
+
+    [HttpPut("unassign/milestone")]
+    [Authorize]
+    public async Task<IActionResult> UnassignMilestone([FromBody] UpdatePullRequestDto dto)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Guid updatedPrGuid = await _sender.Send(new UnassignMilestoneToPullRequestCommand(dto.Id,
+            creatorId));
         return Ok(updatedPrGuid);
     }
 
