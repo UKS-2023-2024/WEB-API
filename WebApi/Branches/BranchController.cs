@@ -11,6 +11,7 @@ using Application.Branches.Commands.Delete;
 using Application.Branches.Commands.Restore;
 using Application.Branches.Queries.FindAllRepositoryBranches;
 using Application.Branches.Queries.ListBranchFiles;
+using Application.Branches.Queries.ListCommits;
 using Application.Branches.Queries.ListFileContent;
 using Application.Repositories.Queries.FindAllUserWithoutDefaultByRepositoryId;
 using Application.Repositories.Queries.FindAllWithoutDefaultByRepositoryId;
@@ -133,6 +134,14 @@ public class BranchController : ControllerBase
     public async Task<IActionResult> ListFileContent(Guid id, string path)
     {
         var result = await _sender.Send(new ListFileContentQuery(id, HttpUtility.UrlDecode(path)));
+        return Ok(result);
+    }
+
+    [HttpGet("{id}/commits")]
+    [Authorize]
+    public async Task<IActionResult> ListBranchCommits(Guid id)
+    {
+        var result = await _sender.Send(new ListCommitsQuery(id));
         return Ok(result);
     }
 }

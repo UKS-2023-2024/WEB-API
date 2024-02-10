@@ -2,20 +2,19 @@ using Application.Shared;
 using Domain.Auth;
 using Domain.Auth.Interfaces;
 using Domain.Branches;
-using Domain.Branches.Exceptions;
 using Domain.Branches.Interfaces;
 using Domain.Repositories.Interfaces;
 using Domain.Shared.Interfaces;
 
-namespace Application.Branches.Queries.ListBranchFiles;
+namespace Application.Branches.Queries.ListCommits;
 
-public class ListBranchFilesQueryHandler: IQueryHandler<ListBranchFilesQuery, List<ContributionFile>>
+public class ListCommitsQueryHandler: IQueryHandler<ListCommitsQuery, List<CommitContent>>
 {
     private readonly IGitService _gitService;
     private readonly IBranchRepository _branchRepository;
     private readonly IRepositoryRepository _repositoryRepository;
     
-    public ListBranchFilesQueryHandler(
+    public ListCommitsQueryHandler(
         IGitService gitService, 
         IBranchRepository branchRepository, 
         IRepositoryRepository repositoryRepository
@@ -26,15 +25,14 @@ public class ListBranchFilesQueryHandler: IQueryHandler<ListBranchFilesQuery, Li
         _repositoryRepository = repositoryRepository;
     }
     
-    
-    public async Task<List<ContributionFile>> Handle(ListBranchFilesQuery request, CancellationToken cancellationToken)
+    public async Task<List<CommitContent>> Handle(ListCommitsQuery request, CancellationToken cancellationToken)
     {
-        var branch = await _branchRepository.FindById(request.BranchId);
+        var branch = await _branchRepository.FindById(request.Branch);
         Branch.ThrowIfDoesntExist(branch); 
         
         var owner = await _repositoryRepository.FindRepositoryOwner(branch!.RepositoryId);
         User.ThrowIfDoesntExist(owner);
-        
-        return await _gitService.ListFolderContent(owner!, branch, request.Folder);
+
+        return await _gitService.ListBranchCommits(owner!, branch);
     }
 }
