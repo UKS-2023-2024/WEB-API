@@ -8,6 +8,8 @@ using Infrastructure.Shared.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Xml.Linq;
 using Domain.Auth;
+using Domain.Tasks;
+using Task = System.Threading.Tasks.Task;
 
 namespace Infrastructure.Repositories.Repositories;
 
@@ -109,5 +111,13 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
             .FirstOrDefaultAsync();
         return member?.Member;
 
+    }
+
+    public async Task<List<Label>> FindRepositoryLabels(Guid repositoryId)
+    {
+        return await _context.Labels
+            .Where(l => l.RepositoryId.Equals(repositoryId) && l.IsDefaultLabel)
+            .Include(l => l.Repository)
+            .ToListAsync();
     }
 }

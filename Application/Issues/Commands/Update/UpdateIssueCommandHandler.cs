@@ -78,6 +78,12 @@ public class UpdateIssueCommandHandler: ICommandHandler<UpdateIssueCommand, Guid
             await _notificationService.SendNotification(repository, subject, message, NotificationType.Issues);
         }
 
+        if (request.Flag == UpdateIssueFlag.LABEL_ASSIGNED)
+        {
+            Label newLabel = _labelRepository.Find(Guid.Parse(request.LabelsIds[0]));
+            issue.AssignLabel(newLabel, user.Id);
+        }
+
         //var labelGuids = request.LabelsIds.Select(l => Guid.Parse(l));
         //var labels = await _labelRepository.FindAllByIds(repository.Id, labelGuids.ToList());
         //Issue updatedIssue = Issue.Update(foundIssue, request.Title, request.Description, request.State,assignees , request.MilestoneId, labels);

@@ -22,7 +22,8 @@ public class EventConfiguration: IEntityTypeConfiguration<Event>
             .HasValue<RemoveIssueFromPullRequestEvent>(EventType.PULL_REQUEST_ISSUE_REMOVED)
             .HasValue<Event>(EventType.OPENED)
             .HasValue<CloseEvent>(EventType.CLOSED)
-            .HasValue<PullRequestMergedEvent>(EventType.PULL_REQUEST_MERGED);
+            .HasValue<PullRequestMergedEvent>(EventType.PULL_REQUEST_MERGED)
+            .HasValue<AssignLabelEvent>(EventType.LABEL_ASSIGNED);
         
         builder.Navigation(e => e.Creator).AutoInclude();
     }

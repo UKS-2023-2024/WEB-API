@@ -27,6 +27,7 @@ public class IssueRepository: BaseRepository<Issue>, IIssueRepository
             .Include(i => i.Events)
             .ThenInclude(x => x.Creator)
             .Include(i => i.Assignees)
+            .Include(i => i.Labels)
             .ToList()
             .Select(x =>
                 {
@@ -41,6 +42,7 @@ public class IssueRepository: BaseRepository<Issue>, IIssueRepository
     {
         return _context.Issues
             .Where(i => i.RepositoryId.Equals(repositoryId))
+            .Include(i => i.Labels)
             .Include(x => x.Events)
             .ThenInclude(x => x.Creator)
             .ToList()
