@@ -5,12 +5,14 @@ using Application.PullRequests.Commands.Close;
 using Application.PullRequests.Commands.IssueAssignment;
 using Application.PullRequests.Commands.MilestoneAssignment;
 using Application.PullRequests.Commands.MilestoneUnassignment;
+using Application.PullRequests.Commands.Merge;
 using Application.PullRequests.Commands.Reopen;
 using Application.PullRequests.Queries.FindPullRequest;
 using Application.PullRequests.Queries.FindPullRequestEvents;
 using Application.PullRequests.Queries.FindRepositoryPullRequests;
 using Domain.Milestones;
 using Domain.Tasks;
+using Domain.Tasks.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -70,6 +72,15 @@ public class PullRequestController:ControllerBase
     {
         var events = await _sender.Send(new FindPullRequestEventsQuery(pullRequestId));
         return Ok(events);
+    }
+    
+    [HttpPatch("merge/{repositoryId:Guid}/{pullRequestId:Guid}/{mergeType}")]
+    [Authorize]
+    public async Task<IActionResult> MergePullRequest(Guid repositoryId,Guid pullRequestId, MergeType mergeType)
+    {
+        var creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        await _sender.Send(new MergePullRequestCommand(pullRequestId, repositoryId,creatorId,mergeType));
+        return Ok();
     }
 
     [HttpPut("close/{id}")]

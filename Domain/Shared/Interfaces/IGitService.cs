@@ -4,6 +4,7 @@ using Domain.Organizations;
 using Domain.Repositories;
 using Domain.Shared.Git.Payloads;
 using Domain.Tasks;
+using Domain.Tasks.Enums;
 using Task = System.Threading.Tasks.Task;
 
 namespace Domain.Shared.Interfaces;
@@ -21,11 +22,12 @@ public interface IGitService
     public Task RemoveOrganizationMember(User user, Organization organization);
     public Task AddRepositoryMember(Repository repository, User user, string permission);
     public Task RemoveRepositoryMember(Repository repository, User user);
+    public Task MergePullRequest(Repository repository, string mergeType,int gitPullRequestId);
     public Task DeleteUser(User user);
     public Task SetPublicKey(User user, string pk);
     public Task DeleteBranch(User user, Branch branch);
     public Task CreateBranch(Repository repository, string branchName, string createdFromBranch);
-    public Task CreatePullRequest(Repository repository, string fromBranch, string toBranch, PullRequest pullRequest);
+    public Task<int> CreatePullRequest(Repository repository, string fromBranch, string toBranch, PullRequest pullRequest);
     public Task<List<ContributionFile>> ListFolderContent(User user, Branch branch, string path);
     public Task<FileContent> ListFileContent(User user, Branch branch, string path);
 

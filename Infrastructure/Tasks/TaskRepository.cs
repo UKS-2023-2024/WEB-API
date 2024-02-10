@@ -13,8 +13,8 @@ public class TaskRepository: BaseRepository<Domain.Tasks.Task>, ITaskRepository
         _context = context;
     }
 
-    public async Task<int> GetTaskNumber()
+    public async Task<int> GetTaskNumber(Guid repositoryId)
     {
-        return await _context.Tasks.CountAsync();
+        return await _context.Tasks.Where(t => t.RepositoryId.Equals(repositoryId)).CountAsync();
     }
 }
