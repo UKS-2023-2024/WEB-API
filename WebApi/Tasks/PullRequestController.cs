@@ -1,7 +1,11 @@
-﻿using Application.PullRequests.Commands;
+﻿using Application.Issues.Commands.Enums;
+using Application.Issues.Commands.Update;
+using Application.PullRequests.Commands;
 using Application.PullRequests.Commands.Close;
+using Application.PullRequests.Commands.IssueAssignment;
+using Application.PullRequests.Commands.MilestoneAssignment;
+using Application.PullRequests.Commands.MilestoneUnassignment;
 using Application.PullRequests.Commands.Reopen;
-using Application.PullRequests.Queries;
 using Application.PullRequests.Queries.FindPullRequest;
 using Application.PullRequests.Queries.FindPullRequestEvents;
 using Application.PullRequests.Queries.FindRepositoryPullRequests;
@@ -86,4 +90,36 @@ public class PullRequestController:ControllerBase
         PullRequest reopenedPr = await _sender.Send(new ReopenPullRequestCommand(userId, id));
         return Ok(new PullRequestPresenter(reopenedPr));
     }
+
+    [HttpPut("issues/update")]
+    [Authorize]
+    public async Task<IActionResult> Update([FromBody] UpdatePullRequestDto dto)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Guid updatedPrGuid = await _sender.Send(new AssignIssuesToPullRequestCommand(dto.Id, 
+            creatorId, dto.IssueIds));
+        return Ok(updatedPrGuid);
+    }
+
+    [HttpPut("milestone/update")]
+    [Authorize]
+    public async Task<IActionResult> UpdateMilestone([FromBody] UpdatePullRequestDto dto)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Guid updatedPrGuid = await _sender.Send(new AssignMilestoneToPullRequestCommand(dto.Id,
+            creatorId, dto.MilestoneId));
+        return Ok(updatedPrGuid);
+    }
+
+
+    [HttpPut("unassign/milestone")]
+    [Authorize]
+    public async Task<IActionResult> UnassignMilestone([FromBody] UpdatePullRequestDto dto)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Guid updatedPrGuid = await _sender.Send(new UnassignMilestoneFromPullRequestCommand(dto.Id,
+            creatorId));
+        return Ok(updatedPrGuid);
+    }
+
 }

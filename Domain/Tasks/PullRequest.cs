@@ -75,13 +75,13 @@ public class PullRequest : Task
         if (Milestone is not null) UnassignMilestone(creatorId);
         MilestoneId = milestone.Id;
         Milestone = milestone;
-        Events.Add(new AssignMilestoneEvent($"Added this issue to {milestone.Title}", creatorId, Id, milestone.Id));
+        Events.Add(new AssignMilestoneEvent($"Added this pr to {milestone.Title}", creatorId, Id, milestone.Id));
     }
     
     public void UnassignMilestone(Guid creatorId)
     {
         if (Milestone is null) throw new PullRequestDoesNotHaveMilestoneException();
-        Events.Add(new UnassignMilestoneEvent($"Removed this issue from {Milestone.Title}", creatorId, Id, Milestone.Id));
+        Events.Add(new UnassignMilestoneEvent($"Removed this pr from {Milestone.Title}", creatorId, Id, Milestone.Id));
         MilestoneId = null;
         Milestone = null;
     }
