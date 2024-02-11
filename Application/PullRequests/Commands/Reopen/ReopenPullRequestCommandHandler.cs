@@ -42,7 +42,7 @@ public class ReopenPullRequestCommandHandler : ICommandHandler<ReopenPullRequest
         pr.ReopenPullRequest(request.UserId);
         _pullRequestRepository.Update(pr);
         
-        await _gitService.UpdatePullRequest(repository!, pr.GitPullRequestId ?? 0, "open");
+        _gitService.UpdatePullRequest(repository!, pr.GitPullRequestId ?? 0, "open");
 
         var message = $"Pull request #{pr.Number} has been reopened in the repository {repository.Name}<br><br>" +
                         $"Title: {pr.Title} <br>" +

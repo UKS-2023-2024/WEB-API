@@ -112,7 +112,6 @@ public class PullRequest : Task
     
     private void CreateAddAssigneeEvents(List<RepositoryMember> assignees, Guid creatorId)
     {
-        if (assignees is null) return;
         foreach (var assigneeToAdd in assignees.Where(assignee => !Assignees.Contains(assignee)))
         {
             Events.Add(new AssignPullRequestEvent($"Assigned this pull request to {assigneeToAdd.Member.Username}", creatorId, Id, assigneeToAdd.Id));
@@ -121,10 +120,9 @@ public class PullRequest : Task
 
     private void CreateRemoveAssigneeEvents(List<RepositoryMember> assignees, Guid creatorId)
     {
-        if (assignees is null) return;
-        foreach (var assigneeToAdd in Assignees.Where(assignee => !assignees.Contains(assignee)))
+        foreach (var assigneeToRemove in Assignees.Where(assignee => !assignees.Contains(assignee)))
         {
-            Events.Add(new UnnassignPullRequestEvent($"Removed {assigneeToAdd.Member.Username} from this pull request", creatorId, Id, assigneeToAdd.Id));
+            Events.Add(new UnnassignPullRequestEvent($"Removed {assigneeToRemove.Member.Username} from this pull request", creatorId, Id, assigneeToRemove.Id));
         }
     }
     

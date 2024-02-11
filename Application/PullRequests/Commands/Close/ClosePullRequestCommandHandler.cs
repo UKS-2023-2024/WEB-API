@@ -43,7 +43,7 @@ public class ClosePullRequestCommandHandler : ICommandHandler<ClosePullRequestCo
         pullRequest.ClosePullRequest(request.UserId);
         _pullRequestRepository.Update(pullRequest);
 
-        await _gitService.UpdatePullRequest(repository!, pullRequest.GitPullRequestId ?? 0, "closed");
+        _gitService.UpdatePullRequest(repository!, pullRequest.GitPullRequestId ?? 0, "closed");
 
         var message = $"Pull request #{pullRequest.Number} has been closed in the repository {repository.Name}<br><br>" +
                       $"Title: {pullRequest.Title} <br>" +
