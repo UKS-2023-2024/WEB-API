@@ -23,6 +23,7 @@ public interface IGitService
     public Task AddRepositoryMember(Repository repository, User user, string permission);
     public Task RemoveRepositoryMember(Repository repository, User user);
     public Task MergePullRequest(Repository repository, string mergeType,int gitPullRequestId);
+    public Task UpdatePullRequest(Repository repository,int gitPullRequestId, string updateState);
     public Task DeleteUser(User user);
     public Task SetPublicKey(User user, string pk);
     public Task DeleteBranch(User user, Branch branch);

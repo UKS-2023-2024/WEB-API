@@ -9,6 +9,7 @@ using Domain.Notifications.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
+using Domain.Shared.Interfaces;
 using Domain.Tasks;
 using Domain.Tasks.Enums;
 using Domain.Tasks.Exceptions;
@@ -25,6 +26,7 @@ public class ReopenPullRequestUnitTests
     private readonly Mock<IRepositoryMemberRepository> _repositoryMemberRepositoryMock;
     private readonly Mock<IRepositoryRepository> _repositoryRepositoryMock;
     private readonly Mock<INotificationService> _notificationServiceMock;
+    private readonly Mock<IGitService> _gitService;
 
     public ReopenPullRequestUnitTests()
     {
@@ -32,6 +34,7 @@ public class ReopenPullRequestUnitTests
         _repositoryMemberRepositoryMock = new();
         _repositoryRepositoryMock = new();
         _notificationServiceMock = new();
+        _gitService = new();
     }
 
     [Fact]
@@ -54,7 +57,8 @@ public class ReopenPullRequestUnitTests
 
         
         var handler = new ReopenPullRequestCommandHandler(_repositoryMemberRepositoryMock.Object,
-            _pullRequestRepositoryMock.Object, _repositoryRepositoryMock.Object, _notificationServiceMock.Object);
+            _pullRequestRepositoryMock.Object, _repositoryRepositoryMock.Object, _notificationServiceMock.Object,
+            _gitService.Object);
 
         //Act
         PullRequest closedPr = await handler.Handle(command, default);
@@ -84,7 +88,8 @@ public class ReopenPullRequestUnitTests
 
 
         var handler = new ReopenPullRequestCommandHandler(_repositoryMemberRepositoryMock.Object,
-            _pullRequestRepositoryMock.Object, _repositoryRepositoryMock.Object, _notificationServiceMock.Object);
+            _pullRequestRepositoryMock.Object, _repositoryRepositoryMock.Object, _notificationServiceMock.Object,
+            _gitService.Object);
 
         //Act
         Func<System.Threading.Tasks.Task> handle = async () =>
@@ -115,7 +120,8 @@ public class ReopenPullRequestUnitTests
 
 
         var handler = new ReopenPullRequestCommandHandler(_repositoryMemberRepositoryMock.Object,
-            _pullRequestRepositoryMock.Object, _repositoryRepositoryMock.Object, _notificationServiceMock.Object);
+            _pullRequestRepositoryMock.Object, _repositoryRepositoryMock.Object, _notificationServiceMock.Object,
+            _gitService.Object);
 
         //Act
         Func<System.Threading.Tasks.Task> handle = async () =>
@@ -147,7 +153,8 @@ public class ReopenPullRequestUnitTests
 
 
         var handler = new ReopenPullRequestCommandHandler(_repositoryMemberRepositoryMock.Object,
-            _pullRequestRepositoryMock.Object, _repositoryRepositoryMock.Object, _notificationServiceMock.Object);
+            _pullRequestRepositoryMock.Object, _repositoryRepositoryMock.Object, _notificationServiceMock.Object,
+            _gitService.Object);
 
         //Act
         Func<System.Threading.Tasks.Task> handle = async () =>

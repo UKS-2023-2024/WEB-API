@@ -44,7 +44,7 @@ public class PullRequestController:ControllerBase
     {
         var creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
         var createdPullRequestId = await _sender.Send(new CreatePullRequestCommand(creatorId, createPullRequestDto.Title, 
-            createPullRequestDto.Description, createPullRequestDto.RepositoryId, createPullRequestDto.AssigneesIds, createPullRequestDto.LabelsIds,
+            createPullRequestDto.Description, createPullRequestDto.RepositoryId, createPullRequestDto.AssigneeIds, createPullRequestDto.LabelIds,
             createPullRequestDto.MilestoneId,createPullRequestDto.FromBranchId, createPullRequestDto.ToBranchId, createPullRequestDto.IssueIds));
         return Ok(new {Id = createdPullRequestId});
     }
