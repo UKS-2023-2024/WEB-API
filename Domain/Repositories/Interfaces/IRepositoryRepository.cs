@@ -16,5 +16,5 @@ public interface IRepositoryRepository: IBaseRepository<Repository>
     Task<IEnumerable<Repository>> FindAllUserBelongsTo(Guid id);
     Task<bool> IsUserWatchingRepository(Guid userid, Guid repositoryId);
     Task<User?> FindRepositoryOwner(Guid repositoryId);
-    Task<List<Label>> FindRepositoryLabels(Guid repositoryId);
+    Task<List<Label>> FindRepositoryLabels(Guid repositoryId, string search);
 }
