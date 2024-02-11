@@ -44,12 +44,12 @@ public class PullRequestController:ControllerBase
     {
         var creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
         var createdPullRequestId = await _sender.Send(new CreatePullRequestCommand(creatorId, createPullRequestDto.Title, 
-            createPullRequestDto.Description, createPullRequestDto.RepositoryId, createPullRequestDto.AssigneesIds, createPullRequestDto.LabelsIds,
+            createPullRequestDto.Description, createPullRequestDto.RepositoryId, createPullRequestDto.AssigneeIds, createPullRequestDto.LabelIds,
             createPullRequestDto.MilestoneId,createPullRequestDto.FromBranchId, createPullRequestDto.ToBranchId, createPullRequestDto.IssueIds));
         return Ok(new {Id = createdPullRequestId});
     }
     
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     [Authorize]
     public async Task<IActionResult> FindPullRequestById(Guid id)
     {
@@ -58,7 +58,7 @@ public class PullRequestController:ControllerBase
         return Ok(new PullRequestPresenter(pullRequest));
     }
 
-    [HttpGet("{repositoryId}/pull-requests")]
+    [HttpGet("repository/{repositoryId:guid}")]
     [Authorize]
     public async Task<IActionResult> FindRepositoryPullRequests(Guid repositoryId)
     {
@@ -72,7 +72,7 @@ public class PullRequestController:ControllerBase
     public async Task<IActionResult> FindPullRequestEvents(Guid pullRequestId)
     {
         var events = await _sender.Send(new FindPullRequestEventsQuery(pullRequestId));
-        return Ok(events);
+        return Ok(EventPresenter.MapEventToEventPresenter(events));
     }
     
     [HttpPatch("merge/{repositoryId:Guid}/{pullRequestId:Guid}/{mergeType}")]

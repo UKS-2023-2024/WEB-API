@@ -4,6 +4,7 @@ using Domain.Notifications.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
+using Domain.Shared.Interfaces;
 using Domain.Tasks;
 using Domain.Tasks.Exceptions;
 using Domain.Tasks.Interfaces;
@@ -16,14 +17,16 @@ public class ClosePullRequestCommandHandler : ICommandHandler<ClosePullRequestCo
     private readonly IRepositoryMemberRepository _repositoryMemberRepository;
     private readonly IRepositoryRepository _repositoryRepository;
     private readonly INotificationService _notificationService;
+    private readonly IGitService _gitService;
 
     public ClosePullRequestCommandHandler(IRepositoryMemberRepository repositoryMemberRepository, IPullRequestRepository pullRequestRepository
-    , IRepositoryRepository repositoryRepository, INotificationService notificationService)
+    , IRepositoryRepository repositoryRepository, INotificationService notificationService, IGitService gitService)
     {
         _repositoryMemberRepository = repositoryMemberRepository;
         _pullRequestRepository = pullRequestRepository;
         _repositoryRepository = repositoryRepository;
         _notificationService = notificationService;
+        _gitService = gitService;
     }
 
 
@@ -40,6 +43,7 @@ public class ClosePullRequestCommandHandler : ICommandHandler<ClosePullRequestCo
         pullRequest.ClosePullRequest(request.UserId);
         _pullRequestRepository.Update(pullRequest);
 
+        _gitService.UpdatePullRequest(repository!, pullRequest.GitPullRequestId ?? 0, "closed");
 
         var message = $"Pull request #{pullRequest.Number} has been closed in the repository {repository.Name}<br><br>" +
                       $"Title: {pullRequest.Title} <br>" +

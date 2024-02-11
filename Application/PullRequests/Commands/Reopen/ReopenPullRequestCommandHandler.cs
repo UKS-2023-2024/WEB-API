@@ -4,6 +4,7 @@ using Domain.Notifications.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
+using Domain.Shared.Interfaces;
 using Domain.Tasks;
 using Domain.Tasks.Exceptions;
 using Domain.Tasks.Interfaces;
@@ -17,14 +18,16 @@ public class ReopenPullRequestCommandHandler : ICommandHandler<ReopenPullRequest
     private readonly IRepositoryMemberRepository _repositoryMemberRepository;
     private readonly IRepositoryRepository _repositoryRepository;
     private readonly INotificationService _notificationService;
+    private readonly IGitService _gitService;
 
     public ReopenPullRequestCommandHandler(IRepositoryMemberRepository repositoryMemberRepository, IPullRequestRepository pullRequestRepository,
-        IRepositoryRepository repositoryRepository, INotificationService notificationService)
+        IRepositoryRepository repositoryRepository, INotificationService notificationService, IGitService gitService)
     {
         _repositoryMemberRepository = repositoryMemberRepository;
         _pullRequestRepository = pullRequestRepository;
         _repositoryRepository = repositoryRepository;
         _notificationService = notificationService;
+        _gitService = gitService;
     }
     public async Task<PullRequest> Handle(ReopenPullRequestCommand request, CancellationToken cancellationToken)
     {
@@ -38,6 +41,8 @@ public class ReopenPullRequestCommandHandler : ICommandHandler<ReopenPullRequest
 
         pr.ReopenPullRequest(request.UserId);
         _pullRequestRepository.Update(pr);
+        
+        _gitService.UpdatePullRequest(repository!, pr.GitPullRequestId ?? 0, "open");
 
         var message = $"Pull request #{pr.Number} has been reopened in the repository {repository.Name}<br><br>" +
                         $"Title: {pr.Title} <br>" +

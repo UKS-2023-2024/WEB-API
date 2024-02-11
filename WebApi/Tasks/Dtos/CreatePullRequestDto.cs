@@ -13,8 +13,8 @@ public class CreatePullRequestDto
     [Required]
     public Guid RepositoryId { get;  set; }
 
-    public List<Guid>? AssigneesIds { get; set; } = new();
-    public List<Guid>? LabelsIds { get; set; } = new();
+    public List<Guid>? AssigneeIds { get; set; } = new();
+    public List<Guid>? LabelIds { get; set; } = new();
     public List<Guid>? IssueIds { get; set; } = new();
     public Guid? MilestoneId { get;  set; }
     public Guid FromBranchId { get; set; }

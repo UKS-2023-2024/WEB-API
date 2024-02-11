@@ -111,6 +111,18 @@ public class GiteaService: IGitService
         var response = await _httpClient.PostAsync(url, body);
         await LogStatusAndResponseContent(response);
     }
+    
+    public async Task UpdatePullRequest(Repository repository, int gitPullRequestId, string updateState)
+    {
+        SetAuthToken(_adminToken);
+        var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}/pulls/{gitPullRequestId}";
+        var body = Body(new
+        {
+            state = updateState
+        });
+        var response = await _httpClient.PatchAsync(url, body);
+        await LogStatusAndResponseContent(response);
+    }
 
     public async Task DeleteUser(User user)
     {
