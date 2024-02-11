@@ -80,8 +80,20 @@ public class UpdateIssueCommandHandler: ICommandHandler<UpdateIssueCommand, Guid
 
         if (request.Flag == UpdateIssueFlag.LABEL_ASSIGNED)
         {
-            Label newLabel = _labelRepository.Find(Guid.Parse(request.LabelsIds[0]));
-            issue.AssignLabel(newLabel, user.Id);
+            Label newLabel = _labelRepository.Find(Guid.Parse(request.LabelsIds[request.LabelsIds.Count-1]));
+            Label createdLabel = Label.Create(newLabel.Title, newLabel.Description, newLabel.Color,
+                newLabel.RepositoryId, false);
+            await _labelRepository.Create(createdLabel);
+            issue.AssignLabel(createdLabel, newLabel, user.Id);
+        }
+        
+        if (request.Flag == UpdateIssueFlag.LABEL_UNASSIGNED)
+        {
+            Label foundLabel = _labelRepository.Find(Guid.Parse(request.LabelsIds[0]));
+            Label labelForDeletion =
+                await _labelRepository.FindByRepositoryIdAndTitle(foundLabel.RepositoryId, foundLabel.Title);
+            _labelRepository.Delete(labelForDeletion);
+            issue.UnassignLabel(foundLabel, user.Id);
         }
 
         //var labelGuids = request.LabelsIds.Select(l => Guid.Parse(l));

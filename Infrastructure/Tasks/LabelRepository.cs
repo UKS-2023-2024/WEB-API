@@ -24,4 +24,12 @@ public class LabelRepository: BaseRepository<Label>, ILabelRepository
                          label.RepositoryId.Equals(repositoryId)
             ).ToListAsync();
     }
+
+    public async Task<Label> FindByRepositoryIdAndTitle(Guid repositoryId, string title)
+    {
+        return await _context.Labels
+            .Where(label =>
+                label.RepositoryId.Equals(repositoryId) && label.Title.Equals(title) && !label.IsDefaultLabel)
+            .FirstAsync();
+    }
 }

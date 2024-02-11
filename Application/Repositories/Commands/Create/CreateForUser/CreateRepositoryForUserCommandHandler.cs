@@ -42,6 +42,11 @@ public class CreateRepositoryForUserCommandHandler : ICommandHandler<CreateRepos
 
         repository = await _repositoryRepository.Create(repository);
         repository.Labels.Add(new Label("enhancement", "New feature or request", "#a2eeef", repository.Id, true));
+        repository.Labels.Add(new Label("bug", "Something isn't working", "#d73a4a", repository.Id, true));
+        repository.Labels.Add(new Label("documentation", "Improvements or additions to documentation", "#0075ca", repository.Id, true));
+        repository.Labels.Add(new Label("refactor", "Code is working but should be changed for reusability and readability", "#063846", repository.Id, true));
+        repository.Labels.Add(new Label("auth", "Authorization and authentication", "#422F03", repository.Id, true));
+
         _repositoryRepository.Update(repository);
         
         // Git related updates

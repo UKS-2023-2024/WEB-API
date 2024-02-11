@@ -103,6 +103,34 @@ public class IssueController: ControllerBase
             UpdateIssueFlag.MILESTONE_UNASSIGNED, milestoneId));
         return Ok(new {Id = updatedIssueGuid});
     }
+    
+    [HttpPost("assign/label/update")]
+    [Authorize]
+    public async Task<IActionResult> UpdateAssignLabel([FromBody] UpdateIssueDto issueDto)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Guid milestoneId;
+        Guid.TryParse(issueDto.MilestoneId, out milestoneId);
+        Guid updatedIssueGuid = await _sender.Send(new UpdateIssueCommand(Guid.Parse(issueDto.Id), creatorId,
+            issueDto.Title, issueDto.Description, issueDto.State, issueDto.Number,
+            Guid.Parse(issueDto.RepositoryId), issueDto.AssigneesIds, issueDto.LabelsIds,
+            UpdateIssueFlag.LABEL_ASSIGNED, milestoneId));
+        return Ok(new {Id = updatedIssueGuid});
+    }
+    
+    [HttpPost("unassign/label/update")]
+    [Authorize]
+    public async Task<IActionResult> UpdateUnassignLabel([FromBody] UpdateIssueDto issueDto)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Guid milestoneId;
+        Guid.TryParse(issueDto.MilestoneId, out milestoneId);
+        Guid updatedIssueGuid = await _sender.Send(new UpdateIssueCommand(Guid.Parse(issueDto.Id), creatorId,
+            issueDto.Title, issueDto.Description, issueDto.State, issueDto.Number,
+            Guid.Parse(issueDto.RepositoryId), issueDto.AssigneesIds, issueDto.LabelsIds,
+            UpdateIssueFlag.LABEL_UNASSIGNED, milestoneId));
+        return Ok(new {Id = updatedIssueGuid});
+    }
 
     [HttpGet("{id}")]
     [Authorize]

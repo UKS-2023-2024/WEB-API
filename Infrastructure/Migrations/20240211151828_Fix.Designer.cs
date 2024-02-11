@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240211151828_Fix")]
+    partial class Fix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -709,24 +712,6 @@ namespace Infrastructure.Migrations
                     b.HasDiscriminator().HasValue(4);
                 });
 
-            modelBuilder.Entity("Domain.Tasks.Interfaces.UnassignLabelEvent", b =>
-                {
-                    b.HasBaseType("Domain.Tasks.Event");
-
-                    b.Property<Guid>("LabelId")
-                        .HasColumnType("uuid");
-
-                    b.HasIndex("LabelId");
-
-                    b.ToTable("Events", t =>
-                        {
-                            t.Property("LabelId")
-                                .HasColumnName("UnassignLabelEvent_LabelId");
-                        });
-
-                    b.HasDiscriminator().HasValue(12);
-                });
-
             modelBuilder.Entity("Domain.Tasks.PullRequestMergedEvent", b =>
                 {
                     b.HasBaseType("Domain.Tasks.Event");
@@ -1226,17 +1211,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Milestone");
-                });
-
-            modelBuilder.Entity("Domain.Tasks.Interfaces.UnassignLabelEvent", b =>
-                {
-                    b.HasOne("Domain.Tasks.Label", "Label")
-                        .WithMany()
-                        .HasForeignKey("LabelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Label");
                 });
 
             modelBuilder.Entity("Domain.Tasks.RemoveIssueFromPullRequestEvent", b =>

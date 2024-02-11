@@ -23,7 +23,8 @@ public class EventConfiguration: IEntityTypeConfiguration<Event>
             .HasValue<Event>(EventType.OPENED)
             .HasValue<CloseEvent>(EventType.CLOSED)
             .HasValue<PullRequestMergedEvent>(EventType.PULL_REQUEST_MERGED)
-            .HasValue<AssignLabelEvent>(EventType.LABEL_ASSIGNED);
+            .HasValue<AssignLabelEvent>(EventType.LABEL_ASSIGNED)
+            .HasValue<UnassignLabelEvent>(EventType.LABEL_UNASSIGNED);
         
         builder.Navigation(e => e.Creator).AutoInclude();
     }

@@ -63,10 +63,17 @@ public class Issue: Task
         UpdateMilestone(milestoneId, creatorId);
     }
 
-    public void AssignLabel(Label label, Guid creatorId)
+    public void AssignLabel(Label label, Label defaultLabel, Guid creatorId)
     {
         Labels.Add(label);
-        Events.Add(new AssignLabelEvent("Label Assigned", creatorId, Id, label.Id));
+        Events.Add(new AssignLabelEvent("Label Assigned", creatorId, Id, defaultLabel.Id));
+    }
+    
+    public void UnassignLabel(Label label, Guid creatorId)
+    {
+        Label labelForDeletion = Labels.Find(l => l.Title.Equals(label.Title));
+        Labels.Remove(labelForDeletion);
+        Events.Add(new UnassignLabelEvent("Label Unassigned", creatorId, Id, label.Id));
     }
 
     public void Close()
