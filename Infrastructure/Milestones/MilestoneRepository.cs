@@ -2,6 +2,7 @@
 using Domain.Milestones.Interfaces;
 using Infrastructure.Persistence;
 using Infrastructure.Shared.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Milestones;
 
@@ -25,5 +26,18 @@ public class MilestoneRepository : BaseRepository<Milestone>, IMilestoneReposito
         return _context.Milestones
             .Where(m => m.RepositoryId.Equals(repositoryId) && m.Closed)
             .ToList();
+    }
+
+    public async Task<Milestone> FindMilestone(Guid milestoneId)
+    {
+        return await _context.Milestones
+            .Where(m => m.Id.Equals(milestoneId))
+            .Include(m => m.Tasks)
+            .ThenInclude(t => t.Labels)
+            .Include(m => m.Tasks)
+            .ThenInclude(t => t.Creator)
+            .Include(m => m.Tasks)
+            .ThenInclude(t => t.Events)
+            .FirstAsync();
     }
 }
