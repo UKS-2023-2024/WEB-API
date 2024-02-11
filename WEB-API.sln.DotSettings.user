@@ -94,10 +94,7 @@
   &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c97e5f77_002D5813_002D4c58_002D8b20_002De5173046549a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="DeleteMilestone_ShouldFail_WhenMilestoneNotFound" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Integration.Milestones.DeleteMilestoneIntegrationTests.DeleteMilestone_ShouldFail_WhenMilestoneNotFound&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::1C585274-3F29-447E-991D-5BE6A12EE105::net7.0::Tests.Integration.Milestones.DeleteMilestoneIntegrationTests.DeleteMilestone_ShouldBeSuccessful_WhenCommandIsValid&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+  &lt;ProjectFile&gt;1C585274-3F29-447E-991D-5BE6A12EE105/d:Integration/d:Milestones/f:DeleteMilestoneIntegrationTests.cs&lt;/ProjectFile&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=cbea10c3_002D0d07_002D4a02_002Da7ad_002Df10680d9a564/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AssignIssueToUser_ShouldBeSuccessful_WhenCommandIsValid #6" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Or&gt;&#xD;

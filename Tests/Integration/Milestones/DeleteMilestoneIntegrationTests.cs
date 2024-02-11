@@ -58,6 +58,6 @@ public class DeleteMilestoneIntegrationTests: BaseIntegrationTest
         };
 
         //Assert
-        await Should.ThrowAsync<RepositoryMemberNotFoundException>(() => handle());
+        await Should.ThrowAsync<MilestoneNotFoundException>(() => handle());
     }
 }

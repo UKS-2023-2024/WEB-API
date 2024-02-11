@@ -7,8 +7,11 @@ using Domain.Milestones.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
 using Domain.Repositories.Interfaces;
+using Domain.Tasks;
+using Domain.Tasks.Interfaces;
 using Moq;
 using Shouldly;
+using Task = System.Threading.Tasks.Task;
 
 namespace Tests.Unit.Milestones;
 
@@ -17,12 +20,15 @@ public class DeleteMilestoneUnitTests
     private readonly Mock<IMilestoneRepository> _milestoneRepositoryMock;
     private readonly Mock<IRepositoryMemberRepository> _repositoryMemberRepositoryMock;
     private readonly Mock<IRepositoryRepository> _repositoryRepositoryMock;
+    private readonly Mock<IIssueRepository> _issueRepositoryMock;
+
 
     public DeleteMilestoneUnitTests()
     {
         _milestoneRepositoryMock = new();
         _repositoryMemberRepositoryMock = new();
         _repositoryRepositoryMock = new();
+        _issueRepositoryMock = new();
     }
 
     [Fact]
@@ -43,10 +49,11 @@ public class DeleteMilestoneUnitTests
         _repositoryMemberRepositoryMock.Setup(x => x.FindByUserIdAndRepositoryId(It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(repositoryMember);
         _milestoneRepositoryMock.Setup(x => x.Delete(It.IsAny<Milestone>()));
+        _issueRepositoryMock.Setup(x => x.FindMilestoneIssues(It.IsAny<Guid>())).ReturnsAsync(new List<Issue>());
 
         
         var handler = new DeleteMilestoneCommandHandler(_repositoryMemberRepositoryMock.Object,
-            _milestoneRepositoryMock.Object, _repositoryRepositoryMock.Object);
+            _milestoneRepositoryMock.Object, _repositoryRepositoryMock.Object, _issueRepositoryMock.Object);
 
         //Act
         Guid milestoneId = await handler.Handle(command, default);
@@ -73,10 +80,11 @@ public class DeleteMilestoneUnitTests
         _repositoryMemberRepositoryMock.Setup(x => x.FindByUserIdAndRepositoryId(It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(repositoryMember);
         _milestoneRepositoryMock.Setup(x => x.Delete(It.IsAny<Milestone>()));
+        _issueRepositoryMock.Setup(x => x.FindMilestoneIssues(It.IsAny<Guid>())).ReturnsAsync(new List<Issue>());
 
         
         var handler = new DeleteMilestoneCommandHandler(_repositoryMemberRepositoryMock.Object,
-            _milestoneRepositoryMock.Object, _repositoryRepositoryMock.Object);
+            _milestoneRepositoryMock.Object, _repositoryRepositoryMock.Object, _issueRepositoryMock.Object);
 
         //Act
         Func<Task> handle = async () =>
@@ -107,10 +115,11 @@ public class DeleteMilestoneUnitTests
         _repositoryMemberRepositoryMock.Setup(x => x.FindByUserIdAndRepositoryId(It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(repositoryMember);
         _milestoneRepositoryMock.Setup(x => x.Delete(It.IsAny<Milestone>()));
+        _issueRepositoryMock.Setup(x => x.FindMilestoneIssues(It.IsAny<Guid>())).ReturnsAsync(new List<Issue>());
 
         
         var handler = new DeleteMilestoneCommandHandler(_repositoryMemberRepositoryMock.Object,
-            _milestoneRepositoryMock.Object, _repositoryRepositoryMock.Object);
+            _milestoneRepositoryMock.Object, _repositoryRepositoryMock.Object, _issueRepositoryMock.Object);
 
         //Act
         Func<Task> handle = async () =>
