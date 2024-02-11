@@ -113,10 +113,11 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
 
     }
 
-    public async Task<List<Label>> FindRepositoryLabels(Guid repositoryId)
+    public async Task<List<Label>> FindRepositoryLabels(Guid repositoryId, string searchValue)
     {
         return await _context.Labels
-            .Where(l => l.RepositoryId.Equals(repositoryId) && l.IsDefaultLabel)
+            .Where(l => l.RepositoryId.Equals(repositoryId) && l.IsDefaultLabel && (l.Title.ToLower().Contains(searchValue.ToLower()) ||
+                    l.Description.ToLower().Contains(searchValue.ToLower())))
             .Include(l => l.Repository)
             .ToListAsync();
     }

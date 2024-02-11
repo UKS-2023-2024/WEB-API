@@ -50,10 +50,10 @@ public class LabelController: ControllerBase
 
     [HttpGet("{repositoryId}/defaults")]
     [Authorize]
-    public async Task<IActionResult> FindRepositoryDefaultLabels(string repositoryId)
+    public async Task<IActionResult> FindRepositoryDefaultLabels(string repositoryId, [FromQuery] string? search)
     {
         Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        var labels = await _sender.Send(new FindRepositoryDefaultLabelsQuery(Guid.Parse(repositoryId)));
+        var labels = await _sender.Send(new FindRepositoryDefaultLabelsQuery(Guid.Parse(repositoryId), search is null ? "" : search));
         return Ok(labels);
     }
 

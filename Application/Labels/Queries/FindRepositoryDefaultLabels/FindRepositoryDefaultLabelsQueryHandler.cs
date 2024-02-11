@@ -15,6 +15,6 @@ public class FindRepositoryDefaultLabelsQueryHandler: IQueryHandler<FindReposito
 
     public async Task<List<Label>> Handle(FindRepositoryDefaultLabelsQuery request, CancellationToken cancellationToken)
     {
-        return await _repositoryRepository.FindRepositoryLabels(request.RepositoryId);
+        return await _repositoryRepository.FindRepositoryLabels(request.RepositoryId, request.Search);
     }
 }
