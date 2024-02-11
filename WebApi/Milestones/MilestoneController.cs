@@ -17,6 +17,7 @@ using WEB_API.Shared.UserIdentityService;
 using Application.Issues.Queries.FindIssueEventsQuery;
 using Domain.Tasks;
 using Application.Milestones.Queries.FindCompletionPercentageOfMilestone;
+using Application.Milestones.Queries.FindMilestone;
 
 namespace WEB_API.Milestones;
 
@@ -116,5 +117,13 @@ public class MilestoneController : ControllerBase
     {
         double percentage = await _sender.Send(new FindCompletionPercentageOfMilestoneQuery(id));
         return Ok(percentage);
+    }
+
+    [HttpGet("milestone/{id}")]
+    [Authorize]
+    public async Task<IActionResult> FindMilestone(string id)
+    {
+        var milestone = await _sender.Send(new FindMilestoneQuery(Guid.Parse(id)));
+        return Ok(milestone);
     }
 }

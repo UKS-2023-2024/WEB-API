@@ -8,7 +8,7 @@ public class LabelConfiguration: IEntityTypeConfiguration<Label>
 {
     public void Configure(EntityTypeBuilder<Label> builder)
     {
-        builder.HasIndex(l => new { l.Title, l.RepositoryId })
+        builder.HasIndex(l => new { l.Title, l.RepositoryId, l.IsDefaultLabel })
             .IsUnique();
     }
 }

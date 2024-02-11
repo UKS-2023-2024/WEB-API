@@ -4,8 +4,8 @@ namespace Domain.Tasks.Interfaces;
 
 public class AssignLabelEvent: Event
 {
-    public Guid LabelId { get; private set; }
-    public Label Label { get; private set; }
+    public Guid LabelId { get; set; }
+    public Label Label { get; set; }
     
     public AssignLabelEvent() {}
     public AssignLabelEvent(string title, Guid creatorId, Guid taskId, Guid labelId) 
