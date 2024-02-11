@@ -34,7 +34,7 @@ public class CloseMilestoneIntegrationTests: BaseIntegrationTest
     {
         //Arrange
         var command = new CloseMilestoneCommand(Guid.Parse("7e9b1cc0-35d3-4bf2-9f2c-5e00a21d92a5"),
-            Guid.Parse("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b4"));
+            Guid.Parse("8e9b1cc3-35d3-4bf2-9f2c-9e00a21d94b9"));
         //Act
         Func<Task> handle = async () =>
         {
