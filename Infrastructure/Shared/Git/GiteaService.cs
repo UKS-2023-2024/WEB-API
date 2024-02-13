@@ -19,7 +19,8 @@ namespace Infrastructure.Shared.Git;
 public class GiteaService: IGitService
 {
     private HttpClient _httpClient;
-    private string _adminToken;
+    private string _adminUsername;
+    private string _adminPassword;
 
     private readonly List<string> ALL_SCOPES = new()
     {
@@ -40,7 +41,8 @@ public class GiteaService: IGitService
     public GiteaService(IConfiguration configuration)
     {
         var giteaBaseUrl = configuration["Gitea:BaseUrl"] ?? "";
-        _adminToken = configuration["Gitea:AdminToken"] ?? "";
+        _adminUsername = configuration["Gitea:AdminUsername"] ?? "";
+        _adminPassword= configuration["Gitea:AdminPassword"] ?? "";
         
         _httpClient = new()
         {
@@ -57,7 +59,7 @@ public class GiteaService: IGitService
 
     public async Task<string> CreateUser(User user, string password)
     {
-        SetAuthToken(_adminToken);
+        SetAdminBasicAuthToken();
         var url = "admin/users";
 
         var body = Body(new
@@ -75,14 +77,10 @@ public class GiteaService: IGitService
 
     public async Task<string> GenerateAccessToken(User user, string plainPassword)
     {
-        SetAuthToken(_adminToken);
+        SetAdminBasicAuthToken();
         var url = $"users/{user.Username}/tokens";
-        var base64Credentials = Convert.ToBase64String(
-            System.Text.Encoding.ASCII.GetBytes($"{user.Username}:{plainPassword}")
-        );
-        _httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Basic", base64Credentials);
-        
+        SetBasicAuthToken(user.Username, user.Password);
+       
         var body = Body(new
         {
             name = "uks_access_token",
@@ -102,7 +100,7 @@ public class GiteaService: IGitService
 
     public async Task MergePullRequest(Repository repository, string mergeType,int gitPullRequestId)
     {
-        SetAuthToken(_adminToken);
+        SetAdminBasicAuthToken();
         var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}/pulls/{gitPullRequestId}/merge";
         var body = Body(new
         {
@@ -114,7 +112,7 @@ public class GiteaService: IGitService
     
     public async Task UpdatePullRequest(Repository repository, int gitPullRequestId, string updateState)
     {
-        SetAuthToken(_adminToken);
+        SetAdminBasicAuthToken();
         var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}/pulls/{gitPullRequestId}";
         var body = Body(new
         {
@@ -126,7 +124,7 @@ public class GiteaService: IGitService
 
     public async Task DeleteUser(User user)
     {
-        SetAuthToken(_adminToken);
+        SetAdminBasicAuthToken();
         var url = $"admin/users/{user.Username}";
         var response = await _httpClient.DeleteAsync(url);
         await LogStatusAndResponseContent(response);
@@ -134,7 +132,7 @@ public class GiteaService: IGitService
 
     public async Task SetPublicKey(User user, string key)
     {
-        SetAuthToken(_adminToken);
+        SetAdminBasicAuthToken();
         var url = $"admin/users/{user.Username}/keys";
         var body = Body(new
         {
@@ -149,7 +147,7 @@ public class GiteaService: IGitService
 
     public async Task<GiteaRepoCreated?> CreatePersonalRepository(User user, Repository repository)
     {
-        SetAuthToken(_adminToken);
+        SetAdminBasicAuthToken();
         var url = $"admin/users/{user.Username}/repos";
         var body = Body(new
         {
@@ -166,7 +164,7 @@ public class GiteaService: IGitService
     
     public async Task<GiteaRepoCreated?> CreateOrganizationRepository(Organization organization,Repository repository)
     {
-        SetAuthToken(_adminToken);
+        SetAdminBasicAuthToken();
         var url = $"orgs/{organization.Name}/repos";
         var body = Body(new
         {
@@ -181,14 +179,14 @@ public class GiteaService: IGitService
     }
     public async Task RemoveRepositoryMember(Repository repository, User user)
     {
-        SetAuthToken(_adminToken);
+        SetAdminBasicAuthToken();
         var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}/collaborators/{user.Username}";
         var response = await _httpClient.DeleteAsync(url);
         await LogStatusAndResponseContent(response);
     }
     public async Task DeleteBranch(User user, Branch branch)
     {
-        SetAuthToken(_adminToken);
+        SetAdminBasicAuthToken();
         var url = $"repos/{user.Username}/{branch.Repository.Name}/branches/{branch.Name}";
         var response = await _httpClient.DeleteAsync(url);
         await LogStatusAndResponseContent(response);
@@ -196,7 +194,7 @@ public class GiteaService: IGitService
 
     public async Task CreateBranch(Repository repository, string branchName, string createdFromBranch)
     {
-        SetAuthToken(_adminToken);
+        SetAdminBasicAuthToken();
         var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}/branches/";
         var body = Body(new
         {
@@ -210,7 +208,7 @@ public class GiteaService: IGitService
 
     public async Task<int> CreatePullRequest(Repository repository, string fromBranch, string toBranch, PullRequest pullRequest)
     {
-        SetAuthToken(_adminToken);
+        SetAdminBasicAuthToken();
         var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}/pulls";
         var body = Body(new
         {
@@ -229,7 +227,7 @@ public class GiteaService: IGitService
 
     public async Task<List<CommitContent>> ListBranchCommits(User user, Branch branch)
     {
-        SetAuthToken(_adminToken);
+        SetAdminBasicAuthToken();
         var url = $"repos/{user.Username}/{branch.Repository.Name}/commits";
         var query = HttpUtility.ParseQueryString(string.Empty);
         query["sha"] = branch.Name;
@@ -298,7 +296,7 @@ public class GiteaService: IGitService
 
     public async Task DeleteRepository(Repository repository)
     {
-        SetAuthToken(_adminToken);
+        SetAdminBasicAuthToken();
         var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}";
         var response = await _httpClient.DeleteAsync(url);
         await LogStatusAndResponseContent(response);
@@ -326,7 +324,7 @@ public class GiteaService: IGitService
     
     public async Task AddOrganizationMember(User user, Organization organization)
     {
-        SetAuthToken(_adminToken);
+        SetAdminBasicAuthToken();
         var url = $"teams/{organization.memberTeamId}/members/{user.Username}";
         var response = await _httpClient.PutAsync(url,null);
         await LogStatusAndResponseContent(response);
@@ -334,7 +332,7 @@ public class GiteaService: IGitService
     
     public async Task RemoveOrganizationMember(User user, Organization organization)
     {
-        SetAuthToken(_adminToken);
+        SetAdminBasicAuthToken();
         var url = $"teams/{organization.memberTeamId}/members/{user.Username}";
         var response = await _httpClient.DeleteAsync(url);
         await LogStatusAndResponseContent(response);
@@ -342,7 +340,7 @@ public class GiteaService: IGitService
     
     public async Task AddRepositoryMember(Repository repository, User user, string permission)
     {
-        SetAuthToken(_adminToken);
+        SetAdminBasicAuthToken();
         var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}/collaborators/{user.Username}";
         var body = Body(new
         {
@@ -354,7 +352,7 @@ public class GiteaService: IGitService
 
     public async Task<List<ContributionFile>> ListFolderContent(User user, Branch branch, string path)
     {
-        SetAuthToken(_adminToken);
+        SetAdminBasicAuthToken();
         var url = $"repos/{user.Username}/{branch.Repository.Name}/contents";
         var pathBasedUrl = path.Equals("/") ? url : url + $"{path}";
         var query = HttpUtility.ParseQueryString(string.Empty);
@@ -370,7 +368,7 @@ public class GiteaService: IGitService
 
     public async Task<FileContent> ListFileContent(User user, Branch branch, string path)
     {
-        SetAuthToken(_adminToken);
+        SetAdminBasicAuthToken();
         var url = $"repos/{user.Username}/{branch.Repository.Name}/contents/{path}";
         var query = HttpUtility.ParseQueryString(string.Empty);
         query["ref"] = branch.Name;
@@ -384,7 +382,7 @@ public class GiteaService: IGitService
 
     private async Task CreatePushWebhook(User user, Repository repository)
     {   
-        SetAuthToken(_adminToken);
+        SetAdminBasicAuthToken();
         var url = $"repos/{user.Username}/{repository.Name}/hooks";
         var body = Body(new
         {
@@ -392,7 +390,7 @@ public class GiteaService: IGitService
             branch_filter = "*",
             config = new
             {
-                url = "http://uks_backend:5124/webhook",
+                url = "http://uks_backend/webhook",
                 content_type = "json"
             },
             type = "gitea"
@@ -416,6 +414,28 @@ public class GiteaService: IGitService
     {
         var jsonData = JsonSerializer.Serialize(data);
         return new StringContent(jsonData, Encoding.UTF8, "application/json");
+    }
+
+    private void SetAdminBasicAuthToken()
+    {
+        Console.WriteLine(_adminUsername, _adminPassword);
+        SetBasicAuthToken(_adminUsername, _adminPassword);
+    }
+
+    private void SetBasicAuthToken(string username, string password)
+    {
+        var base64Credentials = GenerateCredentialsBase64(username, password);
+        Console.WriteLine("Credentials for " + username + " password " + password + " " + base64Credentials);
+        _httpClient.DefaultRequestHeaders.Authorization =
+        new AuthenticationHeaderValue("Basic", base64Credentials);
+    }
+
+    private string GenerateCredentialsBase64(string username, string password)
+    {
+        var base64Credentials = Convert.ToBase64String(
+            System.Text.Encoding.ASCII.GetBytes($"{username}:{password}")
+        );
+        return base64Credentials;
     }
 
 }
