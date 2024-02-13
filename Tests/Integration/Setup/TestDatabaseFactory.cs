@@ -129,7 +129,10 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         pullRequest3 = OverrideFromBranch(pullRequest3,branch2);
         pullRequest3 = OverrideToBranch(pullRequest3,branch1);
         pullRequest3.MergePullRequest(user1.Id);
-        
+
+        var label2 = Label.Create("labela", "labela", "red", repository1.Id, false);
+        label2 = OverrideId(label2, new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21c94b5"));
+
         context.Users.AddRange(user1, user2, user3, user4);
         context.Organizations.AddRange(organization1,organization2);
         context.Repositories.AddRange(repository1,repository2,repository3,repository4,repository5);
@@ -138,6 +141,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         context.Issues.AddRange(issue1, issue2);
         context.Notifications.AddRange(notification1);
         context.PullRequests.AddRange(pullRequest1,pullRequest2,pullRequest3);
+        context.Labels.AddRange(label2);
         context.SaveChanges();
     }
     
