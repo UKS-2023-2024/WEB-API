@@ -150,4 +150,29 @@ public class PullRequest : Task
     {
         if (pullRequest is null) throw new PullRequestNotFoundException();
     }
+
+    public void UpdateLabels(List<Label> labels, Guid creatorId)
+    {
+        CreateAddLabelEvents(labels, creatorId);
+        CreateRemoveLabelEvents(labels, creatorId);
+        Labels = labels;
+    }
+
+    private void CreateAddLabelEvents(List<Label> labels, Guid creatorId)
+    {
+        if (labels is null) return;
+        foreach (var labelToAdd in labels.Where(label => !Labels.Contains(label)))
+        {
+            Events.Add(new AssignLabelEvent($"Added label {labelToAdd.Title} to pull request", creatorId, Id, labelToAdd.Id));
+        }
+    }
+
+    private void CreateRemoveLabelEvents(List<Label> labels, Guid creatorId)
+    {
+        if (labels is null) return;
+        foreach (var labelToRemove in Labels.Where(label => !labels.Contains(label)))
+        {
+            Events.Add(new UnassignLabelEvent($"Removed label {labelToRemove.Title} from pull request", creatorId, Id, labelToRemove.Id));
+        }
+    }
 }

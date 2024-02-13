@@ -8,4 +8,5 @@ public class UpdatePullRequestDto
     public List<Guid>? IssueIds { get;  set; }
     public Guid? MilestoneId { get; set; }
     public List<Guid>? AssigneeIds { get; set; }
+    public List<Guid>? LabelIds { get; set; } = new();
 }

@@ -21,6 +21,7 @@ public class PullRequestPresenter
     public IEnumerable<RepositoryMemberPresenter> Assignees { get; set; }
     public List<IssuePullRequestPresenter> issues { get; set; }
     public MilestonePresenter Milestone { get; set; }
+    public List<LabelPresenter> Labels { get; set; }
 
     public PullRequestPresenter(PullRequest pullRequest)
     {
@@ -37,6 +38,7 @@ public class PullRequestPresenter
         issues = IssuePullRequestPresenter.MapEventToEventPresenter(pullRequest.Issues);
         if (pullRequest.Milestone is not null)
             Milestone = new MilestonePresenter(pullRequest.Milestone);
+        Labels = LabelPresenter.MapLabelToLabelPresenter(pullRequest.Labels);
     }
 
     public static List<PullRequestPresenter> MapPullRequestToPullRequestPresenter(List<PullRequest> pullRequests)
