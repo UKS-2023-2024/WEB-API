@@ -36,6 +36,7 @@ public class PullRequest : Task
         Events.Add(new Event("Opened pull request", EventType.OPENED, userId));
         UpdateAssignees(assignees, userId);
         UpdateIssues(issues, userId);
+        UpdateLabels(labels, userId);
     }
     
     public static PullRequest Create(string title, string description, int number, Repository repository,
