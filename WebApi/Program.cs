@@ -35,7 +35,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173")
+            policy.WithOrigins("http://localhost:5174", "http://localhost:5173")
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
@@ -126,6 +126,21 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseCors(MyAllowSpecificOrigins);
+
+
+if (!builder.Environment.IsDevelopment())
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+
+        var context = services.GetRequiredService<MainDbContext>();
+        if (context.Database.GetPendingMigrations().Any())
+        {
+            context.Database.Migrate();
+        }
+    }
+}
 
 
 app.Run();
