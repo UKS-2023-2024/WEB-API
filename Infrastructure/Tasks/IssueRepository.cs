@@ -78,5 +78,13 @@ public class IssueRepository: BaseRepository<Issue>, IIssueRepository
                          issue.RepositoryId.Equals(repositoryId)
             ).ToListAsync();
     }
-    
+
+    public async Task<List<Issue>> FindAllAssignedWithLabelInRepository(Label label, Guid repositoryId)
+    {
+        return await _context.Issues
+            .Include(i => i.Labels)
+            .Where(i => i.RepositoryId.Equals(repositoryId) && i.Labels.Contains(label))
+            .ToListAsync();
+    }
+
 }

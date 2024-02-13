@@ -13,6 +13,7 @@ public class Label
     public Guid RepositoryId { get; private set; }
     public Repository? Repository { get; private set; }
     public bool IsDefaultLabel { get; private set; }
+    public bool IsDeleted { get; private set; }
 
     public Label(string title, string description, string color, Guid repositoryId, bool isDefaultLabel = false)
     {
@@ -34,5 +35,10 @@ public class Label
         Description = description;
         Color = color;
         return this;
+    }
+
+    public void Delete()
+    {
+        IsDeleted = true;
     }
 }
