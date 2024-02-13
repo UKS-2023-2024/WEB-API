@@ -21,6 +21,7 @@ using WEB_API.Shared.UserIdentityService;
 using WEB_API.Tasks.Dtos;
 using WEB_API.Tasks.Presenters;
 using Application.PullRequests.Commands.UserAssignment;
+using Application.PullRequests.Commands.LabelAssignment;
 
 namespace WEB_API.Tasks;
 
@@ -143,4 +144,15 @@ public class PullRequestController:ControllerBase
             creatorId, dto.AssigneeIds));
         return Ok(updatedPrGuid);
     }
+
+    [HttpPut("labels/update")]
+    [Authorize]
+    public async Task<IActionResult> UpdateLabels([FromBody] UpdatePullRequestDto dto)
+    {
+        Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
+        Guid updatedPrGuid = await _sender.Send(new AssignLabelsToPullRequestCommand(dto.Id,
+            creatorId, dto.LabelIds));
+        return Ok(updatedPrGuid);
+    }
+
 }

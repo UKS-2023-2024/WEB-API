@@ -69,7 +69,7 @@ public class AssignUsersToPullRequestCommandHandler : ICommandHandler<AssignUser
             message += $"The following users have been unassigned from pull request #{pullRequest.Number} in the repository {repository.Name}:<br>";
             foreach (var user in removedUsers)
             {
-                message += $"#{user.Member.Username}<br>";
+                message += $"{user.Member.Username}<br>";
             }
         }
         message += $"<br>By: {member.Member.Username}";

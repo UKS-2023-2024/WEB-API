@@ -54,7 +54,35 @@ public class UpdateIssueCommandHandler: ICommandHandler<UpdateIssueCommand, Guid
         {
             var assigneeGuids = request.AssigneesIds.Select(Guid.Parse).ToList();
             var assignees = await _repositoryMemberRepository.FindAllByIdsAndRepositoryId(repository.Id, assigneeGuids);
+
+            var addedUsers = assignees.Except(issue.Assignees).ToList();
+            var removedUsers = issue.Assignees.Except(assignees).ToList();
+
             issue.UpdateAssignees(assignees, user.Id);
+
+            string message = "";
+            string subject = "";
+            if (addedUsers.Any())
+            {
+                subject += $"[Github] Users assigned to issue #{issue.Number} in {repository.Name}";
+                message += $"The following users have been assigned to issue #{issue.Number} in the repository {repository.Name}:<br>";
+                foreach (var assignee in addedUsers)
+                {
+                    message += $"{assignee.Member.Username}<br>";
+                }
+            }
+
+            if (removedUsers.Any())
+            {
+                subject += $"[Github] Users unassigned from issue #{issue.Number} in {repository.Name}";
+                message += $"The following users have been unassigned from pull request #{issue.Number} in the repository {repository.Name}:<br>";
+                foreach (var assignee in removedUsers)
+                {
+                    message += $"{assignee.Member.Username}<br>";
+                }
+            }
+            message += $"<br>By: {member.Member.Username}";
+            await _notificationService.SendNotification(repository, subject, message, NotificationType.Issues);
         }
 
         if (request.Flag == UpdateIssueFlag.MILESTONE_ASSIGNED)
@@ -85,6 +113,10 @@ public class UpdateIssueCommandHandler: ICommandHandler<UpdateIssueCommand, Guid
                 newLabel.RepositoryId, false);
             await _labelRepository.Create(createdLabel);
             issue.AssignLabel(createdLabel, newLabel, user.Id);
+
+            string subject = $"[Github] Label assigned from issue #{issue.Number} in {repository.Name}";
+            string message = $"Label {newLabel.Title} has been assigned from pull request #{issue.Number} in the repository {repository.Name}:<br>";
+            await _notificationService.SendNotification(repository, subject, message, NotificationType.Issues);
         }
         
         if (request.Flag == UpdateIssueFlag.LABEL_UNASSIGNED)
@@ -94,7 +126,12 @@ public class UpdateIssueCommandHandler: ICommandHandler<UpdateIssueCommand, Guid
                 await _labelRepository.FindByRepositoryIdAndTitle(foundLabel.RepositoryId, foundLabel.Title);
             _labelRepository.Delete(labelForDeletion);
             issue.UnassignLabel(foundLabel, user.Id);
+
+            string subject = $"[Github] Label unassigned from issue #{issue.Number} in {repository.Name}";
+            string message = $"Label {foundLabel.Title} has been unassigned from pull request #{issue.Number} in the repository {repository.Name}:<br>";
+            await _notificationService.SendNotification(repository, subject, message, NotificationType.Issues);
         }
+     
 
         //var labelGuids = request.LabelsIds.Select(l => Guid.Parse(l));
         //var labels = await _labelRepository.FindAllByIds(repository.Id, labelGuids.ToList());

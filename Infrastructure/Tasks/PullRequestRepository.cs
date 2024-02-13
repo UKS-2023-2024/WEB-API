@@ -55,6 +55,7 @@ public class PullRequestRepository: BaseRepository<PullRequest>, IPullRequestRep
           .Include(pr => pr.Milestone)
           .Include(pr => pr.Assignees)
           .ThenInclude(mem => mem.Member)
+          .Include(pr => pr.Labels)
           .FirstOrDefault(pr => pr.Id.Equals(id));
     }
 }
