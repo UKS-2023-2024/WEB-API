@@ -14,9 +14,6 @@ public class LabelPresenter
     public string Description { get; set; }
     public string Color { get; set; }
 
-    public List<Event> Events { get; set; }
-    public List<Comment> Comments { get; set; }
-
     public LabelPresenter(Label label)
     {
         Id = label.Id.ToString();
