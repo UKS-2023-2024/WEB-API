@@ -160,6 +160,7 @@ public class GiteaService: IGitService
         });
         var response = await _httpClient.PostAsync(url, body);
         await LogStatusAndResponseContent(response);
+        await CreatePushWebhook(user, repository);
         return await DeserializeBody<GiteaRepoCreated>(response);
     }
     
@@ -379,6 +380,25 @@ public class GiteaService: IGitService
         var fileContent = await DeserializeBody<GitFileContent>(response);
         if (fileContent is null) return null;
         return new FileContent(fileContent.content, fileContent.name, fileContent.path,  fileContent.encoding);        
+    }
+
+    private async Task CreatePushWebhook(User user, Repository repository)
+    {   
+        SetAuthToken(_adminToken);
+        var url = $"repos/{user.Username}/{repository.Name}/hooks";
+        var body = Body(new
+        {
+            active = true,
+            branch_filter = "*",
+            config = new
+            {
+                url = "http://uks_backend:5124/webhook",
+                content_type = "json"
+            },
+            type = "gitea"
+        });
+        var response = await _httpClient.PostAsync(url, body);
+        await LogStatusAndResponseContent(response);
     }
 
     private async Task<T?> DeserializeBody<T>(HttpResponseMessage response)
