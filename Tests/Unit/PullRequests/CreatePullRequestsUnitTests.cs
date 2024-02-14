@@ -7,6 +7,7 @@ using Domain.Auth.Interfaces;
 using Domain.Branches;
 using Domain.Branches.Exceptions;
 using Domain.Branches.Interfaces;
+using Domain.Milestones.Interfaces;
 using Domain.Notifications.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Exceptions;
@@ -33,6 +34,7 @@ public class CreatePullRequestsUnitTests
     private readonly Mock<IGitService> _gitService = new();
     private readonly Mock<IUserRepository> _userRepository = new();
     private readonly Mock<IIssueRepository> _issueRepository = new();
+    private readonly Mock<IMilestoneRepository> _milestoneRepository = new();
     private readonly User _user1;
     private readonly User _user2;
     private readonly User _user3;
@@ -78,7 +80,7 @@ public class CreatePullRequestsUnitTests
         _userRepository.Setup(x => x.FindUserById(_user3.Id)).ReturnsAsync(_user3);
         
         var dummyPullRequest = PullRequest.Create("", "", 0, _repository1, new Guid(),
-            new List<RepositoryMember>(), new List<Label>(), new Guid(), new Guid(), new Guid(),new List<Issue>());
+            new List<RepositoryMember>(), new List<Label>(), null, new Guid(), new Guid(),new List<Issue>());
         _pullRequestRepository.Setup(x => x.Create(It.IsAny<PullRequest>())).ReturnsAsync(dummyPullRequest);
         
         _pullRequestRepository.Setup(x => x.FindOpenByBranchesAndRepository(_repository1.Id, _branch1.Id, _branch3.Id))
@@ -91,12 +93,12 @@ public class CreatePullRequestsUnitTests
     {
         //Arrange
         var command = new CreatePullRequestCommand(_user1.Id,"super title","super description",_repository1.Id,
-            new List<Guid>{_repoMember1.Id},new List<Guid>(),null, _branch1.Id, _branch2.Id,new List<Guid>());
+            new List<Guid>{_repoMember1.Id},new List<Guid>(), null, _branch1.Id, _branch2.Id,new List<Guid>());
 
         //Act
         var result = new CreatePullRequestCommandHandler(_pullRequestRepository.Object, _labelRepository.Object,
                 _notificationService.Object, _repositoryRepository.Object,_taskRepository.Object, _repositoryMemberRepository.Object,
-                 _branchRepository.Object,_gitService.Object, _userRepository.Object, _issueRepository.Object)
+                 _branchRepository.Object,_gitService.Object, _userRepository.Object, _issueRepository.Object, _milestoneRepository.Object)
             .Handle(command,default);
 
         //Assert
@@ -111,7 +113,7 @@ public class CreatePullRequestsUnitTests
             new List<Guid>{_repoMember1.Id},new List<Guid>(),null, _branch1.Id, _branch2.Id,new List<Guid>());
         var handler = new CreatePullRequestCommandHandler(_pullRequestRepository.Object, _labelRepository.Object,
             _notificationService.Object, _repositoryRepository.Object,_taskRepository.Object, _repositoryMemberRepository.Object,
-            _branchRepository.Object,_gitService.Object, _userRepository.Object, _issueRepository.Object);
+            _branchRepository.Object,_gitService.Object, _userRepository.Object, _issueRepository.Object, _milestoneRepository.Object);
 
         //Act
         async Task<Guid> Handle() => await handler.Handle(command, default);
@@ -128,7 +130,7 @@ public class CreatePullRequestsUnitTests
             new List<Guid>{_repoMember1.Id},new List<Guid>(),null, _branch1.Id, _branch3.Id,new List<Guid>());
         var handler = new CreatePullRequestCommandHandler(_pullRequestRepository.Object, _labelRepository.Object,
             _notificationService.Object, _repositoryRepository.Object,_taskRepository.Object, _repositoryMemberRepository.Object,
-            _branchRepository.Object,_gitService.Object, _userRepository.Object, _issueRepository.Object);
+            _branchRepository.Object,_gitService.Object, _userRepository.Object, _issueRepository.Object, _milestoneRepository.Object);
         //Act
         async Task<Guid> Handle() => await handler.Handle(command, default);
 
@@ -144,7 +146,7 @@ public class CreatePullRequestsUnitTests
             new List<Guid>{_repoMember1.Id},new List<Guid>(),null, _branch1.Id, _branch1.Id,new List<Guid>());
         var handler = new CreatePullRequestCommandHandler(_pullRequestRepository.Object, _labelRepository.Object,
             _notificationService.Object, _repositoryRepository.Object,_taskRepository.Object, _repositoryMemberRepository.Object,
-            _branchRepository.Object,_gitService.Object, _userRepository.Object, _issueRepository.Object);
+            _branchRepository.Object,_gitService.Object, _userRepository.Object, _issueRepository.Object, _milestoneRepository.Object);
 
         //Act
         async Task<Guid> Handle() => await handler.Handle(command, default);
@@ -161,7 +163,7 @@ public class CreatePullRequestsUnitTests
             new List<Guid>{_repoMember1.Id},new List<Guid>(),null, new Guid(), _branch1.Id,new List<Guid>());
         var handler = new CreatePullRequestCommandHandler(_pullRequestRepository.Object, _labelRepository.Object,
             _notificationService.Object, _repositoryRepository.Object,_taskRepository.Object, _repositoryMemberRepository.Object,
-            _branchRepository.Object,_gitService.Object, _userRepository.Object, _issueRepository.Object);
+            _branchRepository.Object,_gitService.Object, _userRepository.Object, _issueRepository.Object, _milestoneRepository.Object);
 
         //Act
         async Task<Guid> Handle() => await handler.Handle(command, default);

@@ -58,4 +58,12 @@ public class PullRequestRepository: BaseRepository<PullRequest>, IPullRequestRep
           .Include(pr => pr.Labels)
           .FirstOrDefault(pr => pr.Id.Equals(id));
     }
+
+    public async Task<List<PullRequest>> FindAllAssignedWithLabelInRepository(Label label, Guid repositoryId)
+    {
+        return await _context.PullRequests
+            .Include(p => p.Labels)
+            .Where(p => p.RepositoryId.Equals(repositoryId) && p.Labels.Contains(label))
+            .ToListAsync();
+    }
 }

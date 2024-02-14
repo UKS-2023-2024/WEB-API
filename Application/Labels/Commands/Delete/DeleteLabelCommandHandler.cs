@@ -8,11 +8,13 @@ public class DeleteLabelCommandHandler: ICommandHandler<DeleteLabelCommand, Guid
 {
     private readonly ILabelRepository _labelRepository;
     private readonly IIssueRepository _issueRepository;
+    private readonly IPullRequestRepository _pullRequestRepository;
 
-    public DeleteLabelCommandHandler(ILabelRepository labelRepository, IIssueRepository issueRepository)
+    public DeleteLabelCommandHandler(ILabelRepository labelRepository, IIssueRepository issueRepository, IPullRequestRepository pullRequestRepository)
     {
         _labelRepository = labelRepository;
         _issueRepository = issueRepository;
+        _pullRequestRepository = pullRequestRepository;
     }
 
     public async Task<Guid> Handle(DeleteLabelCommand request, CancellationToken cancellationToken)
@@ -23,6 +25,12 @@ public class DeleteLabelCommandHandler: ICommandHandler<DeleteLabelCommand, Guid
         {
             issue.Labels.Remove(label);
             _issueRepository.Update(issue);
+        }
+        List<PullRequest> pullRequests = await _pullRequestRepository.FindAllAssignedWithLabelInRepository(label, label.RepositoryId);
+        foreach (PullRequest pr in pullRequests)
+        {
+            pr.Labels.Remove(label);
+            _pullRequestRepository.Update(pr);
         }
         label.Delete();
         _labelRepository.Update(label);

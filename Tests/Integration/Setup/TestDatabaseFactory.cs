@@ -121,7 +121,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         issue2.UpdateMilestone(milestone1.Id, user1.Id);
         var notification1 = Notification.Create("test", "subject", user1, DateTime.UtcNow);
         var pullRequest1 = PullRequest.Create(new Guid("8e9b1cc3-36d3-4bf2-9f4c-9e00a21d94b3"), "pr", "pr", 1, repository1, user1.Id, new List<RepositoryMember>(), new List<Label>(), null, branch2.Id, branch1.Id, new List<Issue>());
-        var pullRequest2 = PullRequest.Create(new Guid("8e9b1cc3-36d3-4bf2-9f4c-9e00a21d94b4"), "pr2", "pr2", 1, repository1, user1.Id, new List<RepositoryMember>(), new List<Label>(), milestone3.Id, branch3.Id, branch1.Id, new List<Issue>());
+        var pullRequest2 = PullRequest.Create(new Guid("8e9b1cc3-36d3-4bf2-9f4c-9e00a21d94b4"), "pr2", "pr2", 1, repository1, user1.Id, new List<RepositoryMember>(), new List<Label>(), milestone3, branch3.Id, branch1.Id, new List<Issue>());
         pullRequest2 = OverrideFromBranch(pullRequest2,branch2);
         pullRequest2 = OverrideToBranch(pullRequest2,branch1);
         pullRequest2.ClosePullRequest(user1.Id);
