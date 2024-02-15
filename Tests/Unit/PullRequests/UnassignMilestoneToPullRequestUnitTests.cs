@@ -42,7 +42,7 @@ public class UnassignMilestoneFromPullRequestsUnitTests
         Milestone milestone = Milestone.Create("ms", "ms", DateOnly.FromDateTime(DateTime.Now), repository.Id);
         RepositoryMember member =
             RepositoryMember.Create(user, It.IsAny<Repository>(), RepositoryMemberRole.OWNER);
-        PullRequest pr = PullRequest.Create("pr", "pr", 1, repository, user.Id, It.IsAny<List<RepositoryMember>>(), It.IsAny<List<Label>>(), milestone.Id, It.IsAny<Guid>(), It.IsAny<Guid>(), new List<Issue>());
+        PullRequest pr = PullRequest.Create("pr", "pr", 1, repository, user.Id, It.IsAny<List<RepositoryMember>>(), It.IsAny<List<Label>>(), milestone, It.IsAny<Guid>(), It.IsAny<Guid>(), new List<Issue>());
         pr.UpdateMilestone(milestone, user.Id);
 
         _pullRequestRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>())).Returns(pr);
@@ -103,7 +103,7 @@ public class UnassignMilestoneFromPullRequestsUnitTests
         Repository repository = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d94a5"), "repo", "test", false, null, user); ;
         Milestone milestone = Milestone.Create("ms", "ms", DateOnly.FromDateTime(DateTime.Now), repository.Id);
         RepositoryMember member = null;
-        PullRequest pr = PullRequest.Create("pr", "pr", 1, repository, user.Id, It.IsAny<List<RepositoryMember>>(), It.IsAny<List<Label>>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), new List<Issue>());
+        PullRequest pr = PullRequest.Create("pr", "pr", 1, repository, user.Id, It.IsAny<List<RepositoryMember>>(), It.IsAny<List<Label>>(), It.IsAny<Milestone>(), It.IsAny<Guid>(), It.IsAny<Guid>(), new List<Issue>());
 
         _pullRequestRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>())).Returns(pr);
         _repositoryMemberRepositoryMock.Setup(x => x.FindByUserIdAndRepositoryId(It.IsAny<Guid>(), It.IsAny<Guid>()))

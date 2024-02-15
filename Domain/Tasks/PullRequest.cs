@@ -28,8 +28,8 @@ public class PullRequest : Task
     }
     
     private PullRequest(string title, string description, int number, Guid userId, Guid repositoryId,
-        List<RepositoryMember> assignees, List<Label> labels, Guid? milestoneId, Guid fromBranchId, Guid toBranchId, List<Issue> issues) : 
-        base(title, description, TaskState.OPEN, number, TaskType.ISSUE, userId, repositoryId, assignees, labels, milestoneId)
+        List<RepositoryMember> assignees, List<Label> labels, Milestone? milestone, Guid fromBranchId, Guid toBranchId, List<Issue> issues) : 
+        base(title, description, TaskState.OPEN, number, TaskType.ISSUE, userId, repositoryId)
     {
         FromBranchId = fromBranchId;
         ToBranchId = toBranchId;
@@ -37,22 +37,23 @@ public class PullRequest : Task
         UpdateAssignees(assignees, userId);
         UpdateIssues(issues, userId);
         UpdateLabels(labels, userId);
+        UpdateMilestone(milestone, userId);
     }
     
     public static PullRequest Create(string title, string description, int number, Repository repository,
-        Guid creatorId, List<RepositoryMember> assignees, List<Label> labels, Guid? milestoneId, Guid fromBranchId, Guid toBranchId,
+        Guid creatorId, List<RepositoryMember> assignees, List<Label> labels, Milestone? milestone, Guid fromBranchId, Guid toBranchId,
         List<Issue> issues)
     {
         return new PullRequest(title, description, number, creatorId, repository.Id, assignees, labels,
-            milestoneId, fromBranchId,  toBranchId, issues);
+            milestone, fromBranchId,  toBranchId, issues);
     }
 
     public static PullRequest Create(Guid id, string title, string description, int number, Repository repository,
-       Guid creatorId, List<RepositoryMember> assignees, List<Label> labels, Guid? milestoneId, Guid fromBranchId, Guid toBranchId,
+       Guid creatorId, List<RepositoryMember> assignees, List<Label> labels, Milestone? milestone, Guid fromBranchId, Guid toBranchId,
        List<Issue> issues)
     {
         PullRequest pr = new PullRequest(title, description, number, creatorId, repository.Id, assignees, labels,
-            milestoneId, fromBranchId, toBranchId, issues);
+            milestone, fromBranchId, toBranchId, issues);
         pr.Id = id;
         return pr;
     }
@@ -73,6 +74,7 @@ public class PullRequest : Task
     
     public void UpdateMilestone(Milestone milestone, Guid creatorId)
     {
+        if (milestone is null) return;
         if (Milestone is not null) UnassignMilestone(creatorId);
         MilestoneId = milestone.Id;
         Milestone = milestone;

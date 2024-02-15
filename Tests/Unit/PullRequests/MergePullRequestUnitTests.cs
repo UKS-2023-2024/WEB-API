@@ -50,20 +50,20 @@ public class MergePullRequestUnitTests
         
         var branch1 = Branch.Create("branch1", _repository1.Id, false, new Guid("805a6c69-5b51-4156-b4cc-71e8dd111579"));
         _pullRequest1 = PullRequest.Create("pr1", "pull request1", 0, _repository1, new Guid(),
-            new List<RepositoryMember>(), new List<Label>(), new Guid(), new Guid(), new Guid(),new List<Issue>());
+            new List<RepositoryMember>(), new List<Label>(), null, new Guid(), new Guid(),new List<Issue>());
         _pullRequest1 = OverrideId(_pullRequest1, new Guid("8e9b1cc1-ffaa-4bf2-1111-5e00a21d92a9"));
         _pullRequest1 = OverrideFromBranch(_pullRequest1, branch1);
         _pullRequest1 = OverrideToBranch(_pullRequest1, branch1);
         
         _pullRequest2 = PullRequest.Create("pr2", "pull request2", 0, _repository1, new Guid(),
-            new List<RepositoryMember>(), new List<Label>(), new Guid(), new Guid(), new Guid(),new List<Issue>());
+            new List<RepositoryMember>(), new List<Label>(), null, new Guid(), new Guid(),new List<Issue>());
         _pullRequest2 = OverrideId(_pullRequest2, new Guid("8e9b1cc1-ffaa-4bf2-2222-5e00a21d92a9"));
         _pullRequest2 = OverrideFromBranch(_pullRequest2, branch1);
         _pullRequest2 = OverrideToBranch(_pullRequest2, branch1);
         _pullRequest2.ClosePullRequest(_user1.Id);
         
         _pullRequest3 = PullRequest.Create("pr3", "pull request3", 0, _repository1, new Guid(),
-            new List<RepositoryMember>(), new List<Label>(), new Guid(), new Guid(), new Guid(),new List<Issue>());
+            new List<RepositoryMember>(), new List<Label>(), null, new Guid(), new Guid(),new List<Issue>());
         _pullRequest3 = OverrideId(_pullRequest3, new Guid("8e9b1cc1-ffaa-4bf2-3333-5e00a21d92a9"));
         _pullRequest3 = OverrideFromBranch(_pullRequest3, branch1);
         _pullRequest3 = OverrideToBranch(_pullRequest3, branch1);

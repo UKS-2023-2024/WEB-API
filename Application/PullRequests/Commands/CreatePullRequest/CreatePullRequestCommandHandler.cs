@@ -4,6 +4,8 @@ using Domain.Auth.Interfaces;
 using Domain.Branches;
 using Domain.Branches.Exceptions;
 using Domain.Branches.Interfaces;
+using Domain.Milestones;
+using Domain.Milestones.Interfaces;
 using Domain.Notifications.Interfaces;
 using Domain.Repositories;
 using Domain.Repositories.Interfaces;
@@ -26,11 +28,12 @@ public class CreatePullRequestCommandHandler: ICommandHandler<CreatePullRequestC
     private readonly IGitService _gitService;
     private readonly IUserRepository _userRepository;
     private readonly IIssueRepository _issueRepository;
+    private readonly IMilestoneRepository _milestoneRepository;
     
     public CreatePullRequestCommandHandler (IPullRequestRepository pullRequestRepository, ILabelRepository labelRepository,
         INotificationService notificationService, IRepositoryRepository repositoryRepository, ITaskRepository taskRepository,
         IRepositoryMemberRepository repositoryMemberRepository, IBranchRepository branchRepository, IGitService gitService,
-        IUserRepository userRepository, IIssueRepository issueRepository)
+        IUserRepository userRepository, IIssueRepository issueRepository, IMilestoneRepository milestoneRepository)
     {
         _pullRequestRepository = pullRequestRepository;
         _labelRepository = labelRepository;
@@ -42,6 +45,7 @@ public class CreatePullRequestCommandHandler: ICommandHandler<CreatePullRequestC
         _gitService = gitService;
         _userRepository = userRepository;
         _issueRepository = issueRepository;
+        _milestoneRepository = milestoneRepository;
     }
 
     public async Task<Guid> Handle(CreatePullRequestCommand request, CancellationToken cancellationToken)
@@ -68,9 +72,13 @@ public class CreatePullRequestCommandHandler: ICommandHandler<CreatePullRequestC
         var pullRequest = await _pullRequestRepository.FindOpenByBranchesAndRepository(request.RepositoryId,fromBranch.Id,toBranch.Id);
         if (pullRequest is not null) throw new PullRequestWithSameBranchesExistsException();
         var creator = await _userRepository.FindUserById(request.UserId);
-        
+
+        Milestone milestone = null;
+        if (request.MilestoneId != null)
+            milestone = await _milestoneRepository.FindMilestone((Guid)request.MilestoneId);
+
         pullRequest = PullRequest.Create(request.Title, request.Description, taskNumber,
-            repository, request.UserId, assignees, labels, request.MilestoneId,fromBranch.Id, toBranch.Id, issues);
+            repository, request.UserId, assignees, labels, milestone, fromBranch.Id, toBranch.Id, issues);
 
         var gitPullRequestId = await _gitService.CreatePullRequest(repository, fromBranch.Name, toBranch.Name, pullRequest);
         pullRequest.SetGitPullRequestId(gitPullRequestId);
