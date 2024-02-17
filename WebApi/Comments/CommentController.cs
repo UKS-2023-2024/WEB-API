@@ -1,5 +1,6 @@
 ﻿using Application.Comments.Commands.Create;
 using Application.Comments.Commands.Delete;
+using Application.Comments.Queries.GetTaskComments;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,8 +29,9 @@ public class CommentController: ControllerBase
     [Authorize]
     public async Task<IActionResult> Create([FromBody] CreateCommentDto commentDto)
     {
+        var parentId = commentDto.ParentId is null ? (Guid?)null : Guid.Parse(commentDto.ParentId);
         Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        var createdCommentId = await _sender.Send(new CreateCommentCommand(creatorId, Guid.Parse(commentDto.TaskId), commentDto.Content));
+        var createdCommentId = await _sender.Send(new CreateCommentCommand(creatorId, Guid.Parse(commentDto.TaskId), commentDto.Content, parentId));
         return Ok(new {Id = createdCommentId});
     }
     
@@ -40,5 +42,13 @@ public class CommentController: ControllerBase
         Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
         var createdCommentId = await _sender.Send(new DeleteCommentCommand(Guid.Parse(id)));
         return Ok(new {Id = createdCommentId});
+    }
+
+    [HttpGet("{taskId}")]
+    [Authorize]
+    public async Task<IActionResult> GetTaskComments(string taskId)
+    {
+        var comments = await _sender.Send(new GetTaskCommentsQuery(new Guid(), Guid.Parse(taskId)));
+        return Ok(comments);
     }
 }
