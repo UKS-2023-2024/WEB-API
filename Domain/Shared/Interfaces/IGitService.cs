@@ -32,5 +32,7 @@ public interface IGitService
     public Task<List<CommitContent>> ListBranchCommits(User user, Branch branch);
     public Task<List<ContributionFile>> ListFolderContent(User user, Branch branch, string path);
     public Task<FileContent> ListFileContent(User user, Branch branch, string path);
+    public Task<string> GetPrDiffPreview(User user, Repository repository, PullRequest pullRequest);
+    public Task<List<CommitContent>> ListPrCommits(User user, Repository repository, PullRequest pullRequest);
 
 }
