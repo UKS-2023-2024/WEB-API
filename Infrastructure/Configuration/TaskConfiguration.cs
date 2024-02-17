@@ -9,6 +9,8 @@ public class TaskConfiguration: IEntityTypeConfiguration<Domain.Tasks.Task>
 {
     public void Configure(EntityTypeBuilder<Domain.Tasks.Task> builder)
     {
+        builder.ToTable("tasks");
+        
         builder.HasMany(t => t.Labels)
             .WithMany(l => l.Tasks);
 

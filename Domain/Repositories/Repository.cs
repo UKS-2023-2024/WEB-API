@@ -29,6 +29,8 @@ namespace Domain.Repositories
         public string? SshCloneUrl { get; private set; }
         public RepositoryFork? ForkedFrom { get; private set; }
         public List<RepositoryFork> RepositoryForks { get; private set; } = new();
+        public DateTime? CreatedAt { get; private set; }
+        public DateTime? UpdatedAt { get; private set; }
 
         private Repository() { }
 
@@ -46,6 +48,15 @@ namespace Domain.Repositories
         {
             HttpCloneUrl = httpsCloneUrl;
             SshCloneUrl = sshCloneUrl;
+        }
+        
+        public void Created()
+        {
+            CreatedAt = DateTime.Now.ToUniversalTime();
+        }
+        public void Updated()
+        {
+            UpdatedAt = DateTime.Now.ToUniversalTime();
         }
 
         public static Repository Create(string name, string description, bool isPrivate, Organization? organization,User creator)

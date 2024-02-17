@@ -3,3 +3,5 @@
 .vs/
 obj
 .env
+postgres
+gitea

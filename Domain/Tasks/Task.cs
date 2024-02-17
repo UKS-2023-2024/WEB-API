@@ -24,6 +24,8 @@ public abstract class Task
     public Guid UserId { get; protected set; }
     public User? Creator { get; protected set; }
     public List<Comment> Comments { get; protected set; } = new();
+    public DateTime? CreatedAt { get; private set; }
+    public DateTime? UpdatedAt { get; private set; }
 
     protected Task()
     {
@@ -38,6 +40,15 @@ public abstract class Task
         Type = type;
         UserId = userId;
         RepositoryId = repositoryId;
+    }
+    
+    public void Created()
+    {
+        CreatedAt = DateTime.Now.ToUniversalTime();
+    }
+    public void Updated()
+    {
+        UpdatedAt = DateTime.Now.ToUniversalTime();
     }
     
     protected Task(string title, string description, TaskState state, int number, TaskType type,
