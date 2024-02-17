@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240216121941_AddedParentIdInComment")]
+    partial class AddedParentIdInComment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,627 +28,473 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Auth.Email", b =>
                 {
                     b.Property<string>("Value")
-                        .HasColumnType("text")
-                        .HasColumnName("value");
+                        .HasColumnType("text");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnType("uuid");
 
-                    b.HasKey("Value")
-                        .HasName("pk_emails");
+                    b.HasKey("Value");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_emails_user_id");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("emails", (string)null);
+                    b.ToTable("Emails");
                 });
 
             modelBuilder.Entity("Domain.Auth.SocialAccount", b =>
                 {
                     b.Property<Guid?>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Value")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("value");
+                        .HasColumnType("text");
 
-                    b.HasKey("Id")
-                        .HasName("pk_social_accounts");
+                    b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_social_accounts_user_id");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("social_accounts", (string)null);
+                    b.ToTable("SocialAccounts");
                 });
 
             modelBuilder.Entity("Domain.Auth.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Bio")
-                        .HasColumnType("text")
-                        .HasColumnName("bio");
+                        .HasColumnType("text");
 
                     b.Property<string>("Company")
-                        .HasColumnType("text")
-                        .HasColumnName("company");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                        .HasColumnType("text");
 
                     b.Property<bool>("Deleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("deleted");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("FullName")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("full_name");
+                        .HasColumnType("text");
 
                     b.Property<string>("GitToken")
-                        .HasColumnType("text")
-                        .HasColumnName("git_token");
+                        .HasColumnType("text");
 
                     b.Property<string>("Location")
-                        .HasColumnType("text")
-                        .HasColumnName("location");
+                        .HasColumnType("text");
 
                     b.Property<int>("NotificationPreferences")
-                        .HasColumnType("integer")
-                        .HasColumnName("notification_preferences");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("password");
+                        .HasColumnType("text");
 
                     b.Property<string>("PrimaryEmail")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("primary_email");
+                        .HasColumnType("text");
 
                     b.Property<int>("Role")
-                        .HasColumnType("integer")
-                        .HasColumnName("role");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("username");
+                        .HasColumnType("text");
 
                     b.Property<string>("Website")
-                        .HasColumnType("text")
-                        .HasColumnName("website");
+                        .HasColumnType("text");
 
-                    b.HasKey("Id")
-                        .HasName("pk_users");
+                    b.HasKey("Id");
 
                     b.HasIndex("PrimaryEmail")
-                        .IsUnique()
-                        .HasDatabaseName("ix_users_primary_email");
+                        .IsUnique();
 
-                    b.ToTable("users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Domain.Branches.Branch", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("CreatedFrom")
-                        .HasColumnType("text")
-                        .HasColumnName("created_from");
+                        .HasColumnType("text");
 
                     b.Property<bool>("Deleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("deleted");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsDefault")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_default");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
+                        .HasColumnType("text");
 
                     b.Property<Guid>("OwnerId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("owner_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("RepositoryId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("repository_id");
+                        .HasColumnType("uuid");
 
-                    b.HasKey("Id")
-                        .HasName("pk_branches");
+                    b.HasKey("Id");
 
-                    b.HasIndex("OwnerId")
-                        .HasDatabaseName("ix_branches_owner_id");
+                    b.HasIndex("OwnerId");
 
-                    b.HasIndex("RepositoryId")
-                        .HasDatabaseName("ix_branches_repository_id");
+                    b.HasIndex("RepositoryId");
 
                     b.HasIndex("Name", "RepositoryId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_branches_name_repository_id");
+                        .IsUnique();
 
-                    b.ToTable("branches", (string)null);
+                    b.ToTable("Branches");
                 });
 
             modelBuilder.Entity("Domain.Comments.Comment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("content");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("CreatorId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("creator_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid?>("ParentId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("parent_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("TaskId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("task_id");
+                        .HasColumnType("uuid");
 
-                    b.HasKey("Id")
-                        .HasName("pk_comments");
+                    b.HasKey("Id");
 
-                    b.HasIndex("CreatorId")
-                        .HasDatabaseName("ix_comments_creator_id");
+                    b.HasIndex("CreatorId");
 
-                    b.HasIndex("TaskId")
-                        .HasDatabaseName("ix_comments_task_id");
+                    b.HasIndex("TaskId");
 
-                    b.ToTable("comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Domain.Milestones.Milestone", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("Closed")
-                        .HasColumnType("boolean")
-                        .HasColumnName("closed");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("description");
+                        .HasColumnType("text");
 
                     b.Property<DateOnly?>("DueDate")
-                        .HasColumnType("date")
-                        .HasColumnName("due_date");
+                        .HasColumnType("date");
 
                     b.Property<Guid>("RepositoryId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("repository_id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("title");
+                        .HasColumnType("text");
 
-                    b.HasKey("Id")
-                        .HasName("pk_milestones");
+                    b.HasKey("Id");
 
-                    b.HasIndex("RepositoryId")
-                        .HasDatabaseName("ix_milestones_repository_id");
+                    b.HasIndex("RepositoryId");
 
-                    b.ToTable("milestones", (string)null);
+                    b.ToTable("Milestones");
                 });
 
             modelBuilder.Entity("Domain.Notifications.Notification", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("DateTime")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("date_time");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("message");
+                        .HasColumnType("text");
 
                     b.Property<string>("Subject")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("subject");
+                        .HasColumnType("text");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnType("uuid");
 
-                    b.HasKey("Id")
-                        .HasName("pk_notifications");
+                    b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_notifications_user_id");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Domain.Organizations.Organization", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("ContactEmail")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("contact_email");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                        .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("description");
+                        .HasColumnType("text");
 
                     b.Property<string>("Location")
-                        .HasColumnType("text")
-                        .HasColumnName("location");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
+                        .HasColumnType("text");
 
                     b.Property<string>("Url")
-                        .HasColumnType("text")
-                        .HasColumnName("url");
+                        .HasColumnType("text");
 
                     b.Property<int?>("memberTeamId")
-                        .HasColumnType("integer")
-                        .HasColumnName("member_team_id");
+                        .HasColumnType("integer");
 
-                    b.HasKey("Id")
-                        .HasName("pk_organizations");
+                    b.HasKey("Id");
 
-                    b.ToTable("organizations", (string)null);
+                    b.ToTable("Organizations");
                 });
 
             modelBuilder.Entity("Domain.Organizations.OrganizationInvite", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("expires_at");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("OrganizationId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("organization_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnType("uuid");
 
-                    b.HasKey("Id")
-                        .HasName("pk_organization_invites");
+                    b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_organization_invites_user_id");
+                    b.HasIndex("UserId");
 
                     b.HasIndex("OrganizationId", "UserId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_organization_invites_organization_id_user_id");
+                        .IsUnique();
 
-                    b.ToTable("organization_invites", (string)null);
+                    b.ToTable("OrganizationInvites");
                 });
 
             modelBuilder.Entity("Domain.Organizations.OrganizationMember", b =>
                 {
                     b.Property<Guid>("OrganizationId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("organization_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("MemberId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("member_id");
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("Deleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("deleted");
+                        .HasColumnType("boolean");
 
                     b.Property<int>("Role")
-                        .HasColumnType("integer")
-                        .HasColumnName("role");
+                        .HasColumnType("integer");
 
-                    b.HasKey("OrganizationId", "MemberId")
-                        .HasName("pk_organization_members");
+                    b.HasKey("OrganizationId", "MemberId");
 
-                    b.HasIndex("MemberId")
-                        .HasDatabaseName("ix_organization_members_member_id");
+                    b.HasIndex("MemberId");
 
-                    b.ToTable("organization_members", (string)null);
+                    b.ToTable("OrganizationMembers");
                 });
 
             modelBuilder.Entity("Domain.Reactions.Reaction", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("CommentId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("comment_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("CreatorId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("creator_id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("EmojiCode")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("emoji_code");
+                        .HasColumnType("text");
 
-                    b.HasKey("Id")
-                        .HasName("pk_reactions");
+                    b.HasKey("Id");
 
-                    b.HasIndex("CommentId")
-                        .HasDatabaseName("ix_reactions_comment_id");
+                    b.HasIndex("CommentId");
 
-                    b.HasIndex("CreatorId")
-                        .HasDatabaseName("ix_reactions_creator_id");
+                    b.HasIndex("CreatorId");
 
-                    b.ToTable("reactions", (string)null);
+                    b.ToTable("Reactions");
                 });
 
             modelBuilder.Entity("Domain.Repositories.Repository", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("description");
+                        .HasColumnType("text");
 
                     b.Property<string>("HttpCloneUrl")
-                        .HasColumnType("text")
-                        .HasColumnName("http_clone_url");
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsPrivate")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_private");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
+                        .HasColumnType("text");
 
                     b.Property<Guid?>("OrganizationId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("organization_id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("SshCloneUrl")
-                        .HasColumnType("text")
-                        .HasColumnName("ssh_clone_url");
+                        .HasColumnType("text");
 
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
+                    b.HasKey("Id");
 
-                    b.HasKey("Id")
-                        .HasName("pk_repositories");
+                    b.HasIndex("OrganizationId");
 
-                    b.HasIndex("OrganizationId")
-                        .HasDatabaseName("ix_repositories_organization_id");
-
-                    b.ToTable("repositories", (string)null);
+                    b.ToTable("Repositories");
                 });
 
             modelBuilder.Entity("Domain.Repositories.RepositoryFork", b =>
                 {
                     b.Property<Guid>("SourceRepoId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("source_repo_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ForkedRepoId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("forked_repo_id");
+                        .HasColumnType("uuid");
 
-                    b.HasKey("SourceRepoId", "ForkedRepoId")
-                        .HasName("pk_repository_forks");
+                    b.HasKey("SourceRepoId", "ForkedRepoId");
 
                     b.HasIndex("ForkedRepoId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_repository_forks_forked_repo_id");
+                        .IsUnique();
 
-                    b.ToTable("repository_forks", (string)null);
+                    b.ToTable("RepositoryForks");
                 });
 
             modelBuilder.Entity("Domain.Repositories.RepositoryInvite", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("expires_at");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("RepositoryId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("repository_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnType("uuid");
 
-                    b.HasKey("Id")
-                        .HasName("pk_repository_invites");
+                    b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_repository_invites_user_id");
+                    b.HasIndex("UserId");
 
                     b.HasIndex("RepositoryId", "UserId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_repository_invites_repository_id_user_id");
+                        .IsUnique();
 
-                    b.ToTable("repository_invites", (string)null);
+                    b.ToTable("RepositoryInvites");
                 });
 
             modelBuilder.Entity("Domain.Repositories.RepositoryMember", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("Deleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("deleted");
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("MemberId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("member_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("RepositoryId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("repository_id");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Role")
-                        .HasColumnType("integer")
-                        .HasColumnName("role");
+                        .HasColumnType("integer");
 
-                    b.HasKey("Id")
-                        .HasName("pk_repository_members");
+                    b.HasKey("Id");
 
-                    b.HasIndex("MemberId")
-                        .HasDatabaseName("ix_repository_members_member_id");
+                    b.HasIndex("MemberId");
 
-                    b.HasIndex("RepositoryId")
-                        .HasDatabaseName("ix_repository_members_repository_id");
+                    b.HasIndex("RepositoryId");
 
-                    b.ToTable("repository_members", (string)null);
+                    b.ToTable("RepositoryMembers");
                 });
 
             modelBuilder.Entity("Domain.Repositories.RepositoryWatcher", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("RepositoryId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("repository_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("WatchingPreferences")
-                        .HasColumnType("integer")
-                        .HasColumnName("watching_preferences");
+                        .HasColumnType("integer");
 
-                    b.HasKey("Id")
-                        .HasName("pk_repository_watchers");
+                    b.HasKey("Id");
 
-                    b.HasIndex("RepositoryId")
-                        .HasDatabaseName("ix_repository_watchers_repository_id");
+                    b.HasIndex("RepositoryId");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_repository_watchers_user_id");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("repository_watchers", (string)null);
+                    b.ToTable("RepositoryWatchers");
                 });
 
             modelBuilder.Entity("Domain.Tasks.Event", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("CreatorId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("creator_id");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("EventType")
-                        .HasColumnType("integer")
-                        .HasColumnName("event_type");
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("TaskId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("task_id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("title");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatorId")
-                        .HasDatabaseName("ix_events_creator_id");
+                    b.HasIndex("CreatorId");
 
-                    b.HasIndex("TaskId")
-                        .HasDatabaseName("ix_events_task_id");
+                    b.HasIndex("TaskId");
 
-                    b.ToTable("events", (string)null);
+                    b.ToTable("Events");
 
                     b.HasDiscriminator<int>("EventType").HasValue(0);
 
@@ -656,111 +505,80 @@ namespace Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("color");
+                        .HasColumnType("text");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("description");
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsDefaultLabel")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_default_label");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_deleted");
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("RepositoryId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("repository_id");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("title");
+                        .HasColumnType("text");
 
-                    b.HasKey("Id")
-                        .HasName("pk_labels");
+                    b.HasKey("Id");
 
-                    b.HasIndex("RepositoryId")
-                        .HasDatabaseName("ix_labels_repository_id");
+                    b.HasIndex("RepositoryId");
 
                     b.HasIndex("Title", "RepositoryId", "IsDefaultLabel")
-                        .IsUnique()
-                        .HasDatabaseName("ix_labels_title_repository_id_is_default_label");
+                        .IsUnique();
 
-                    b.ToTable("labels", (string)null);
+                    b.ToTable("Labels");
                 });
 
             modelBuilder.Entity("Domain.Tasks.Task", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("description");
+                        .HasColumnType("text");
 
                     b.Property<Guid?>("MilestoneId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("milestone_id");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Number")
-                        .HasColumnType("integer")
-                        .HasColumnName("number");
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("RepositoryId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("repository_id");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("State")
-                        .HasColumnType("integer")
-                        .HasColumnName("state");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("title");
+                        .HasColumnType("text");
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer")
-                        .HasColumnName("type");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
+                        .HasColumnType("uuid");
 
-                    b.HasKey("Id")
-                        .HasName("pk_tasks");
+                    b.HasKey("Id");
 
-                    b.HasIndex("MilestoneId")
-                        .HasDatabaseName("ix_tasks_milestone_id");
+                    b.HasIndex("MilestoneId");
 
-                    b.HasIndex("RepositoryId")
-                        .HasDatabaseName("ix_tasks_repository_id");
+                    b.HasIndex("RepositoryId");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_tasks_user_id");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("tasks", (string)null);
+                    b.ToTable("Tasks");
 
                     b.HasDiscriminator<int>("Type");
 
@@ -770,77 +588,61 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("IssuePullRequest", b =>
                 {
                     b.Property<Guid>("IssuesId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("issues_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("PullRequestsId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("pull_requests_id");
+                        .HasColumnType("uuid");
 
-                    b.HasKey("IssuesId", "PullRequestsId")
-                        .HasName("pk_issue_pull_request");
+                    b.HasKey("IssuesId", "PullRequestsId");
 
-                    b.HasIndex("PullRequestsId")
-                        .HasDatabaseName("ix_issue_pull_request_pull_requests_id");
+                    b.HasIndex("PullRequestsId");
 
-                    b.ToTable("issue_pull_request", (string)null);
+                    b.ToTable("IssuePullRequest");
                 });
 
             modelBuilder.Entity("LabelTask", b =>
                 {
                     b.Property<Guid>("LabelsId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("labels_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("TasksId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tasks_id");
+                        .HasColumnType("uuid");
 
-                    b.HasKey("LabelsId", "TasksId")
-                        .HasName("pk_label_task");
+                    b.HasKey("LabelsId", "TasksId");
 
-                    b.HasIndex("TasksId")
-                        .HasDatabaseName("ix_label_task_tasks_id");
+                    b.HasIndex("TasksId");
 
-                    b.ToTable("label_task", (string)null);
+                    b.ToTable("LabelTask");
                 });
 
             modelBuilder.Entity("RepositoryMemberTask", b =>
                 {
                     b.Property<Guid>("AssigneesId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("assignees_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("TasksId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("tasks_id");
+                        .HasColumnType("uuid");
 
-                    b.HasKey("AssigneesId", "TasksId")
-                        .HasName("pk_repository_member_task");
+                    b.HasKey("AssigneesId", "TasksId");
 
-                    b.HasIndex("TasksId")
-                        .HasDatabaseName("ix_repository_member_task_tasks_id");
+                    b.HasIndex("TasksId");
 
-                    b.ToTable("repository_member_task", (string)null);
+                    b.ToTable("RepositoryMemberTask");
                 });
 
             modelBuilder.Entity("RepositoryUser", b =>
                 {
                     b.Property<Guid>("StarredById")
-                        .HasColumnType("uuid")
-                        .HasColumnName("starred_by_id");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("StarredId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("starred_id");
+                        .HasColumnType("uuid");
 
-                    b.HasKey("StarredById", "StarredId")
-                        .HasName("pk_repository_user");
+                    b.HasKey("StarredById", "StarredId");
 
-                    b.HasIndex("StarredId")
-                        .HasDatabaseName("ix_repository_user_starred_id");
+                    b.HasIndex("StarredId");
 
-                    b.ToTable("repository_user", (string)null);
+                    b.ToTable("RepositoryUser");
                 });
 
             modelBuilder.Entity("Domain.Tasks.AddIssueToPullRequestEvent", b =>
@@ -848,11 +650,9 @@ namespace Infrastructure.Migrations
                     b.HasBaseType("Domain.Tasks.Event");
 
                     b.Property<Guid>("IssueId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("issue_id");
+                        .HasColumnType("uuid");
 
-                    b.HasIndex("IssueId")
-                        .HasDatabaseName("ix_events_issue_id");
+                    b.HasIndex("IssueId");
 
                     b.HasDiscriminator().HasValue(9);
                 });
@@ -862,16 +662,14 @@ namespace Infrastructure.Migrations
                     b.HasBaseType("Domain.Tasks.Event");
 
                     b.Property<Guid>("AssigneeId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("assignee_id");
+                        .HasColumnType("uuid");
 
-                    b.HasIndex("AssigneeId")
-                        .HasDatabaseName("ix_events_assignee_id1");
+                    b.HasIndex("AssigneeId");
 
-                    b.ToTable("events", t =>
+                    b.ToTable("Events", t =>
                         {
                             t.Property("AssigneeId")
-                                .HasColumnName("assign_event_assignee_id");
+                                .HasColumnName("AssignEvent_AssigneeId");
                         });
 
                     b.HasDiscriminator().HasValue(2);
@@ -882,11 +680,9 @@ namespace Infrastructure.Migrations
                     b.HasBaseType("Domain.Tasks.Event");
 
                     b.Property<Guid>("AssigneeId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("assignee_id");
+                        .HasColumnType("uuid");
 
-                    b.HasIndex("AssigneeId")
-                        .HasDatabaseName("ix_events_assignee_id");
+                    b.HasIndex("AssigneeId");
 
                     b.HasDiscriminator().HasValue(7);
                 });
@@ -903,11 +699,9 @@ namespace Infrastructure.Migrations
                     b.HasBaseType("Domain.Tasks.Event");
 
                     b.Property<Guid>("LabelId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("label_id");
+                        .HasColumnType("uuid");
 
-                    b.HasIndex("LabelId")
-                        .HasDatabaseName("ix_events_label_id");
+                    b.HasIndex("LabelId");
 
                     b.HasDiscriminator().HasValue(11);
                 });
@@ -917,11 +711,9 @@ namespace Infrastructure.Migrations
                     b.HasBaseType("Domain.Tasks.Event");
 
                     b.Property<Guid>("MilestoneId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("milestone_id");
+                        .HasColumnType("uuid");
 
-                    b.HasIndex("MilestoneId")
-                        .HasDatabaseName("ix_events_milestone_id");
+                    b.HasIndex("MilestoneId");
 
                     b.HasDiscriminator().HasValue(4);
                 });
@@ -931,16 +723,14 @@ namespace Infrastructure.Migrations
                     b.HasBaseType("Domain.Tasks.Event");
 
                     b.Property<Guid>("LabelId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("label_id");
+                        .HasColumnType("uuid");
 
-                    b.HasIndex("LabelId")
-                        .HasDatabaseName("ix_events_label_id1");
+                    b.HasIndex("LabelId");
 
-                    b.ToTable("events", t =>
+                    b.ToTable("Events", t =>
                         {
                             t.Property("LabelId")
-                                .HasColumnName("unassign_label_event_label_id");
+                                .HasColumnName("UnassignLabelEvent_LabelId");
                         });
 
                     b.HasDiscriminator().HasValue(12);
@@ -958,16 +748,14 @@ namespace Infrastructure.Migrations
                     b.HasBaseType("Domain.Tasks.Event");
 
                     b.Property<Guid>("IssueId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("issue_id");
+                        .HasColumnType("uuid");
 
-                    b.HasIndex("IssueId")
-                        .HasDatabaseName("ix_events_issue_id1");
+                    b.HasIndex("IssueId");
 
-                    b.ToTable("events", t =>
+                    b.ToTable("Events", t =>
                         {
                             t.Property("IssueId")
-                                .HasColumnName("remove_issue_from_pull_request_event_issue_id");
+                                .HasColumnName("RemoveIssueFromPullRequestEvent_IssueId");
                         });
 
                     b.HasDiscriminator().HasValue(10);
@@ -978,16 +766,14 @@ namespace Infrastructure.Migrations
                     b.HasBaseType("Domain.Tasks.Event");
 
                     b.Property<Guid>("AssigneeId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("assignee_id");
+                        .HasColumnType("uuid");
 
-                    b.HasIndex("AssigneeId")
-                        .HasDatabaseName("ix_events_assignee_id2");
+                    b.HasIndex("AssigneeId");
 
-                    b.ToTable("events", t =>
+                    b.ToTable("Events", t =>
                         {
                             t.Property("AssigneeId")
-                                .HasColumnName("unassign_event_assignee_id");
+                                .HasColumnName("UnassignEvent_AssigneeId");
                         });
 
                     b.HasDiscriminator().HasValue(3);
@@ -998,16 +784,14 @@ namespace Infrastructure.Migrations
                     b.HasBaseType("Domain.Tasks.Event");
 
                     b.Property<Guid?>("MilestoneId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("milestone_id");
+                        .HasColumnType("uuid");
 
-                    b.HasIndex("MilestoneId")
-                        .HasDatabaseName("ix_events_milestone_id1");
+                    b.HasIndex("MilestoneId");
 
-                    b.ToTable("events", t =>
+                    b.ToTable("Events", t =>
                         {
                             t.Property("MilestoneId")
-                                .HasColumnName("unassign_milestone_event_milestone_id");
+                                .HasColumnName("UnassignMilestoneEvent_MilestoneId");
                         });
 
                     b.HasDiscriminator().HasValue(5);
@@ -1018,16 +802,14 @@ namespace Infrastructure.Migrations
                     b.HasBaseType("Domain.Tasks.Event");
 
                     b.Property<Guid>("AssigneeId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("assignee_id");
+                        .HasColumnType("uuid");
 
-                    b.HasIndex("AssigneeId")
-                        .HasDatabaseName("ix_events_assignee_id3");
+                    b.HasIndex("AssigneeId");
 
-                    b.ToTable("events", t =>
+                    b.ToTable("Events", t =>
                         {
                             t.Property("AssigneeId")
-                                .HasColumnName("unnassign_pull_request_event_assignee_id");
+                                .HasColumnName("UnnassignPullRequestEvent_AssigneeId");
                         });
 
                     b.HasDiscriminator().HasValue(8);
@@ -1045,22 +827,17 @@ namespace Infrastructure.Migrations
                     b.HasBaseType("Domain.Tasks.Task");
 
                     b.Property<Guid>("FromBranchId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("from_branch_id");
+                        .HasColumnType("uuid");
 
                     b.Property<int?>("GitPullRequestId")
-                        .HasColumnType("integer")
-                        .HasColumnName("git_pull_request_id");
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("ToBranchId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("to_branch_id");
+                        .HasColumnType("uuid");
 
-                    b.HasIndex("FromBranchId")
-                        .HasDatabaseName("ix_tasks_from_branch_id");
+                    b.HasIndex("FromBranchId");
 
-                    b.HasIndex("ToBranchId")
-                        .HasDatabaseName("ix_tasks_to_branch_id");
+                    b.HasIndex("ToBranchId");
 
                     b.HasDiscriminator().HasValue(1);
                 });
@@ -1071,8 +848,7 @@ namespace Infrastructure.Migrations
                         .WithMany("SecondaryEmails")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_emails_users_user_id");
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -1083,8 +859,7 @@ namespace Infrastructure.Migrations
                         .WithMany("SocialAccounts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_social_accounts_users_user_id");
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -1095,15 +870,13 @@ namespace Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_branches_users_owner_id");
+                        .IsRequired();
 
                     b.HasOne("Domain.Repositories.Repository", "Repository")
                         .WithMany("Branches")
                         .HasForeignKey("RepositoryId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_branches_repositories_repository_id");
+                        .IsRequired();
 
                     b.Navigation("Owner");
 
@@ -1116,15 +889,13 @@ namespace Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_comments_users_creator_id");
+                        .IsRequired();
 
                     b.HasOne("Domain.Tasks.Task", "Task")
                         .WithMany("Comments")
                         .HasForeignKey("TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_comments_tasks_task_id");
+                        .IsRequired();
 
                     b.Navigation("Creator");
 
@@ -1137,8 +908,7 @@ namespace Infrastructure.Migrations
                         .WithMany("Milestones")
                         .HasForeignKey("RepositoryId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_milestones_repositories_repository_id");
+                        .IsRequired();
 
                     b.Navigation("Repository");
                 });
@@ -1149,8 +919,7 @@ namespace Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_notifications_users_user_id");
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -1161,15 +930,13 @@ namespace Infrastructure.Migrations
                         .WithMany("PendingInvites")
                         .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_organization_invites_organizations_organization_id");
+                        .IsRequired();
 
                     b.HasOne("Domain.Auth.User", "User")
                         .WithMany("OrganizationInvites")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_organization_invites_users_user_id");
+                        .IsRequired();
 
                     b.Navigation("Organization");
 
@@ -1182,15 +949,13 @@ namespace Infrastructure.Migrations
                         .WithMany("Members")
                         .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_organization_members_users_member_id");
+                        .IsRequired();
 
                     b.HasOne("Domain.Organizations.Organization", "Organization")
                         .WithMany("Members")
                         .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_organization_members_organizations_organization_id");
+                        .IsRequired();
 
                     b.Navigation("Member");
 
@@ -1203,15 +968,13 @@ namespace Infrastructure.Migrations
                         .WithMany("Reactions")
                         .HasForeignKey("CommentId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_reactions_comments_comment_id");
+                        .IsRequired();
 
                     b.HasOne("Domain.Auth.User", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_reactions_users_creator_id");
+                        .IsRequired();
 
                     b.Navigation("Comment");
 
@@ -1223,8 +986,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Organizations.Organization", "Organization")
                         .WithMany("Repositories")
                         .HasForeignKey("OrganizationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("fk_repositories_organizations_organization_id");
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Organization");
                 });
@@ -1235,15 +997,13 @@ namespace Infrastructure.Migrations
                         .WithOne("ForkedFrom")
                         .HasForeignKey("Domain.Repositories.RepositoryFork", "ForkedRepoId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_repository_forks_repositories_forked_repo_id");
+                        .IsRequired();
 
                     b.HasOne("Domain.Repositories.Repository", "SourceRepo")
                         .WithMany("RepositoryForks")
                         .HasForeignKey("SourceRepoId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_repository_forks_repositories_source_repo_id");
+                        .IsRequired();
 
                     b.Navigation("ForkedRepo");
 
@@ -1256,15 +1016,13 @@ namespace Infrastructure.Migrations
                         .WithMany("PendingInvites")
                         .HasForeignKey("RepositoryId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_repository_invites_repositories_repository_id");
+                        .IsRequired();
 
                     b.HasOne("Domain.Auth.User", "User")
                         .WithMany("RepositoryInvites")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_repository_invites_users_user_id");
+                        .IsRequired();
 
                     b.Navigation("Repository");
 
@@ -1277,15 +1035,13 @@ namespace Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_repository_members_users_member_id");
+                        .IsRequired();
 
                     b.HasOne("Domain.Repositories.Repository", "Repository")
                         .WithMany("Members")
                         .HasForeignKey("RepositoryId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_repository_members_repositories_repository_id");
+                        .IsRequired();
 
                     b.Navigation("Member");
 
@@ -1298,15 +1054,13 @@ namespace Infrastructure.Migrations
                         .WithMany("WatchedBy")
                         .HasForeignKey("RepositoryId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_repository_watchers_repositories_repository_id");
+                        .IsRequired();
 
                     b.HasOne("Domain.Auth.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_repository_watchers_users_user_id");
+                        .IsRequired();
 
                     b.Navigation("Repository");
 
@@ -1319,15 +1073,13 @@ namespace Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_events_users_creator_id");
+                        .IsRequired();
 
                     b.HasOne("Domain.Tasks.Task", "Task")
                         .WithMany("Events")
                         .HasForeignKey("TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_events_tasks_task_id");
+                        .IsRequired();
 
                     b.Navigation("Creator");
 
@@ -1340,8 +1092,7 @@ namespace Infrastructure.Migrations
                         .WithMany("Labels")
                         .HasForeignKey("RepositoryId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_labels_repositories_repository_id");
+                        .IsRequired();
 
                     b.Navigation("Repository");
                 });
@@ -1350,22 +1101,19 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Milestones.Milestone", "Milestone")
                         .WithMany("Tasks")
-                        .HasForeignKey("MilestoneId")
-                        .HasConstraintName("fk_tasks_milestones_milestone_id");
+                        .HasForeignKey("MilestoneId");
 
                     b.HasOne("Domain.Repositories.Repository", "Repository")
                         .WithMany("Tasks")
                         .HasForeignKey("RepositoryId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_tasks_repositories_repository_id");
+                        .IsRequired();
 
                     b.HasOne("Domain.Auth.User", "Creator")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_tasks_users_user_id");
+                        .IsRequired();
 
                     b.Navigation("Creator");
 
@@ -1380,15 +1128,13 @@ namespace Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("IssuesId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_issue_pull_request_tasks_issues_id");
+                        .IsRequired();
 
                     b.HasOne("Domain.Tasks.PullRequest", null)
                         .WithMany()
                         .HasForeignKey("PullRequestsId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_issue_pull_request_tasks_pull_requests_id");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("LabelTask", b =>
@@ -1397,15 +1143,13 @@ namespace Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("LabelsId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_label_task_labels_labels_id");
+                        .IsRequired();
 
                     b.HasOne("Domain.Tasks.Task", null)
                         .WithMany()
                         .HasForeignKey("TasksId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_label_task_tasks_tasks_id");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("RepositoryMemberTask", b =>
@@ -1414,15 +1158,13 @@ namespace Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("AssigneesId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_repository_member_task_repository_members_assignees_id");
+                        .IsRequired();
 
                     b.HasOne("Domain.Tasks.Task", null)
                         .WithMany()
                         .HasForeignKey("TasksId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_repository_member_task_tasks_tasks_id");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("RepositoryUser", b =>
@@ -1431,15 +1173,13 @@ namespace Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("StarredById")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_repository_user_users_starred_by_id");
+                        .IsRequired();
 
                     b.HasOne("Domain.Repositories.Repository", null)
                         .WithMany()
                         .HasForeignKey("StarredId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_repository_user_repositories_starred_id");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Tasks.AddIssueToPullRequestEvent", b =>
@@ -1448,8 +1188,7 @@ namespace Infrastructure.Migrations
                         .WithMany("AddPullRequestEvents")
                         .HasForeignKey("IssueId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_add_issue_to_pull_request_event_tasks_issue_id1");
+                        .IsRequired();
 
                     b.Navigation("Issue");
                 });
@@ -1460,8 +1199,7 @@ namespace Infrastructure.Migrations
                         .WithMany("AssignEvents")
                         .HasForeignKey("AssigneeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_assign_event_repository_members_assignee_id");
+                        .IsRequired();
 
                     b.Navigation("Assignee");
                 });
@@ -1472,8 +1210,7 @@ namespace Infrastructure.Migrations
                         .WithMany("AssignPullRequestEvents")
                         .HasForeignKey("AssigneeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_assign_pull_request_event_repository_members_repository_member");
+                        .IsRequired();
 
                     b.Navigation("Assignee");
                 });
@@ -1484,8 +1221,7 @@ namespace Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("LabelId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_events_labels_label_id");
+                        .IsRequired();
 
                     b.Navigation("Label");
                 });
@@ -1496,8 +1232,7 @@ namespace Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("MilestoneId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_events_milestones_milestone_id");
+                        .IsRequired();
 
                     b.Navigation("Milestone");
                 });
@@ -1508,8 +1243,7 @@ namespace Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("LabelId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_events_labels_label_id1");
+                        .IsRequired();
 
                     b.Navigation("Label");
                 });
@@ -1520,8 +1254,7 @@ namespace Infrastructure.Migrations
                         .WithMany("RemovePullRequestEvents")
                         .HasForeignKey("IssueId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_remove_issue_from_pull_request_event_tasks_issue_id1");
+                        .IsRequired();
 
                     b.Navigation("Issue");
                 });
@@ -1532,8 +1265,7 @@ namespace Infrastructure.Migrations
                         .WithMany("UnassignEvents")
                         .HasForeignKey("AssigneeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_unassign_event_repository_members_assignee_id");
+                        .IsRequired();
 
                     b.Navigation("Assignee");
                 });
@@ -1542,8 +1274,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Milestones.Milestone", "Milestone")
                         .WithMany()
-                        .HasForeignKey("MilestoneId")
-                        .HasConstraintName("fk_events_milestones_milestone_id1");
+                        .HasForeignKey("MilestoneId");
 
                     b.Navigation("Milestone");
                 });
@@ -1554,8 +1285,7 @@ namespace Infrastructure.Migrations
                         .WithMany("UnnassignPullRequestEvents")
                         .HasForeignKey("AssigneeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_unnassign_pull_request_event_repository_members_repository_mem");
+                        .IsRequired();
 
                     b.Navigation("Assignee");
                 });
@@ -1566,15 +1296,13 @@ namespace Infrastructure.Migrations
                         .WithMany("FromPullRequests")
                         .HasForeignKey("FromBranchId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_tasks_branches_from_branch_id");
+                        .IsRequired();
 
                     b.HasOne("Domain.Branches.Branch", "ToBranch")
                         .WithMany("ToPullRequests")
                         .HasForeignKey("ToBranchId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_tasks_branches_to_branch_id");
+                        .IsRequired();
 
                     b.Navigation("FromBranch");
 

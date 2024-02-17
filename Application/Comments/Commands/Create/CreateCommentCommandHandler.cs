@@ -16,7 +16,7 @@ public class CreateCommentCommandHandler : ICommandHandler<CreateCommentCommand,
     public async Task<Guid> Handle(CreateCommentCommand request, CancellationToken cancellationToken)
     {
         Comment comment = Comment.Create(request.CreatorId, DateTime.Now.ToUniversalTime(), request.Content,
-            request.TaskId);
+            request.TaskId, request.ParentId);
         var createdComment = await _commentRepository.Create(comment);
         return createdComment.Id;
     }
