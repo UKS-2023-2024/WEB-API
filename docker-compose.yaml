@@ -108,6 +108,17 @@ services:
       - uks_backend
     volumes:
       - logstashvolume:/usr/share/logstash/data
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.5.3
+    ports:
+      - "5601:5601"
+    environment:
+      SERVER_NAME: kibana
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+    networks:
+      - network
+    depends_on:
+      - elasticsearch
 
 networks:
   network:
