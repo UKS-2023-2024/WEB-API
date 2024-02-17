@@ -56,4 +56,19 @@ public class UserRepository : BaseRepository<User>, IUserRepository
             .Where(x => x.Starred.Any(r => r.Id == repositoryId))
             .ToListAsync();
     }
+    
+    public override async Task<User> Create(User user)
+    {
+        user.Created();
+        await _context.Set<User>().AddAsync(user);
+        await _context.SaveChangesAsync();
+        return user;
+    }
+
+    public override void Update(User user)
+    {
+        user.Updated();
+        _context.Update(user);
+        _context.SaveChanges();
+    }
 }

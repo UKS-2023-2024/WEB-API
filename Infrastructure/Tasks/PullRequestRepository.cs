@@ -66,4 +66,19 @@ public class PullRequestRepository: BaseRepository<PullRequest>, IPullRequestRep
             .Where(p => p.RepositoryId.Equals(repositoryId) && p.Labels.Contains(label))
             .ToListAsync();
     }
+    
+    public override async Task<PullRequest> Create(PullRequest pullRequest)
+    {
+        pullRequest.Created();
+        await _context.Set<PullRequest>().AddAsync(pullRequest);
+        await _context.SaveChangesAsync();
+        return pullRequest;
+    }
+
+    public override void Update(PullRequest pullRequest)
+    {
+        pullRequest.Updated();
+        _context.Update(pullRequest);
+        _context.SaveChanges();
+    }
 }

@@ -18,6 +18,8 @@ public class Organization
     public List<Repository> Repositories { get; private set; }
 
     public int? memberTeamId { get; private set; }
+    public DateTime? CreatedAt { get; private set; }
+    public DateTime? UpdatedAt { get; private set; }
 
     private Organization()
     {
@@ -46,6 +48,15 @@ public class Organization
         Organization newOrganization = new Organization(name, contactEmail, pendingMembers,creator);
         newOrganization.Id = id;
         return newOrganization;
+    }
+    
+    public void Created()
+    {
+        CreatedAt = DateTime.Now.ToUniversalTime();
+    }
+    public void Updated()
+    {
+        UpdatedAt = DateTime.Now.ToUniversalTime();
     }
     
     public OrganizationMember AddMember(User user)

@@ -34,8 +34,8 @@ public class GiteaService: IGitService
         "write:repository",
         "read:user",
         "write:user",
-        "write:admin",
-        "read:admin"
+        "read:admin",
+        "write:admin"
     };
 
     public GiteaService(IConfiguration configuration)
@@ -50,11 +50,6 @@ public class GiteaService: IGitService
         };
         _httpClient.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
-    }
-
-    private void SetAuthToken(string token)
-    {
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", token);
     }
 
     public async Task<string> CreateUser(User user, string password)
@@ -77,13 +72,12 @@ public class GiteaService: IGitService
 
     public async Task<string> GenerateAccessToken(User user, string plainPassword)
     {
-        SetAdminBasicAuthToken();
         var url = $"users/{user.Username}/tokens";
-        SetBasicAuthToken(user.Username, user.Password);
+        SetBasicAuthToken(user.Username, plainPassword);
        
         var body = Body(new
         {
-            name = "uks_access_token",
+            name = new Guid().ToString(),
             scopes = ALL_SCOPES
         });
         var response = await _httpClient.PostAsync(url, body);
@@ -316,7 +310,7 @@ public class GiteaService: IGitService
 
     public async Task DeleteOrganization(User user, Organization organization)
     {
-        SetAuthToken(user.GitToken!);
+        SetAdminBasicAuthToken();
         var url = $"orgs/{organization.Name}";
         var response = await _httpClient.DeleteAsync(url);
         await LogStatusAndResponseContent(response);
@@ -428,6 +422,11 @@ public class GiteaService: IGitService
         Console.WriteLine("Credentials for " + username + " password " + password + " " + base64Credentials);
         _httpClient.DefaultRequestHeaders.Authorization =
         new AuthenticationHeaderValue("Basic", base64Credentials);
+    }
+    
+    private void SetAuthToken(string token)
+    {
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("token", token);
     }
 
     private string GenerateCredentialsBase64(string username, string password)

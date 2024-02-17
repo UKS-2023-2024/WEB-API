@@ -17,6 +17,7 @@ services:
       - JwtSettings__Audience=${JWT_AUDIENCE}
       - JwtSettings__Issuer=${JWT_ISSUER}
       - ConnectionString=${CONNECTION_STRING}
+      - PublicApp=${PUBLIC_APP}
       - Gitea__BaseUrl=${GITEA_BASE_URL}
       - Gitea__AdminUsername=${GITEA_ADMIN_USERNAME}
       - Gitea__AdminPassword=${GITEA_ADMIN_PASSWORD}
@@ -67,10 +68,49 @@ services:
       - POSTGRES_USER=gitea
       - POSTGRES_PASSWORD=gitea
       - POSTGRES_DB=gitea
-    networks:      
+    networks:
       - network
     volumes:
       - ./postgres:/var/lib/postgresql/data
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.3
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - network
+    volumes:
+      - elasticvolume:/usr/share/elasticsearch/data
+  logstash:
+    container_name: logstash
+    build:
+      context: ./logstash/
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - CONFIG_SUPPORT_ESCAPE=true
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    networks:
+      - network
+    depends_on:
+      - elasticsearch
+      - postgresql_database
+      - uks_backend
+    volumes:
+      - logstashvolume:/usr/share/logstash/data
 
 networks:
   network:
+volumes:
+  elasticvolume:
+  logstashvolume:

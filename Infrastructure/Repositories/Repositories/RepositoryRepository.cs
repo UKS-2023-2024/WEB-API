@@ -121,4 +121,19 @@ public class RepositoryRepository: BaseRepository<Repository>, IRepositoryReposi
             .Include(l => l.Repository)
             .ToListAsync();
     }
+    
+    public override async Task<Repository> Create(Repository repository)
+    {
+        repository.Created();
+        await _context.Set<Repository>().AddAsync(repository);
+        await _context.SaveChangesAsync();
+        return repository;
+    }
+
+    public override void Update(Repository repository)
+    {
+        repository.Updated();
+        _context.Update(repository);
+        _context.SaveChanges();
+    }
 }

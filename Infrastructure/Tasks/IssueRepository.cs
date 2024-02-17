@@ -86,5 +86,19 @@ public class IssueRepository: BaseRepository<Issue>, IIssueRepository
             .Where(i => i.RepositoryId.Equals(repositoryId) && i.Labels.Contains(label))
             .ToListAsync();
     }
+    
+    public override async Task<Issue> Create(Issue issue)
+    {
+        issue.Created();
+        await _context.Set<Issue>().AddAsync(issue);
+        await _context.SaveChangesAsync();
+        return issue;
+    }
 
+    public override void Update(Issue issue)
+    {
+        issue.Updated();
+        _context.Update(issue);
+        _context.SaveChanges();
+    }
 }

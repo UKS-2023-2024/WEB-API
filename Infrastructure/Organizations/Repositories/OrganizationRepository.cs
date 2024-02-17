@@ -1,7 +1,5 @@
 ﻿using Domain.Organizations;
 using Domain.Organizations.Interfaces;
-using Domain.Organizations.Types;
-using Domain.Repositories;
 using Infrastructure.Persistence;
 using Infrastructure.Shared.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -37,5 +35,20 @@ public class OrganizationRepository: BaseRepository<Organization>, IOrganization
             .ThenInclude(m => m.Member)
             .Where(r => r.Members.Any(m => m.Member.Id == id && m.Role == OrganizationMemberRole.OWNER))
             .ToList();
+    }
+    
+    public override async Task<Organization> Create(Organization organization)
+    {
+        organization.Created();
+        await _context.Set<Organization>().AddAsync(organization);
+        await _context.SaveChangesAsync();
+        return organization;
+    }
+
+    public override void Update(Organization organization)
+    {
+        organization.Updated();
+        _context.Update(organization);
+        _context.SaveChanges();
     }
 }
