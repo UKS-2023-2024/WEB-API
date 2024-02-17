@@ -1,13 +1,11 @@
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Application;
 using Domain;
 using Domain.Auth.Enums;
 using Infrastructure;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -53,7 +51,7 @@ var config = builder.Configuration;
 Console.WriteLine("Connection string: " + config["ConnectionString"]);
 
 builder.Services.AddDbContext<MainDbContext>(options => 
-    options.UseNpgsql(config["ConnectionString"]));
+    options.UseNpgsql(config["ConnectionString"]).UseSnakeCaseNamingConvention());
 
 builder.Services.AddScoped<ITokenHandler, TokenHandler>();
 builder.Services.AddScoped<IUserIdentityService, UserIdentityService>();
