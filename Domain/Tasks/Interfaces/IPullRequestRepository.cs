@@ -8,4 +8,5 @@ public interface IPullRequestRepository : IBaseRepository<PullRequest>
     Task<List<PullRequest>> FindAllByRepositoryId(Guid repositoryId);
     Task<PullRequest?> FindOpenByBranchesAndRepository(Guid repositoryId, Guid fromBranchId, Guid toBranchId);
     Task<List<PullRequest>> FindAllAssignedWithLabelInRepository(Label label, Guid repositoryId);
+    Task<PullRequest?> FindByNumber(Guid repositoryId, int number);
 }

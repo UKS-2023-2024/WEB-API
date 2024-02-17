@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Web;
@@ -372,6 +373,36 @@ public class GiteaService: IGitService
         var fileContent = await DeserializeBody<GitFileContent>(response);
         if (fileContent is null) return null;
         return new FileContent(fileContent.content, fileContent.name, fileContent.path,  fileContent.encoding);        
+    }
+
+    public async Task<string> GetPrDiffPreview(User user, Repository repository, PullRequest pullRequest)
+    {
+        SetAdminBasicAuthToken();
+        var url = $"repos/{user.Username}/{repository.Name}/pulls/{pullRequest.Number}.diff";
+        var response = await _httpClient.GetAsync(url);
+        await LogStatusAndResponseContent(response);
+        return await response.Content.ReadAsStringAsync();
+    }
+
+    public async Task<List<CommitContent>> ListPrCommits(User user, Repository repository, PullRequest pullRequest)
+    {
+        SetAdminBasicAuthToken();
+        var url = $"repos/{user.Username}/{repository.Name}/pulls/{pullRequest.Number}/commits";
+        Console.WriteLine(url);
+        var response = await _httpClient.GetAsync(url);
+        await LogStatusAndResponseContent(response);
+        var commits = await DeserializeBody<List<GitCommitContent>>(response);
+        if (response.StatusCode != HttpStatusCode.OK) return new();
+        if (commits is null) commits = new List<GitCommitContent>();
+        return commits.Select(c => new CommitContent()
+        {
+            Additions = c.stats.additions,
+            Deletions = c.stats.deletions,
+            Message = c.commit.message,
+            Sha = c.sha,
+            CreatedAt = c.created,
+            Committer = c.commit.committer?.name
+        }).ToList();
     }
 
     private async Task CreatePushWebhook(User user, Repository repository)

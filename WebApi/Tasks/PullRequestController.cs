@@ -22,6 +22,8 @@ using WEB_API.Tasks.Dtos;
 using WEB_API.Tasks.Presenters;
 using Application.PullRequests.Commands.UserAssignment;
 using Application.PullRequests.Commands.LabelAssignment;
+using Application.PullRequests.Queries.GetCommitPreview;
+using Application.PullRequests.Queries.GetDiffPreview;
 
 namespace WEB_API.Tasks;
 
@@ -153,6 +155,22 @@ public class PullRequestController:ControllerBase
         Guid updatedPrGuid = await _sender.Send(new AssignLabelsToPullRequestCommand(dto.Id,
             creatorId, dto.LabelIds));
         return Ok(updatedPrGuid);
+    }
+
+    [HttpGet("{id}/diff")]
+    [Authorize]
+    public async Task<IActionResult> GetDiffPreview(Guid id)
+    {
+        var result = await _sender.Send(new GetDiffPreviewQuery(id));
+        return Ok(result);
+    }
+    
+    [HttpGet("{id}/commits")]
+    [Authorize]
+    public async Task<IActionResult> ListPrCommits(Guid id)
+    {
+        var result = await _sender.Send(new GetCommitPreviewQuery(id));
+        return Ok(result);
     }
 
 }

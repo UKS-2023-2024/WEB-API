@@ -66,7 +66,14 @@ public class PullRequestRepository: BaseRepository<PullRequest>, IPullRequestRep
             .Where(p => p.RepositoryId.Equals(repositoryId) && p.Labels.Contains(label))
             .ToListAsync();
     }
-    
+
+    public async Task<PullRequest?> FindByNumber(Guid repositoryId, int number)
+    {
+        return await _context.PullRequests
+            .Where(pr => pr.RepositoryId.Equals(repositoryId) && pr.Number == number)
+            .FirstOrDefaultAsync();
+    }
+
     public override async Task<PullRequest> Create(PullRequest pullRequest)
     {
         pullRequest.Created();
