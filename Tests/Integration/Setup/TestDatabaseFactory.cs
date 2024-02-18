@@ -6,6 +6,7 @@ using Domain.Notifications;
 using Domain.Organizations;
 using Domain.Repositories;
 using Domain.Repositories.Enums;
+using Domain.Shared.Interfaces;
 using Domain.Tasks;
 using Domain.Tasks.Enums;
 using Infrastructure.Persistence;
@@ -14,6 +15,8 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Moq;
 
 namespace Tests.Integration.Setup;
 
@@ -38,6 +41,12 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
             using var scope = BuildServiceProvider(services).CreateScope();
             var scopedServices = scope.ServiceProvider;
             var db = scopedServices.GetRequiredService<MainDbContext>();
+                       var descriptor =
+                new ServiceDescriptor(
+                    typeof(IGitService),
+                    typeof(MockGitService),
+                    ServiceLifetime.Transient);
+            services.Replace(descriptor);
             dbContext = db;
             InitializeDatabase(db);
         });
