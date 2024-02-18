@@ -14,9 +14,17 @@ public class CommentRepository: BaseRepository<Comment>, ICommentRepository
         _context = context;
     }
 
-    public async Task<List<Comment>> FindAllComments()
+    public Task<Comment> FindByParentId(Guid parentId)
     {
-        return _context.Comments.Where(x => x.Id != null)
+        return _context.Comments.Where(x => x.Id == parentId)
+            .Include(c => c.Creator)
+            .Include(c => c.Reactions)
+            .FirstAsync();
+    }
+
+    public async Task<List<Comment>> FindAllByAndTaskId(Guid taskId)
+    {
+        return _context.Comments.Where(x => x.TaskId == taskId)
             .Include(c => c.Creator)
             .Include(c => c.Reactions)
             .ToList();

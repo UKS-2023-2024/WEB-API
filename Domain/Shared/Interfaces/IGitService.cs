@@ -16,6 +16,7 @@ public interface IGitService
     public Task<GiteaRepoCreated?> CreateOrganizationRepository(Organization organization, Repository repository);
     public Task<int> CreateOrganization(User user, Organization organization);
     public Task DeleteRepository(Repository repository);
+    public Task UpdateRepository(Repository repository, string defaultBranchName,string oldName);
     public Task ForkRepository(Repository repository, User creator);
     public Task DeleteOrganization(User user, Organization organization);
     public Task AddOrganizationMember(User user, Organization organization);

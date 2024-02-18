@@ -9,6 +9,7 @@ namespace Domain.Branches
     {
         public Guid Id { get; private set; }
         public string Name { get; private set; } 
+        public string OriginalName { get; private set; } 
         public Guid RepositoryId { get; private set; }
         public Repository Repository { get; private set; }
         public bool IsDefault { get; private set; }
@@ -16,7 +17,6 @@ namespace Domain.Branches
         public User Owner { get; private set; }
         public bool Deleted { get; private set; }
         public string? CreatedFrom { get; set; }
-        
         public List<PullRequest> FromPullRequests { get; private set; } = new();
         public List<PullRequest> ToPullRequests { get; private set; } = new();
 
@@ -27,6 +27,7 @@ namespace Domain.Branches
             IsDefault = isDefault;
             OwnerId = ownerId;
             Deleted = false;
+            OriginalName = name;
         }
 
         public static Branch Create(string name, Guid repositoryId, bool isDefault, Guid ownerId)

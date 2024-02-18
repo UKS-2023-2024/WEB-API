@@ -22,8 +22,6 @@ public class IssueRepository: BaseRepository<Issue>, IIssueRepository
             .Include(i => i.Repository)
             .ThenInclude(r => r.WatchedBy)
             .Include(i => i.Milestone)
-            .Include(i => i.Comments)
-            .ThenInclude(c => c.Reactions)
             .Include(i => i.Events)
             .ThenInclude(x => x.Creator)
             .Include(i => i.Assignees)

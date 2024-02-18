@@ -157,6 +157,21 @@ public class GiteaService: IGitService
         return await DeserializeBody<GiteaRepoCreated>(response);
     }
     
+    public async Task UpdateRepository(Repository repository,string defaultBranchName,string oldName)
+    {
+        SetAdminBasicAuthToken();
+        var url = $"repos/{repository.FindRepositoryOwner()}/{oldName}";
+        var body = Body(new
+        {
+            name = repository.Name,
+            default_branch = defaultBranchName,
+            @private = repository.IsPrivate,
+            description = repository.Description,
+        });
+        var response = await _httpClient.PatchAsync(url, body);
+        await LogStatusAndResponseContent(response);
+    }
+    
     public async Task<GiteaRepoCreated?> CreateOrganizationRepository(Organization organization,Repository repository)
     {
         SetAdminBasicAuthToken();
@@ -213,11 +228,11 @@ public class GiteaService: IGitService
             body = pullRequest.Description
         });
         var response = await _httpClient.PostAsync(url, body);
-        var createdPullRequest = await DeserializeBody<CreateTeamOption>(response);
+        var createdPullRequest = await DeserializeBody<GitCreatePrPayload>(response);
         await LogStatusAndResponseContent(response);
         if (createdPullRequest is null)
             throw new GitException("Problem creating pull request!");
-        return createdPullRequest.id;
+        return createdPullRequest.number;
     }
 
     public async Task<List<CommitContent>> ListBranchCommits(User user, Branch branch)
@@ -378,7 +393,7 @@ public class GiteaService: IGitService
     public async Task<string> GetPrDiffPreview(User user, Repository repository, PullRequest pullRequest)
     {
         SetAdminBasicAuthToken();
-        var url = $"repos/{user.Username}/{repository.Name}/pulls/{pullRequest.Number}.diff";
+        var url = $"repos/{user.Username}/{repository.Name}/pulls/{pullRequest.GitPullRequestId}.diff";
         var response = await _httpClient.GetAsync(url);
         await LogStatusAndResponseContent(response);
         return await response.Content.ReadAsStringAsync();
@@ -387,8 +402,7 @@ public class GiteaService: IGitService
     public async Task<List<CommitContent>> ListPrCommits(User user, Repository repository, PullRequest pullRequest)
     {
         SetAdminBasicAuthToken();
-        var url = $"repos/{user.Username}/{repository.Name}/pulls/{pullRequest.Number}/commits";
-        Console.WriteLine(url);
+        var url = $"repos/{user.Username}/{repository.Name}/pulls/{pullRequest.GitPullRequestId}/commits";
         var response = await _httpClient.GetAsync(url);
         await LogStatusAndResponseContent(response);
         var commits = await DeserializeBody<List<GitCommitContent>>(response);

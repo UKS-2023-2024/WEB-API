@@ -2,6 +2,7 @@
 using Domain.Repositories;
 using Domain.Tasks.Enums;
 using Domain.Tasks.Interfaces;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Domain.Tasks;
 
@@ -59,7 +60,11 @@ public class Issue: Task
     public void UnassignMilestone(Guid milestoneId, Guid creatorId, Guid currentMilestoneId)
     {
         Events.Add(new UnassignMilestoneEvent("Milestone Unassigned", creatorId, Id, currentMilestoneId));
-        if (milestoneId == Guid.Parse("00000000-0000-0000-0000-000000000000")) return;
+        if (milestoneId.Equals(new Guid()))
+        {
+            MilestoneId = null;
+            return;
+        }
         UpdateMilestone(milestoneId, creatorId);
     }
 

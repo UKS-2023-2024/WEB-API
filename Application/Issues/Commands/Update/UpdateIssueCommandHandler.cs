@@ -109,9 +109,6 @@ public class UpdateIssueCommandHandler: ICommandHandler<UpdateIssueCommand, Guid
         if (request.Flag == UpdateIssueFlag.LABEL_ASSIGNED)
         {
             Label newLabel = _labelRepository.Find(Guid.Parse(request.LabelsIds[request.LabelsIds.Count-1]));
-            // Label createdLabel = Label.Create(newLabel.Title, newLabel.Description, newLabel.Color,
-            //     newLabel.RepositoryId, false);
-            // await _labelRepository.Create(createdLabel);
             issue.AssignLabel(newLabel, user.Id);
             _issueRepository.Update(issue);
 
@@ -130,11 +127,6 @@ public class UpdateIssueCommandHandler: ICommandHandler<UpdateIssueCommand, Guid
             string message = $"Label {foundLabel.Title} has been unassigned from pull request #{issue.Number} in the repository {repository.Name}:<br>";
             await _notificationService.SendNotification(repository, subject, message, NotificationType.Issues);
         }
-     
-
-        //var labelGuids = request.LabelsIds.Select(l => Guid.Parse(l));
-        //var labels = await _labelRepository.FindAllByIds(repository.Id, labelGuids.ToList());
-        //Issue updatedIssue = Issue.Update(foundIssue, request.Title, request.Description, request.State,assignees , request.MilestoneId, labels);
         _issueRepository.Update(issue);
         return issue.Id;
     }
