@@ -80,7 +80,7 @@ public class CreatePullRequestCommandHandler: ICommandHandler<CreatePullRequestC
         pullRequest = PullRequest.Create(request.Title, request.Description, taskNumber,
             repository, request.UserId, assignees, labels, milestone, fromBranch.Id, toBranch.Id, issues);
 
-        var gitPullRequestId = await _gitService.CreatePullRequest(repository, fromBranch.Name, toBranch.Name, pullRequest);
+        var gitPullRequestId = await _gitService.CreatePullRequest(repository, fromBranch.OriginalName, toBranch.OriginalName, pullRequest);
         pullRequest.SetGitPullRequestId(gitPullRequestId);
         pullRequest = await _pullRequestRepository.Create(pullRequest);
         

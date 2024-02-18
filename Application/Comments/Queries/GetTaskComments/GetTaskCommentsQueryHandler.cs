@@ -21,14 +21,20 @@ public class GetTaskCommentsQueryHandler: IQueryHandler<GetTaskCommentsQuery, Li
 
     public async Task<List<CommentHierarchy>> Handle(GetTaskCommentsQuery request, CancellationToken cancellationToken)
     {
-        var comments = await _commentRepository.FindAllComments();
+        var comments = await _commentRepository.FindAllByAndTaskId(request.TaskId);
         var commentHierarchy = new List<CommentHierarchy>();
 
         foreach (var comment in comments)
         {
             // Skip comments that are replies
             if (comment.ParentId == null)
+            {
+                commentHierarchy.Add(new CommentHierarchy
+                {
+                    Comment = comment
+                });
                 continue;
+            }
 
             var hierarchy = new CommentHierarchy
             {
@@ -41,15 +47,14 @@ public class GetTaskCommentsQueryHandler: IQueryHandler<GetTaskCommentsQuery, Li
         return commentHierarchy;
     }
     
-    private async void BuildCommentTree(Comment comment, CommentHierarchy childHierarchy)
+    private void BuildCommentTree(Comment comment, CommentHierarchy childHierarchy)
     {
-        List<Comment> comments = await _commentRepository.FindAllComments();
-        foreach (var parentComment in comments.Where(c => c.Id == comment.ParentId))
-        {
-            var hierarchy = new CommentHierarchy { Comment = parentComment, Parent = null };
-            childHierarchy.Parent = hierarchy;
-            BuildCommentTree(parentComment, hierarchy);
-        }
+        var parentComment = _commentRepository.Find(comment.ParentId ?? new Guid());
+        var hierarchy = new CommentHierarchy { Comment = parentComment!, Parent = null };
+        childHierarchy.Parent = hierarchy;
+        if (parentComment.ParentId is null)
+            return;
+        BuildCommentTree(parentComment, hierarchy);
     }
 
    

@@ -50,7 +50,7 @@ public class AssignIssueToUserUnitTests
         Issue issue = Issue.Create("first issue", "description", TaskState.OPEN, 1, repository,
             user, new List<RepositoryMember>(), new List<Label>(), null);
         RepositoryMember member =
-            RepositoryMember.Create(It.IsAny<User>(), It.IsAny<Repository>(), RepositoryMemberRole.OWNER);
+            RepositoryMember.Create(user, It.IsAny<Repository>(), RepositoryMemberRole.OWNER);
         _repositoryMemberRepositoryMock.Setup(x => x.FindByUserIdAndRepositoryId(It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(member);
         _repositoryRepositoryMock.Setup(x => x.Find(It.IsAny<Guid>()))

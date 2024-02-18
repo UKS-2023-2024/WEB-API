@@ -1,4 +1,5 @@
-﻿using Domain.Milestones;
+﻿using Domain.Comments;
+using Domain.Milestones;
 using Domain.Repositories;
 using Domain.Tasks;
 using Domain.Tasks.Enums;
@@ -20,9 +21,8 @@ public class PullRequestPresenter
     public List<EventPresenter> Events { get; set; }
     public IEnumerable<RepositoryMemberPresenter> Assignees { get; set; }
     public List<IssuePullRequestPresenter> issues { get; set; }
-    public MilestonePresenter Milestone { get; set; }
+    public MilestonePresenter? Milestone { get; set; }
     public List<LabelPresenter> Labels { get; set; }
-
     public PullRequestPresenter(PullRequest pullRequest)
     {
         Id = pullRequest.Id.ToString();

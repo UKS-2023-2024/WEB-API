@@ -4,5 +4,6 @@ namespace Domain.Comments.Interfaces;
 
 public interface ICommentRepository: IBaseRepository<Comment>
 {
-    Task<List<Comment>> FindAllComments();
+    Task<Comment> FindByParentId(Guid parentId);
+    Task<List<Comment>> FindAllByAndTaskId(Guid taskId);
 }

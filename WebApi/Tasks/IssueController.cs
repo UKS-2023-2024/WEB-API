@@ -67,12 +67,10 @@ public class IssueController: ControllerBase
     public async Task<IActionResult> Update([FromBody] UpdateIssueDto issueDto)
     {
         Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        Guid milestoneId;
-        Guid.TryParse(issueDto.MilestoneId, out milestoneId);
-        Guid updatedIssueGuid = await _sender.Send(new UpdateIssueCommand(Guid.Parse(issueDto.Id), creatorId,
+        Guid updatedIssueGuid = await _sender.Send(new UpdateIssueCommand(issueDto.Id, creatorId,
             issueDto.Title, issueDto.Description, issueDto.State, issueDto.Number,
-            Guid.Parse(issueDto.RepositoryId), issueDto.AssigneesIds, issueDto.LabelsIds,
-            UpdateIssueFlag.ASSIGNEES, milestoneId));
+            issueDto.RepositoryId, issueDto.AssigneesIds, issueDto.LabelsIds,
+            UpdateIssueFlag.ASSIGNEES, issueDto.MilestoneId));
         return Ok(new {Id = updatedIssueGuid});
     }
     
@@ -81,12 +79,10 @@ public class IssueController: ControllerBase
     public async Task<IActionResult> UpdateMilestone([FromBody] UpdateIssueDto issueDto)
     {
         Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        Guid milestoneId;
-        Guid.TryParse(issueDto.MilestoneId, out milestoneId);
-        Guid updatedIssueGuid = await _sender.Send(new UpdateIssueCommand(Guid.Parse(issueDto.Id), creatorId,
+        Guid updatedIssueGuid = await _sender.Send(new UpdateIssueCommand(issueDto.Id, creatorId,
             issueDto.Title, issueDto.Description, issueDto.State, issueDto.Number,
-            Guid.Parse(issueDto.RepositoryId), issueDto.AssigneesIds, issueDto.LabelsIds,
-            UpdateIssueFlag.MILESTONE_ASSIGNED, milestoneId));
+            issueDto.RepositoryId, issueDto.AssigneesIds, issueDto.LabelsIds,
+            UpdateIssueFlag.MILESTONE_ASSIGNED, issueDto.MilestoneId));
         return Ok(new {Id = updatedIssueGuid});
     }
     
@@ -94,13 +90,12 @@ public class IssueController: ControllerBase
     [Authorize]
     public async Task<IActionResult> UpdateUnassignMilestone([FromBody] UpdateIssueDto issueDto)
     {
+        Console.WriteLine(issueDto.MilestoneId);
         Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        Guid milestoneId;
-        Guid.TryParse(issueDto.MilestoneId, out milestoneId);
-        Guid updatedIssueGuid = await _sender.Send(new UpdateIssueCommand(Guid.Parse(issueDto.Id), creatorId,
+        Guid updatedIssueGuid = await _sender.Send(new UpdateIssueCommand(issueDto.Id, creatorId,
             issueDto.Title, issueDto.Description, issueDto.State, issueDto.Number,
-            Guid.Parse(issueDto.RepositoryId), issueDto.AssigneesIds, issueDto.LabelsIds,
-            UpdateIssueFlag.MILESTONE_UNASSIGNED, milestoneId));
+            issueDto.RepositoryId, issueDto.AssigneesIds, issueDto.LabelsIds,
+            UpdateIssueFlag.MILESTONE_UNASSIGNED, issueDto.MilestoneId));
         return Ok(new {Id = updatedIssueGuid});
     }
     
@@ -109,12 +104,10 @@ public class IssueController: ControllerBase
     public async Task<IActionResult> UpdateAssignLabel([FromBody] UpdateIssueDto issueDto)
     {
         Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        Guid milestoneId;
-        Guid.TryParse(issueDto.MilestoneId, out milestoneId);
-        Guid updatedIssueGuid = await _sender.Send(new UpdateIssueCommand(Guid.Parse(issueDto.Id), creatorId,
+        Guid updatedIssueGuid = await _sender.Send(new UpdateIssueCommand(issueDto.Id, creatorId,
             issueDto.Title, issueDto.Description, issueDto.State, issueDto.Number,
-            Guid.Parse(issueDto.RepositoryId), issueDto.AssigneesIds, issueDto.LabelsIds,
-            UpdateIssueFlag.LABEL_ASSIGNED, milestoneId));
+            issueDto.RepositoryId, issueDto.AssigneesIds, issueDto.LabelsIds,
+            UpdateIssueFlag.LABEL_ASSIGNED, issueDto.MilestoneId));
         return Ok(new {Id = updatedIssueGuid});
     }
     
@@ -123,12 +116,10 @@ public class IssueController: ControllerBase
     public async Task<IActionResult> UpdateUnassignLabel([FromBody] UpdateIssueDto issueDto)
     {
         Guid creatorId = _userIdentityService.FindUserIdentity(HttpContext.User);
-        Guid milestoneId;
-        Guid.TryParse(issueDto.MilestoneId, out milestoneId);
-        Guid updatedIssueGuid = await _sender.Send(new UpdateIssueCommand(Guid.Parse(issueDto.Id), creatorId,
+        Guid updatedIssueGuid = await _sender.Send(new UpdateIssueCommand(issueDto.Id, creatorId,
             issueDto.Title, issueDto.Description, issueDto.State, issueDto.Number,
-            Guid.Parse(issueDto.RepositoryId), issueDto.AssigneesIds, issueDto.LabelsIds,
-            UpdateIssueFlag.LABEL_UNASSIGNED, milestoneId));
+            issueDto.RepositoryId, issueDto.AssigneesIds, issueDto.LabelsIds,
+            UpdateIssueFlag.LABEL_UNASSIGNED, issueDto.MilestoneId));
         return Ok(new {Id = updatedIssueGuid});
     }
 

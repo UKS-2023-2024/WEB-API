@@ -6,6 +6,7 @@ using Domain.Notifications;
 using Domain.Organizations;
 using Domain.Repositories;
 using Domain.Repositories.Enums;
+using Domain.Shared.Interfaces;
 using Domain.Tasks;
 using Domain.Tasks.Enums;
 using Infrastructure.Persistence;
@@ -14,6 +15,8 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Moq;
 
 namespace Tests.Integration.Setup;
 
@@ -38,6 +41,12 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
             using var scope = BuildServiceProvider(services).CreateScope();
             var scopedServices = scope.ServiceProvider;
             var db = scopedServices.GetRequiredService<MainDbContext>();
+                       var descriptor =
+                new ServiceDescriptor(
+                    typeof(IGitService),
+                    typeof(MockGitService),
+                    ServiceLifetime.Transient);
+            services.Replace(descriptor);
             dbContext = db;
             InitializeDatabase(db);
         });
@@ -75,6 +84,8 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         organization1.AddMember(user4);
 
         var repository1 = Repository.Create(new Guid("8e9b1cc0-35d3-4bf2-9f2c-5e00a21d94a5"), "repo", "test", false, null, user1);
+        var branch11 = Branch.Create( "branch1", repository1.Id, true, user1.Id);
+        branch11 = OverrideId(branch11,new Guid("8e9b1cc3-36d3-4bf2-9f2c-9e00a21d94b8"));
         var repositoryMember = repository1.AddMember(user2);
         repositoryMember.Id = new Guid("11111cc0-35d3-4bf2-9f2c-5e00a21d9111");
         repository1.AddMember(user1);
@@ -137,7 +148,7 @@ public class TestDatabaseFactory : WebApplicationFactory<Program>
         context.Organizations.AddRange(organization1,organization2);
         context.Repositories.AddRange(repository1,repository2,repository3,repository4,repository5);
         context.Milestones.AddRange(milestone1, milestone2, milestone3);
-        context.Branches.AddRange(branch1, branch2, branch3);
+        context.Branches.AddRange(branch1, branch2, branch3,branch11);
         context.Issues.AddRange(issue1, issue2);
         context.Notifications.AddRange(notification1);
         context.PullRequests.AddRange(pullRequest1,pullRequest2,pullRequest3);

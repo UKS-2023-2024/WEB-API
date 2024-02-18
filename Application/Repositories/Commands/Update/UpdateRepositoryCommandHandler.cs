@@ -1,24 +1,22 @@
-﻿using Application.Shared;
-using Domain.Auth;
-using Domain.Auth.Enums;
-using Domain.Auth.Interfaces;
-using Domain.Exceptions;
-using Domain.Organizations.Interfaces;
-using Domain.Organizations;
+﻿using Application.Auth.Commands.Update;
+using Application.Shared;
 using Domain.Repositories;
-using Domain.Repositories.Interfaces;
 using Domain.Repositories.Exceptions;
+using Domain.Repositories.Interfaces;
+using Domain.Shared.Interfaces;
 
-namespace Application.Auth.Commands.Update;
+namespace Application.Repositories.Commands.Update;
 
 public class UpdateRepositoryCommandHandler : ICommandHandler<UpdateRepositoryCommand, Repository>
 {
     private readonly IRepositoryRepository _repositoryRepository;
     private readonly IRepositoryMemberRepository _repositoryMemberRepository;
-    public UpdateRepositoryCommandHandler(IRepositoryRepository repositoryRepository, IRepositoryMemberRepository repositoryMemberRepository)
+    private readonly IGitService _gitService;
+    public UpdateRepositoryCommandHandler(IRepositoryRepository repositoryRepository, IRepositoryMemberRepository repositoryMemberRepository, IGitService gitService)
     {
        _repositoryRepository = repositoryRepository;
         _repositoryMemberRepository = repositoryMemberRepository;
+        _gitService = gitService;
     }
 
     public async Task<Repository> Handle(UpdateRepositoryCommand request, CancellationToken cancellationToken)
@@ -45,8 +43,11 @@ public class UpdateRepositoryCommandHandler : ICommandHandler<UpdateRepositoryCo
                 throw new RepositoryWithThisNameExistsException();
         }
 
+        var oldName = repository.Name;
         repository.Update(request.Name, request.Description, request.IsPrivate);
         _repositoryRepository.Update(repository);
+        var defaultBranch = repository.Branches.Find(b => b.IsDefault == true);
+        await _gitService.UpdateRepository(repository,defaultBranch!.OriginalName,oldName);
         
         return repository;
     }

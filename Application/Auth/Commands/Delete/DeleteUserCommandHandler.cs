@@ -34,14 +34,14 @@ public class DeleteUserCommandHandler : ICommandHandler<DeleteUserCommand, User>
         
         foreach (var repository in userRepositories)
         {
-            _repositoryRepository.Delete(repository);
             await _gitService.DeleteRepository(repository);
+            _repositoryRepository.Delete(repository);
         }
 
         foreach (var organization in userOrganizations)
         {
-            _organizationRepository.Delete(organization);
             await _gitService.DeleteOrganization(user,organization);
+            _organizationRepository.Delete(organization);
         }
         
         await _gitService.DeleteUser(user);
