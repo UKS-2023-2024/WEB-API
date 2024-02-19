@@ -197,7 +197,7 @@ public class GiteaService: IGitService
     public async Task DeleteBranch(User user, Branch branch)
     {
         SetAdminBasicAuthToken();
-        var url = $"repos/{user.Username}/{branch.Repository.Name}/branches/{branch.Name}";
+        var url = $"repos/{user.Username}/{branch.Repository.Name}/branches/{branch.OriginalName}";
         var response = await _httpClient.DeleteAsync(url);
         await LogStatusAndResponseContent(response);
     }
@@ -240,7 +240,7 @@ public class GiteaService: IGitService
         SetAdminBasicAuthToken();
         var url = $"repos/{user.Username}/{branch.Repository.Name}/commits";
         var query = HttpUtility.ParseQueryString(string.Empty);
-        query["sha"] = branch.Name;
+        query["sha"] = branch.OriginalName;
         query["stat"] = "true";
         query["verification"] = "false";
         query["files"] = "true";
@@ -366,7 +366,7 @@ public class GiteaService: IGitService
         var url = $"repos/{user.Username}/{branch.Repository.Name}/contents";
         var pathBasedUrl = path.Equals("/") ? url : url + $"{path}";
         var query = HttpUtility.ParseQueryString(string.Empty);
-        query["ref"] = branch.Name;
+        query["ref"] = branch.OriginalName;
         var fullUrl = $"{pathBasedUrl}?{query}";
         var response = await _httpClient.GetAsync(fullUrl);
         await LogStatusAndResponseContent(response);
@@ -381,7 +381,7 @@ public class GiteaService: IGitService
         SetAdminBasicAuthToken();
         var url = $"repos/{user.Username}/{branch.Repository.Name}/contents/{path}";
         var query = HttpUtility.ParseQueryString(string.Empty);
-        query["ref"] = branch.Name;
+        query["ref"] = branch.OriginalName;
         var fullUrl = $"{url}?{query}";
         var response = await _httpClient.GetAsync(fullUrl);
         await LogStatusAndResponseContent(response);

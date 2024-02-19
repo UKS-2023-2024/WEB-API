@@ -125,6 +125,8 @@ public class BranchController : ControllerBase
     [Authorize]
     public async Task<IActionResult> ListFileTree(Guid id, string path)
     {
+        Console.WriteLine(id);
+        Console.WriteLine(path);
         var result = await _sender.Send(new ListBranchFilesQuery(id, HttpUtility.UrlDecode(path)));
         return Ok(result);
     }

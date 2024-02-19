@@ -5,8 +5,6 @@ services:
       context: .
       dockerfile: Dockerfile # build the Docker image
     container_name: web_api_application
-    ports:
-      - "5124:80"
     depends_on:
       - postgresql_database
       - server
@@ -119,6 +117,17 @@ services:
       - uks_backend
     volumes:
       - logstashvolume:/usr/share/logstash/data
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx:ro
+    depends_on:
+      - server
+      - uks_backend
+    networks:
+      - network
 
 networks:
   network:
