@@ -1,15 +1,20 @@
 @startuml
 class User {
-  id: Guid
+  Id: Guid
   Full Name: string
   Username: string
   Password: string
   PrimaryEmail: string
   Role: UserRole
-  bio: string
+  Bio: string
   Location: string
   Company: string
   Website: string
+  Deleted: bool
+  NotificationPreferences: NotificationPreferences
+  GitToken: string
+  CreatedAt: DateTime
+  UpdatedAt: DateTime
 }
 
 class Email {
@@ -21,6 +26,57 @@ class SocialAccount {
   Value: string
 }
 
+class Branch {
+  Id: Guid
+  Name: string
+  IsDefault: bool
+  Deleted: bool
+}
+
+class CommitContent {
+  Sha: string
+  CreatedAt: DateTime
+  Message: string
+  Committer: string
+  Additions: int
+  Deletions: int
+}
+
+class ContributionFile {
+  Name: string
+  Path: string
+  IsFolder: bool
+}
+
+class FileContent {
+  Content: string
+  Name: string
+  Path: string
+  Encoding: string
+}
+
+class Comment {
+  Content: string
+}
+
+class CommentHierarchy {
+}
+
+class Milestone {
+  Id: Guid
+  Title: string
+  DueDate: Date
+  Description: string
+  Closed: bool
+}
+
+class Notification {
+    Id: Guid
+    Subject: string
+    Message: string
+    DateTime: DateTime
+}
+
 class Organization {
   Id: Guid
   Name: string
@@ -28,6 +84,9 @@ class Organization {
   Description: string
   Location: string
   Url: string
+  memberTeamId: int
+  CreatedAt: DateTime
+  UpdatedAt: DateTime
 }
 
 class OrganizationInvite {
@@ -35,12 +94,28 @@ class OrganizationInvite {
   ExpiresAt: DateTime
 }
 
+class OrganizationMember {
+  Role: OrganizationMemberRole
+  Deleted: bool
+}
+
+class Reaction {
+  Id: Guid
+  EmojiCode: string
+}
+
 class Repository {
   Id: Guid
   Name: string
   IsPrivate: bool
   Description: string
-  Location: string
+  HttpCloneUrl: string
+  SshCloneUrl: string
+  CreatedAt: DateTime
+  UpdatedAt: DateTime
+}
+
+class RepositoryFork {
 }
 
 class RepositoryInvite {
@@ -48,121 +123,155 @@ class RepositoryInvite {
   ExpiresAt: DateTime
 }
 
-
-class Task {
+class RepositoryMember {
   Id: Guid
-  Title: string
-  Description: string
-  state: TaskState 
+  Role: RepositoryMemberRole
+  Deleted: bool
 }
 
-class PullRequest {
+class RepositoryWatcher {
+  Id: Guid
+  Role: RepositoryMemberRole
+  WatchingPreferences: WatchingPreferences
 }
 
-class Issue {
+class TaskDoc {
+  Id: string
+  title: string
+  description: string
+  number: int
+  type: int
+  state: int
 }
 
 class Event {
   Id: Guid
   Title: string
-  time: DateTime
+  CreatedAt: DateTime
+  EventType: EventType
 }
 
-class Comment {
-  content: string
+class AddIssueToPullRequestEvent {
 }
 
-class StateChange {
-  content: string
+class AssignEvent {
 }
 
-class Milestone {
+class AssignLabelEvent {
+}
+
+class AssignMilestoneEvent {
+}
+
+class AssignPullRequestEvent {
+}
+
+class CloseEvent {
+}
+
+class PullRequestMergedEvent {
+}
+
+class RemoveIssueFromPullRequestEvent {
+}
+
+class UnassignEvent {
+}
+
+class UnassignLabelEvent {
+}
+
+class UnassignMilestoneEvent {
+}
+
+class UnnassignPullRequestEvent {
+}
+
+class Task {
   Id: Guid
   Title: string
-  DueDate: Date
-}
-
-class RepositoryMember {
-  Id: Guid
-  Role: RepositoryMemberRole
-}
-
-class OrganizationMember {
-  Id: Guid
-}
-
-class OrganizationPermission{
-  Value: string
   Description: string
+  State: TaskState 
+  Number: int
+  CreatedAt: DateTime
+  UpdatedAt: DateTime
 }
 
-class OrganizationRole {
-  Name: string
-  description: string
+class Issue {
 }
 
-class Branch {
+class Label {
   Id: Guid
-  Name: string
+  Title: string
+  Description: string
+  Color: string
+  IsDefaultLabel: bool
+  IsDeleted: bool
 }
 
-class Commit {
-  hash: string
+class PullRequest {
+  GitPullRequestId: int
 }
-
-
-User "1" *-- "*" Email : has
-User "1" *-- "*" Organization: has
-User "*" -- "*" Organization: isIn
-User "1" *-- "*" Repository: has
-User "*" -- "*" Repository: starred
-
-Organization "1" *-- "*" Repository: has
-
-Repository "1" *-- "*" Milestone: has
-Repository "1" *-- "*" Branch: has
-
-Branch "1" *-- "*" PullRequest: from
-Branch "1" *-- "*" PullRequest: to
-Commit "1" *-- "*" Branch : head
-
-PullRequest "1" -- "*" Issue: resolves
-
-Milestone "1" -- "*" Issue: has
-Milestone "1" -- "*" PullRequest: has
-
-Commit "1" -- "*" Branch: canBeOn
-Commit "1" -- "*" Commit : hasChildren
-
-Issue --|> Task
-PullRequest --|> Task
-
-Task "1" *-- "*" Event : has
-
-Organization "1" *-- "*" OrganizationMember: has
-User "1" *-- "*" OrganizationMember: has
-
-OrganizationRole "1" -- "*" OrganizationMember: has
-
-OrganizationPermission "*" -- "*" OrganizationMember: has
-
-Repository "1" *-- "*" RepositoryMember: has
-User "1" *-- "*" RepositoryMember: has
-
-Repository "1" *-- "*" RepositoryInvite: has
-User "1" *-- "*" RepositoryInvite: has
-
-Organization "1" *-- "*" OrganizationInvite: has
-User "1" *-- "*" OrganizationInvite: has
-
-User "1" *-- "*" SocialAccount: has
-
-StateChange --|> Event
-Comment--|> Event
 
 enum UserRole {
   ADMINISTRATOR
   USER
+}
+
+enum NotificationType {
+  MentionsAndParticipating,
+  Issues,
+  PullRequests
+}
+
+enum NotificationPreferences {
+  EMAIL,
+  GITHUB,
+  BOTH,
+  DONTNOTIFY
+}
+
+enum OrganizationMemberRole {
+  OWNER,
+  MODERATOR,
+  MEMBER
+}
+
+enum WatchingPreferences {
+  AllActivity,
+  Ignore,
+  Issues,
+  PullRequests,
+  IssuesAndPullRequests
+}
+
+enum RepositoryMemberRole {
+  OWNER,
+  ADMIN,
+  READ,
+  WRITE
+}
+
+enum EventType {
+  OPENED,
+  CLOSED,
+  ISSUE_ASSIGNED,
+  ISSUE_UNASSIGNED,
+  MILESTONE_ASSIGNED,
+  MILESTONE_UNASSIGNED,
+  PULL_REQUEST_MERGED,
+  PULL_REQUEST_ASSIGNED,
+  PULL_REQUEST_UNASSIGNED,
+  PULL_REQUEST_ISSUE_ADDED,
+  PULL_REQUEST_ISSUE_REMOVED,
+  LABEL_ASSIGNED,
+  LABEL_UNASSIGNED
+}
+
+enum MergeType {
+  MERGE,
+  REBASE,
+  SQUASH
 }
 
 enum TaskState {
@@ -171,10 +280,87 @@ enum TaskState {
   MERGED
 }
 
-
-enum RepositoryMemberRole {
-  OWNER
-  ADMIN
-  CONTRIBUTOR
+enum TaskType
+{
+  ISSUE,
+  PULL_REQUEST
 }
+
+User "1" *-- "*" SocialAccount: has
+User "1" *-- "*" Email : has
+User "*" -- "*" Repository: starred
+User "1" *-- "*" OrganizationMember: has
+User "1" *-- "*" OrganizationInvite: has
+User "1" *-- "*" RepositoryInvite: has
+User "1" *-- "*" RepositoryMember: has
+User "1" *-- "*" Organization: has
+User "1" *-- "*" Repository: has
+User "*" -- "*" Organization: isIn
+User "1" *-- "*" Comment : has
+User "1" *-- "*" Notification: has
+User "1" *-- "*" Reaction : has
+User "1" -- "*" Event : has
+User "1" -- "*" Task : has
+
+Branch "1" *-- "*" PullRequest: from
+Branch "1" *-- "*" PullRequest: to
+Repository "1" *-- "*" Branch: has
+Branch "1" -- "*" Branch: CreatedFrom
+
+Comment "1" *-- "1" CommentHierarchy: has
+Task "1" *-- "*" Comment: has
+Comment "1" *-- "*" Reaction: has
+CommentHierarchy "1" *-- "*" CommentHierarchy: hasReplies
+
+Milestone "1" -- "*" Task: has
+Repository "1" *-- "*" Milestone: has
+
+Organization "1" *-- "*" OrganizationMember: has
+Organization "1" *-- "*" OrganizationInvite: has
+Organization "1" *-- "*" Repository: has
+
+Repository "1" *-- "*" RepositoryMember: has
+Repository "1" *-- "*" RepositoryInvite: has
+Repository "1" *-- "*" Task: has
+Repository "1" *-- "*" Label: has
+Repository "1" *-- "*" RepositoryWatcher: has
+Repository "1" *-- "*" RepositoryFork: hasForks
+Repository "1" *-- "1" RepositoryFork: ForkedFrom
+
+RepositoryMember "1" *-- "*" AssignEvent: has
+RepositoryMember "1" *-- "*" UnassignEvent: has
+RepositoryMember "1" *-- "*" AssignPullRequestEvent: has
+RepositoryMember "1" *-- "*" UnnassignPullRequestEvent: has
+
+Issue "1" *-- "*" AddIssueToPullRequestEvent: has
+Issue "1" *-- "*" RemoveIssueFromPullRequestEvent: has
+
+Milestone "1" *-- "*" AssignMilestoneEvent: has
+Milestone "1" *-- "*" UnassignMilestoneEvent: has
+
+Label "1" *-- "*" AssignLabelEvent: has
+Label "1" *-- "*" UnassignLabelEvent: has
+
+PullRequest "*" -- "*" Issue: resolves
+Label "1" -- "*" Task: has
+RepositoryMember "*" -- "*" Tasks: has
+Label "*" -- "*" Tasks: has
+Task "1" *-- "*" Event : has
+
+Issue --|> Task
+PullRequest --|> Task
+
+AssignEvent --|> Event
+UnassignEvent --|> Event
+UnnassignPullRequestEvent --|> Event
+AssignPullRequestEvent --|> Event
+AddIssueToPullRequestEvent --|> Event
+RemoveIssueFromPullRequestEvent --|> Event
+AssignMilestoneEvent --|> Event
+UnassignMilestoneEvent --|> Event
+AssignLabelEvent --|> Event
+UnassignLabelEvent --|> Event
+CloseEvent --|> Event
+PullRequestMergedEvent --|> Event
+
 @enduml
