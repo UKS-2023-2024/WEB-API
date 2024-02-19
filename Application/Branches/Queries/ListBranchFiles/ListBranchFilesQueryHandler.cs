@@ -32,9 +32,8 @@ public class ListBranchFilesQueryHandler: IQueryHandler<ListBranchFilesQuery, Li
         var branch = await _branchRepository.FindById(request.BranchId);
         Branch.ThrowIfDoesntExist(branch); 
         
-        var owner = await _repositoryRepository.FindRepositoryOwner(branch!.RepositoryId);
-        User.ThrowIfDoesntExist(owner);
+        var repository = _repositoryRepository.Find(branch!.RepositoryId);
         
-        return await _gitService.ListFolderContent(owner!, branch, request.Folder);
+        return await _gitService.ListFolderContent(repository!, branch, request.Folder);
     }
 }

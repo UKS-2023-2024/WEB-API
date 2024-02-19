@@ -27,12 +27,12 @@ public interface IGitService
     public Task UpdatePullRequest(Repository repository,int gitPullRequestId, string updateState);
     public Task DeleteUser(User user);
     public Task SetPublicKey(User user, string pk);
-    public Task DeleteBranch(User user, Branch branch);
+    public Task DeleteBranch(Repository repository, Branch branch);
     public Task CreateBranch(Repository repository, string branchName, string createdFromBranch);
     public Task<int> CreatePullRequest(Repository repository, string fromBranch, string toBranch, PullRequest pullRequest);
-    public Task<List<CommitContent>> ListBranchCommits(User user, Branch branch);
-    public Task<List<ContributionFile>> ListFolderContent(User user, Branch branch, string path);
-    public Task<FileContent> ListFileContent(User user, Branch branch, string path);
+    public Task<List<CommitContent>> ListBranchCommits(Repository repository, Branch branch);
+    public Task<List<ContributionFile>> ListFolderContent(Repository repository, Branch branch, string path);
+    public Task<FileContent> ListFileContent(Repository repository, Branch branch, string path);
     public Task<string> GetPrDiffPreview(User user, Repository repository, PullRequest pullRequest);
     public Task<List<CommitContent>> ListPrCommits(User user, Repository repository, PullRequest pullRequest);
 

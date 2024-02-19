@@ -32,8 +32,8 @@ public class DeleteBranchCommandHandler : ICommandHandler<DeleteBranchCommand, B
         
         
         // Additional git setup
-        var repoOwner = await _repositoryRepository.FindRepositoryOwner(branch.RepositoryId);
-        await _gitService.DeleteBranch(repoOwner, branch);
+        var repository = _repositoryRepository.Find(branch.RepositoryId);
+        await _gitService.DeleteBranch(repository, branch);
         
         
         return branch;

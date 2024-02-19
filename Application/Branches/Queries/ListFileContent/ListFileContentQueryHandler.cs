@@ -34,7 +34,9 @@ public class ListFileContentQueryHandler: IQueryHandler<ListFileContentQuery, Fi
         
         var owner = await _repositoryRepository.FindRepositoryOwner(branch!.RepositoryId);
         User.ThrowIfDoesntExist(owner);
+
+        var repository = _repositoryRepository.Find(branch.RepositoryId);
         
-        return await _gitService.ListFileContent(owner!, branch, request.Path);
+        return await _gitService.ListFileContent(repository!, branch, request.Path);
     }
 }

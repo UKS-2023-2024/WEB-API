@@ -30,9 +30,8 @@ public class ListCommitsQueryHandler: IQueryHandler<ListCommitsQuery, List<Commi
         var branch = await _branchRepository.FindById(request.Branch);
         Branch.ThrowIfDoesntExist(branch); 
         
-        var owner = await _repositoryRepository.FindRepositoryOwner(branch!.RepositoryId);
-        User.ThrowIfDoesntExist(owner);
+        var repository = _repositoryRepository.Find(branch!.RepositoryId);
 
-        return await _gitService.ListBranchCommits(owner!, branch);
+        return await _gitService.ListBranchCommits(repository!, branch);
     }
 }

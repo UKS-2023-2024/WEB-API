@@ -194,10 +194,10 @@ public class GiteaService: IGitService
         var response = await _httpClient.DeleteAsync(url);
         await LogStatusAndResponseContent(response);
     }
-    public async Task DeleteBranch(User user, Branch branch)
+    public async Task DeleteBranch(Repository repository, Branch branch)
     {
         SetAdminBasicAuthToken();
-        var url = $"repos/{user.Username}/{branch.Repository.Name}/branches/{branch.OriginalName}";
+        var url = $"repos/{repository.FindRepositoryOwner()}/{branch.Repository.Name}/branches/{branch.OriginalName}";
         var response = await _httpClient.DeleteAsync(url);
         await LogStatusAndResponseContent(response);
     }
@@ -235,10 +235,10 @@ public class GiteaService: IGitService
         return createdPullRequest.number;
     }
 
-    public async Task<List<CommitContent>> ListBranchCommits(User user, Branch branch)
+    public async Task<List<CommitContent>> ListBranchCommits(Repository repository, Branch branch)
     {
         SetAdminBasicAuthToken();
-        var url = $"repos/{user.Username}/{branch.Repository.Name}/commits";
+        var url = $"repos/{repository.FindRepositoryOwner()}/{branch.Repository.Name}/commits";
         var query = HttpUtility.ParseQueryString(string.Empty);
         query["sha"] = branch.OriginalName;
         query["stat"] = "true";
@@ -360,10 +360,10 @@ public class GiteaService: IGitService
         await LogStatusAndResponseContent(response);
     }
 
-    public async Task<List<ContributionFile>> ListFolderContent(User user, Branch branch, string path)
+    public async Task<List<ContributionFile>> ListFolderContent(Repository repository, Branch branch, string path)
     {
         SetAdminBasicAuthToken();
-        var url = $"repos/{user.Username}/{branch.Repository.Name}/contents";
+        var url = $"repos/{repository.FindRepositoryOwner()}/{branch.Repository.Name}/contents";
         var pathBasedUrl = path.Equals("/") ? url : url + $"{path}";
         var query = HttpUtility.ParseQueryString(string.Empty);
         query["ref"] = branch.OriginalName;
@@ -376,10 +376,10 @@ public class GiteaService: IGitService
             .ToList();
     }
 
-    public async Task<FileContent> ListFileContent(User user, Branch branch, string path)
+    public async Task<FileContent> ListFileContent(Repository repository, Branch branch, string path)
     {
         SetAdminBasicAuthToken();
-        var url = $"repos/{user.Username}/{branch.Repository.Name}/contents/{path}";
+        var url = $"repos/{repository.FindRepositoryOwner()}/{branch.Repository.Name}/contents/{path}";
         var query = HttpUtility.ParseQueryString(string.Empty);
         query["ref"] = branch.OriginalName;
         var fullUrl = $"{url}?{query}";
@@ -393,7 +393,7 @@ public class GiteaService: IGitService
     public async Task<string> GetPrDiffPreview(User user, Repository repository, PullRequest pullRequest)
     {
         SetAdminBasicAuthToken();
-        var url = $"repos/{user.Username}/{repository.Name}/pulls/{pullRequest.GitPullRequestId}.diff";
+        var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}/pulls/{pullRequest.GitPullRequestId}.diff";
         var response = await _httpClient.GetAsync(url);
         await LogStatusAndResponseContent(response);
         return await response.Content.ReadAsStringAsync();
@@ -402,7 +402,7 @@ public class GiteaService: IGitService
     public async Task<List<CommitContent>> ListPrCommits(User user, Repository repository, PullRequest pullRequest)
     {
         SetAdminBasicAuthToken();
-        var url = $"repos/{user.Username}/{repository.Name}/pulls/{pullRequest.GitPullRequestId}/commits";
+        var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}/pulls/{pullRequest.GitPullRequestId}/commits";
         var response = await _httpClient.GetAsync(url);
         await LogStatusAndResponseContent(response);
         var commits = await DeserializeBody<List<GitCommitContent>>(response);
@@ -422,7 +422,7 @@ public class GiteaService: IGitService
     private async Task CreatePushWebhook(User user, Repository repository)
     {   
         SetAdminBasicAuthToken();
-        var url = $"repos/{user.Username}/{repository.Name}/hooks";
+        var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}/hooks";
         var body = Body(new
         {
             active = true,

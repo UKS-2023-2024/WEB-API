@@ -90,7 +90,7 @@ public class MockGitService: IGitService
         return Task.CompletedTask;
     }
 
-    public Task DeleteBranch(User user, Branch branch)
+    public Task DeleteBranch(Repository repository, Branch branch)
     {
         return Task.CompletedTask;
     }
@@ -105,17 +105,17 @@ public class MockGitService: IGitService
         return Task.FromResult(1);
     }
 
-    public Task<List<CommitContent>> ListBranchCommits(User user, Branch branch)
+    public Task<List<CommitContent>> ListBranchCommits(Repository repository, Branch branch)
     {
         return Task.FromResult(new List<CommitContent>());
     }
 
-    public Task<List<ContributionFile>> ListFolderContent(User user, Branch branch, string path)
+    public Task<List<ContributionFile>> ListFolderContent(Repository repository,  Branch branch, string path)
     {
         return Task.FromResult(new List<ContributionFile>());
     }
 
-    public Task<FileContent> ListFileContent(User user, Branch branch, string path)
+    public Task<FileContent> ListFileContent(Repository repository, Branch branch, string path)
     {
         return Task.FromResult(new FileContent());
     }
