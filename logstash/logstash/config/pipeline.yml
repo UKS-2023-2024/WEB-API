@@ -1,8 +1,2 @@
-- pipeline.id: repo-pipeline
-  path.config: "/usr/share/logstash/pipeline/reposync.conf"
-- pipeline.id: user-pipeline
-  path.config: "/usr/share/logstash/pipeline/usersync.conf"
-- pipeline.id: org-pipeline
-  path.config: "/usr/share/logstash/pipeline/orgsync.conf"
 - pipeline.id: task-pipeline
   path.config: "/usr/share/logstash/pipeline/tasksync.conf"

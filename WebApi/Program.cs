@@ -14,7 +14,7 @@ using WEB_API.Shared.TokenHandler;
 using WEB_API.Shared.UserIdentityService;
 using TokenHandler = WEB_API.Shared.TokenHandler.TokenHandler;
 using Newtonsoft.Json;
-
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
@@ -33,10 +33,17 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
         policy =>
         {
-            policy.WithOrigins("http://localhost:5174", "http://localhost:5173")
+            policy
+                .AllowAnyOrigin()
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
+});
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
 
 builder.Services
@@ -116,6 +123,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseForwardedHeaders();
 app.ConfigureGlobalErrorHandling();
 app.MapControllers();
 

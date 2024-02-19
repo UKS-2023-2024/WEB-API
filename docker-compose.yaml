@@ -5,8 +5,6 @@ services:
       context: .
       dockerfile: Dockerfile # build the Docker image
     container_name: web_api_application
-    ports:
-      - "5124:80"
     depends_on:
       - postgresql_database
       - server
@@ -87,6 +85,17 @@ services:
       - network
     volumes:
       - elasticvolume:/usr/share/elasticsearch/data
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.5.3
+    ports:
+      - "5601:5601"
+    environment:
+      SERVER_NAME: kibana
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+    networks:
+      - network
+    depends_on:
+      - elasticsearch
   logstash:
     container_name: logstash
     build:
@@ -108,6 +117,17 @@ services:
       - uks_backend
     volumes:
       - logstashvolume:/usr/share/logstash/data
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx:ro
+    depends_on:
+      - server
+      - uks_backend
+    networks:
+      - network
 
 networks:
   network:
