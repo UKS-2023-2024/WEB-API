@@ -153,7 +153,7 @@ public class GiteaService: IGitService
         });
         var response = await _httpClient.PostAsync(url, body);
         await LogStatusAndResponseContent(response);
-        await CreatePushWebhook(user, repository);
+        await CreatePushWebhook(repository);
         return await DeserializeBody<GiteaRepoCreated>(response);
     }
     
@@ -185,6 +185,7 @@ public class GiteaService: IGitService
         });
         var response = await _httpClient.PostAsync(url, body);
         await LogStatusAndResponseContent(response);
+        await CreatePushWebhook(repository);
         return await DeserializeBody<GiteaRepoCreated>(response);
     }
     public async Task RemoveRepositoryMember(Repository repository, User user)
@@ -419,7 +420,7 @@ public class GiteaService: IGitService
         }).ToList();
     }
 
-    private async Task CreatePushWebhook(User user, Repository repository)
+    private async Task CreatePushWebhook(Repository repository)
     {   
         SetAdminBasicAuthToken();
         var url = $"repos/{repository.FindRepositoryOwner()}/{repository.Name}/hooks";
