@@ -8,7 +8,20 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.HasMany(user => user.SecondaryEmails);
-        builder.HasMany(user => user.SocialAccounts);
+        builder.HasMany(user => user.SocialAccounts)
+               .WithOne(sa => sa.User)
+               .HasForeignKey(sa => sa.UserId)
+               .OnDelete(DeleteBehavior.Cascade);
+
+        builder
+            .HasMany(u => u.SecondaryEmails)
+            .WithOne(e => e.User)
+            .HasForeignKey(e => e.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder
+            .HasIndex(u => u.PrimaryEmail)
+            .IsUnique();
+
     }
 }

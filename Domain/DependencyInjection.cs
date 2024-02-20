@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Domain.Organizations.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Domain;
 

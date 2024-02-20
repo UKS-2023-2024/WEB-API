@@ -1,10 +1,5 @@
 ﻿using Domain.Shared.Interfaces;
 using Infrastructure.Persistence;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Shared.Repositories
 {
@@ -18,7 +13,7 @@ namespace Infrastructure.Shared.Repositories
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public virtual T Find(Guid id)
+        public virtual T? Find(Guid id)
         {
             return _context.Set<T>().Find(id);
         }
@@ -28,10 +23,11 @@ namespace Infrastructure.Shared.Repositories
             return _context.Set<T>().ToList();
         }
 
-        public virtual void Create(T entity)
+        public virtual async Task<T> Create(T entity)
         {
-            _context.Set<T>().Add(entity);
-            _context.SaveChanges();
+            await _context.Set<T>().AddAsync(entity);
+            await _context.SaveChangesAsync();
+            return entity;
         }
 
         public virtual void Update(T entity)

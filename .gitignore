@@ -1,3 +1,7 @@
 .idea/
 *.sln.iml
 .vs/
+obj
+.env
+postgres
+gitea

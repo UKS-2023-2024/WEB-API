@@ -8,11 +8,11 @@ namespace Domain.Shared.Interfaces
 {
     public interface IBaseRepository<T> where T : class
     {
-        T Find(Guid id);
+        T? Find(Guid id);
 
         IEnumerable<T> FindAll();
 
-        void Create(T entity);
+        Task<T> Create(T entity);
 
         void Update(T entity);
         void Delete(T entity);

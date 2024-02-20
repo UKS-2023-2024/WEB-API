@@ -1,5 +1,7 @@
 ﻿using Domain.Auth.Enums;
-using System.Data;
+using Domain.Auth.Exceptions;
+using Domain.Organizations;
+using Domain.Repositories;
 
 namespace Domain.Auth;
 
@@ -11,16 +13,23 @@ public class User
     public string Username { get; private set; }
     public string Password { get; private set; }
     public UserRole Role { get; private set; }
-    public string Bio { get; private set; }
-    public string Location { get; private set; }
-    public string Company { get; private set; }
-    public string Website { get; private set; }
-    public List<SocialAccount> SocialAccounts { get; private set; }
-    public List<Email> SecondaryEmails { get; private set; } = new();
+    public string? Bio { get; private set; }
+    public string? Location { get; private set; }
+    public string? Company { get; private set; }
+    public string? Website { get; private set; }
+    public List<SocialAccount>? SocialAccounts { get; private set; }
+    public List<Email>? SecondaryEmails { get; private set; } = new();
     public bool Deleted { get; private set; }
-
+    public List<Repository> Starred { get; private set; }
+    public List<OrganizationMember> Members { get; private set; }
+    public List<OrganizationInvite> OrganizationInvites { get; private set; }
+    public List<RepositoryInvite> RepositoryInvites { get; private set; }
+    public NotificationPreferences NotificationPreferences { get; private set; }
+    public string? GitToken { get; private set; }
+    public DateTime? CreatedAt { get; private set; }
+    public DateTime? UpdatedAt { get; private set; }
     private User() { }
-    private User(string primaryEmail, string fullName, string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails, bool deleted)
+    private User(string primaryEmail, string fullName, string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails,List<Repository> starred)
     {
         PrimaryEmail = primaryEmail;
         FullName = fullName;
@@ -34,13 +43,56 @@ public class User
         SocialAccounts = socialAccounts;
         SecondaryEmails = secondaryEmails;
         Deleted = false;
+        Starred = starred;
+        NotificationPreferences = NotificationPreferences.EMAIL;
     }
 
-    public static User Create(string primaryEmail, string fullName,string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails, bool deleted)
+    private User(string primaryEmail, string fullName, string username, string password, UserRole role)
+    {
+        PrimaryEmail = primaryEmail;
+        FullName = fullName;
+        Username = username;
+        Password = password;
+        Role = role;
+        SecondaryEmails = new();
+        SocialAccounts = new();
+        Deleted = false;
+    }
+
+    public void SetGitToken(string? token)
+    {
+        GitToken = token;
+    }
+    public void Created()
+    {
+        CreatedAt = DateTime.Now.ToUniversalTime();
+    }
+    public void Updated()
+    {
+        UpdatedAt = DateTime.Now.ToUniversalTime();
+    }
+
+    public static User Create(string primaryEmail, string fullName,string username, string password, UserRole role, string bio, string location, string company, string website, List<SocialAccount> socialAccounts, List<Email> secondaryEmails, List<Repository> starred)
     {
         if (primaryEmail == null) throw new Exception("Primary email cannot be null");
         if (username == null) throw new Exception("Username cannot be null");
-        return new User(primaryEmail, fullName, username, password, role, bio, location, company, website, socialAccounts, secondaryEmails, deleted);
+        return new User(primaryEmail, fullName, username, password, role, bio, location, company, website, socialAccounts, secondaryEmails, starred);
+    }
+
+    public static User Create(string primaryEmail, string fullName, string username, string password, UserRole role)
+    {
+        if (primaryEmail == null) throw new Exception("Primary email cannot be null");
+        if (username == null) throw new Exception("Username cannot be null");
+        return new User(primaryEmail, fullName, username, password, role);
+    }
+
+    public static User Create(Guid id, string primaryEmail, string fullName, string username, string password, UserRole role)
+    {
+        if (primaryEmail == null) throw new Exception("Primary email cannot be null");
+        if (username == null) throw new Exception("Username cannot be null");
+        User user = new User(primaryEmail, fullName, username, password, role);
+        user.Id = id;
+        return user;
     }
 
     public void Delete()
@@ -48,5 +100,23 @@ public class User
         Deleted = true;
     }
 
+    public void Update(string fullName, string bio, string company, string location, string website, List<SocialAccount> socialAccounts)
+    {
+        FullName = fullName;   
+        Bio = bio;
+        Company = company;
+        Location = location;
+        Website = website;
+        SocialAccounts = socialAccounts;
+    }
 
+    public static void ThrowIfDoesntExist(User? user)
+    {
+        if (user is null) throw new UserNotFoundException();
+    }
+    
+    public  void ChangeNotificationPreferences(NotificationPreferences notificationPreferences)
+    {
+        NotificationPreferences = notificationPreferences;
+    }
 }

@@ -1,0 +1,136 @@
+version: "3.9" # optional since v1.27.0
+services:
+  uks_backend:
+    build:
+      context: .
+      dockerfile: Dockerfile # build the Docker image
+    container_name: web_api_application
+    depends_on:
+      - postgresql_database
+      - server
+    environment:
+      - Email__Sender=${EMAIL_SENDER}
+      - Email__Key=${EMAIL_KEY}
+      - JwtSettings__Key=${JWT_KEY}
+      - JwtSettings__Audience=${JWT_AUDIENCE}
+      - JwtSettings__Issuer=${JWT_ISSUER}
+      - ConnectionString=${CONNECTION_STRING}
+      - PublicApp=${PUBLIC_APP}
+      - Gitea__BaseUrl=${GITEA_BASE_URL}
+      - Gitea__AdminUsername=${GITEA_ADMIN_USERNAME}
+      - Gitea__AdminPassword=${GITEA_ADMIN_PASSWORD}
+      - Gitea__AdminToken=${GITEA_ADMIN_TOKEN}
+    networks:
+      - network
+  postgresql_database:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "4201:5432"
+    restart: always
+    networks:
+      - network
+  server:
+    image: gitea/gitea:1.21.4
+    container_name: gitea
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - GITEA__database__DB_TYPE=postgres
+      - GITEA__database__HOST=db:5432
+      - GITEA__database__NAME=gitea
+      - GITEA__database__USER=gitea
+      - GITEA__database__PASSWD=gitea
+      - GITEA__security__SECRET_KEY=LQEdtkKAS52ihUfS0pY1JcZOXYv3p5fWiVLjmI5rUCQDO8r2IiO8ZaZtDNmCOUbD
+      - GITEA__security__INTERNAL_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE3MDY0NTM2NzJ9.xuwtb6gjp9ys671EwN2TKvnDMReUjfnJoOOsKESvlPA
+      - GITEA__webhook__ALLOWED_HOST_LIST=uks_backend
+    restart: always
+    networks:
+      - network
+    volumes:
+      - ./gitea:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "3000:3000"
+      - "22:22"
+    depends_on:
+      - db
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=gitea
+      - POSTGRES_PASSWORD=gitea
+      - POSTGRES_DB=gitea
+    networks:
+      - network
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.3
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - network
+    volumes:
+      - elasticvolume:/usr/share/elasticsearch/data
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.5.3
+    ports:
+      - "5601:5601"
+    environment:
+      SERVER_NAME: kibana
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+    networks:
+      - network
+    depends_on:
+      - elasticsearch
+  logstash:
+    container_name: logstash
+    build:
+      context: ./logstash/
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - CONFIG_SUPPORT_ESCAPE=true
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    networks:
+      - network
+    depends_on:
+      - elasticsearch
+      - postgresql_database
+      - uks_backend
+    volumes:
+      - logstashvolume:/usr/share/logstash/data
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx:ro
+    depends_on:
+      - server
+      - uks_backend
+    networks:
+      - network
+
+networks:
+  network:
+volumes:
+  elasticvolume:
+  logstashvolume:

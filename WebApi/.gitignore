@@ -599,7 +599,7 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
-appsettings.json
+
 appsettings.Development.json
 
 # JetBrains Rider
